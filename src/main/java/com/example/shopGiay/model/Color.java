@@ -2,6 +2,7 @@ package com.example.shopGiay.model;
 
 import jakarta.persistence.*;
 
+import jakarta.validation.constraints.*;
 import java.time.LocalDate;
 
 @Entity
@@ -12,8 +13,9 @@ public class Color {
     private Integer id;
 
     @Column(name = "name", nullable = false)
+    @NotBlank(message = "Tên không được để trống")
     private String name;
-
+    @NotBlank(message = "Code Không được để trống")
     @Column(name = "code", nullable = false)
     private String code;
 
@@ -23,8 +25,9 @@ public class Color {
     @Column(name = "update_date")
     private LocalDate updateDate;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private Integer status;
+    private Status status;
 
     public Integer getId() {
         return id;
@@ -66,11 +69,11 @@ public class Color {
         this.updateDate = updateDate;
     }
 
-    public Integer getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(Integer status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 }
