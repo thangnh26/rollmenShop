@@ -1,8 +1,10 @@
 package com.example.shopGiay.model;
 
 import jakarta.persistence.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
+import java.util.Date;
 
 @Entity
 @Table(name = "Voucher")
@@ -17,26 +19,42 @@ public class Voucher {
     @Column(name = "update_date")
     private LocalDate updateDate;
 
-    @Column(name = "value", nullable = false)
+    @Column(name = "value")
     private Double value;
 
-    @Column(name = "quantity", nullable = false)
+    @Column(name = "quantity")
     private Integer quantity;
 
-    @Column(name = "name_voucher", nullable = false)
+    @Column(name = "name_voucher")
     private String nameVoucher;
 
-    @Column(name = "start_date", nullable = false)
+    @Column(name = "start_date")
     private LocalDate startDate;
 
-    @Column(name = "end_date", nullable = false)
+    @Column(name = "end_date")
     private LocalDate endDate;
 
-    @Column(name = "status", nullable = false)
+    @Column(name = "status")
     private Integer status;
 
-    @Column(name = "condition", nullable = false)
-    private String condition;
+//    @Column(name = "condition", nullable = false)
+//    private String condition;
+
+
+    public Voucher() {
+    }
+
+    public Voucher(Integer id, LocalDate createDate, LocalDate updateDate, Double value, Integer quantity, String nameVoucher, LocalDate startDate, LocalDate endDate, Integer status) {
+        this.id = id;
+        this.createDate = createDate;
+        this.updateDate = updateDate;
+        this.value = value;
+        this.quantity = quantity;
+        this.nameVoucher = nameVoucher;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.status = status;
+    }
 
     public Integer getId() {
         return id;
@@ -109,13 +127,6 @@ public class Voucher {
     public void setStatus(Integer status) {
         this.status = status;
     }
-
-    public String getCondition() {
-        return condition;
-    }
-
-    public void setCondition(String condition) {
-        this.condition = condition;
-    }
 }
+
 

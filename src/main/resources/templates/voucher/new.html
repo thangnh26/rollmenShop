@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Create Voucher</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <h1>Create Voucher</h1>
+    <form th:action="@{/voucher}" th:object="${voucher}" method="post">
+        <div class="form-group">
+            <label for="createDate">Create Date</label>
+            <input type="date" class="form-control" id="createDate" th:field="*{createDate}">
+        </div>
+        <div class="form-group">
+            <label for="updateDate">Update Date</label>
+            <input type="date" class="form-control" id="updateDate" th:field="*{updateDate}">
+        </div>
+
+        <div class="form-group">
+            <label for="value">Value</label>
+            <input type="text" class="form-control" id="value" th:field="*{value}">
+        </div>
+
+        <div class="form-group">
+            <label for="quantity">Quantity</label>
+            <input type="text" class="form-control" id="quantity" th:field="*{quantity}">
+        </div>
+
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" class="form-control" id="name" th:field="*{nameVoucher}">
+        </div>
+
+        <div class="form-group">
+            <label for="startDate">Start Date</label>
+            <input type="date" class="form-control" id="startDate" th:field="*{startDate}">
+        </div>
+        <div class="form-group">
+            <label for="endDate">End Date</label>
+            <input type="date" class="form-control" id="endDate" th:field="*{endDate}">
+        </div>
+
+        <div class="form-group">
+            <label for="status">Status</label>
+            <input type="number" class="form-control" id="status" th:field="*{status}">
+        </div>
+
+<!--        <div class="form-group">-->
+<!--            <label for="condition">Condition</label>-->
+<!--            <input type="text" class="form-control" id="condition" th:field="*{condition}">-->
+<!--        </div>-->
+        <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+</div>
+</body>
+</html>
