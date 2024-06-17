@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Addresses</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <h1>Addresses</h1>
+    <a class="btn btn-primary" th:href="@{/address/add}">Add New Address</a>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name Address</th>
+            <th>Create Date</th>
+            <th>Update Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="address : ${addressPage.content}">
+            <td th:text="${address.id}">1</td>
+            <td th:text="${address.nameAddress}">Sample Address</td>
+            <td th:text="${address.createDate}">2021-01-01</td>
+            <td th:text="${address.updateDate}">2021-01-01</td>
+            <td th:text="${address.status}">1</td>
+            <td>
+                <a th:href="@{/addresses/edit/{id}(id=${address.id})}">Edit</a> |
+                <a th:href="@{/addresses/delete/{id}(id=${address.id})}" onclick="return confirm('Are you sure?');">Delete</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div>
+        <span th:if="${addressPage.hasPrevious()}">
+            <a th:href="@{/addresses(page=${addressPage.number - 1})}">&laquo; Previous</a>
+        </span>
+        <span th:if="${addressPage.hasNext()}">
+            <a th:href="@{/addresses(page=${addressPage.number + 1})}">Next &raquo;</a>
+        </span>
+    </div>
+</div>
+</body>
+</html>

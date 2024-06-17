@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Colors List</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <h1>Danh sách màu sắc</h1>
+    <a class="btn btn-primary" th:href="@{/colors/add}">Thêm màu sắc</a>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Tên</th>
+            <th>Code</th>
+            <th>Ngày tạo</th>
+            <th>Ngày chỉnh sửa</th>
+            <th>Trạng thái</th>
+            <th>Hành động</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="color : ${colors}">
+            <td th:text="${color.id}">1</td>
+            <td th:text="${color.name}">Black</td>
+            <td th:text="${color.code}">#000000</td>
+            <td th:text="${color.createDate}">2024-01-01</td>
+            <td th:text="${color.updateDate}">2024-01-01</td>
+            <td th:text="${color.status}">1</td>
+            <td>
+                <a th:href="@{/colors/edit/{id}(id=${color.id})}" class="btn btn-info">Edit</a>
+                <a th:href="@{/colors/delete/{id}(id=${color.id})}" class="btn btn-danger">Delete</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                <a class="page-link" th:href="@{/colors(page=${currentPage - 1})}">Previous</a>
+            </li>
+            <li class="page-item" th:each="i : ${#numbers.sequence(0, colors.totalPages - 1)}" th:classappend="${i == currentPage} ? 'active'">
+                <a class="page-link" th:href="@{/colors(page=${i})}" th:text="${i + 1}">1</a>
+            </li>
+            <li class="page-item" th:classappend="${currentPage == colors.totalPages - 1} ? 'disabled'">
+                <a class="page-link" th:href="@{/colors(page=${currentPage + 1})}">Next</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+</body>
+</html>
