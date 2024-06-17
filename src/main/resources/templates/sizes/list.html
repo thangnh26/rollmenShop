@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Danh sách kích thước</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <h1>Danh sách kích thước</h1>
+    <a class="btn btn-primary" th:href="@{/sizes/new}">Thêm kích thước</a>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Kích thước</th>
+            <th>Ngày tạo</th>
+            <th>Ngày update</th>
+            <th>Trạng thái</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="size: ${sizes}">
+            <td th:text="${size.id}">1</td>
+            <td th:text="${size.sizeNumber}">Nike</td>
+            <td th:text="${size.createDate}">2022-01-01</td>
+            <td th:text="${size.updateDate}">2022-01-01</td>
+            <td th:text="${size.status}">Active</td>
+            <td>
+                <a class="btn btn-info" th:href="@{/sizes/edit/{id}(id=${size.id})}">Sửa</a>
+                <a class="btn btn-danger" th:href="@{/sizes/{id}(id=${size.id})}">Xóa</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
