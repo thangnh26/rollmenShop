@@ -7,26 +7,24 @@
 <body>
 <div class="container">
     <h1>Create Material</h1>
-    <form th:action="@{/material}" th:object="${material}" method="post">
+    <form th:action="@{/material/add}" th:object="${material}" method="post">
         <div class="form-group">
-            <label for="name">Name</label>
+            <label for="name">Name:</label>
             <input type="text" class="form-control" id="name" th:field="*{name}">
+            <small class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></small>
         </div>
         <div class="form-group">
-            <label for="code">Code</label>
+            <label for="code">Code:</label>
             <input type="text" class="form-control" id="code" th:field="*{code}">
+            <small class="text-danger" th:if="${#fields.hasErrors('code')}" th:errors="*{code}"></small>
         </div>
         <div class="form-group">
-            <label for="createDate">Create Date</label>
-            <input type="date" class="form-control" id="createDate" th:field="*{createDate}">
-        </div>
-        <div class="form-group">
-            <label for="updateDate">Update Date</label>
-            <input type="date" class="form-control" id="updateDate" th:field="*{updateDate}">
-        </div>
-        <div class="form-group">
-            <label for="status">Status</label>
-            <input type="number" class="form-control" id="status" th:field="*{status}">
+            <label for="status">Status:</label>
+            <select class="form-control" id="status" th:field="*{status}">
+                <option value="1" th:selected="${material.status == 1}">Active</option>
+                <!--                <option value="0" th:selected="${material.status == 0}">Hết Hàng</option>-->
+            </select>
+            <div class="text-danger" th:if="${#fields.hasErrors('status')}" th:errors="*{status}"></div>
         </div>
         <button type="submit" class="btn btn-primary">Save</button>
     </form>

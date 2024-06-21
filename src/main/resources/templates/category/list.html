@@ -7,7 +7,16 @@
 <body>
 <div class="container">
     <h1>Category List</h1>
-    <a class="btn btn-primary" th:href="@{/category/new}">Add New Material</a>
+    <a class="btn btn-primary" th:href="@{/category/new}">Add New Category</a>
+
+    <form th:action="@{/category}" method="get" class="form-inline mt-2">
+        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="keyword">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+    </form>
+
+
+
+
     <table class="table table-striped">
         <thead>
         <tr>
@@ -20,12 +29,12 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="category : ${categories}" th:if="${category.status != 0}">
+        <tr th:each="category : ${categories}" th:if="${category.status != 2}">
             <td th:text="${category.id}">1</td>
             <td th:text="${category.nameCategory}">Nike</td>
             <td th:text="${category.createDate}">2022-01-01</td>
             <td th:text="${category.updateDate}">2022-01-01</td>
-            <td th:text="${category.status}">Active</td>
+            <td th:text="${category.status == 1 ? 'Active' : 'InActive'}">Active</td>
             <td>
                 <a class="btn btn-info" th:href="@{/category/edit/{id}(id=${category.id})}">Edit</a>
                 <a class="btn btn-danger" th:href="@{/category/{id}(id=${category.id})}">Delete</a>
@@ -35,16 +44,16 @@
     </table>
     <nav aria-label="Page navigation">
         <ul class="pagination justify-content-center">
-            <li th:class="${currentPage == 0} ? 'page-item disabled'">
+            <li th:class="${currentPage == 0 ? 'page-item disabled' : 'page-item'}">
                 <a class="page-link" th:href="@{/category?page=0}" aria-label="Previous">
                     <span aria-hidden="true">&laquo;</span>
                     <span class="sr-only">Previous</span>
                 </a>
             </li>
-            <li th:each="pageNo : ${#numbers.sequence(0, totalPages-1)}" th:class="${currentPage == pageNo} ? 'page-item active' : 'page-item'">
-                <a class="page-link" th:href="@{/category?page=__${pageNo}__}" th:text="${pageNo+1}">1</a>
+            <li th:each="pageNo : ${#numbers.sequence(0, totalPages-1)}" th:class="${currentPage == pageNo ? 'page-item active' : 'page-item'}">
+                <a class="page-link" th:href="@{/category?page=__${pageNo}__}" th:text="${pageNo + 1}">1</a>
             </li>
-            <li th:class="${currentPage == totalPages-1} ? 'page-item disabled'">
+            <li th:class="${currentPage == totalPages-1 ? 'page-item disabled' : 'page-item'}">
                 <a class="page-link" th:href="@{/category?page=__${totalPages-1}__}" aria-label="Next">
                     <span aria-hidden="true">&raquo;</span>
                     <span class="sr-only">Next</span>

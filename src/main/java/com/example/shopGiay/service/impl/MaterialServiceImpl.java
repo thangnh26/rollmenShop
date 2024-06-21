@@ -19,11 +19,6 @@ public class MaterialServiceImpl implements MaterialService {
     @Autowired
     MaterialRepository materialRepository;
     @Override
-    public List<Material> getAllMaterial() {
-        return materialRepository.findAll();
-    }
-
-    @Override
     public Material getMaterialById(Integer id) {
         return materialRepository.findById(id).orElse(null);
     }
@@ -34,13 +29,14 @@ public class MaterialServiceImpl implements MaterialService {
     }
 
     @Override
-    public void deleteMaterialById(Integer id) {
-        materialRepository.deleteById(id);
+    public Page<Material> getMaterialByStatusNot2(Pageable pageable) {
+        return materialRepository.findByStatusNot(2, pageable);
     }
 
     @Override
-    public Page<Material> getAllMaterialsPaginated(Pageable pageable) {
-        return materialRepository.findAll(pageable);
+    public Page<Material> searchMaterialByName(String keyword, Pageable pageable) {
+        return materialRepository.findByNameContainingIgnoreCaseAndStatusNot(keyword, 2, pageable);
     }
+
 }
 

@@ -8,6 +8,12 @@
 <div class="container">
     <h1>Voucher List</h1>
     <a class="btn btn-primary" th:href="@{/voucher/new}">Add New Voucher</a>
+
+    <form th:action="@{/voucher}" method="get" class="form-inline mt-2">
+        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="keyword" th:value="${keyword}">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+    </form>
+
     <table class="table table-striped">
         <thead>
         <tr>
@@ -17,25 +23,23 @@
             <th>Value</th>
             <th>Quantity</th>
             <th>Name</th>
-            <th>Star Date</th>
+            <th>Start Date</th>
             <th>End Date</th>
             <th>Status</th>
-            <th>Condition</th>
             <th>Actions</th>
         </tr>
         </thead>
         <tbody>
-        <tr th:each="voucher : ${vouchers}" th:if="${voucher.status != 0}">
+        <tr th:each="voucher : ${vouchers }" th:if="${voucher.status != 2}">
             <td th:text="${voucher.id}">1</td>
             <td th:text="${voucher.createDate}">2022-01-01</td>
             <td th:text="${voucher.updateDate}">2022-01-01</td>
-            <td th:text="${voucher.value}">Nike</td>
-            <td th:text="${voucher.quantity}">Code</td>
-            <td th:text="${voucher.nameVoucher}"></td>
-            <td th:text="${voucher.startDate}"></td>
-            <td th:text="${voucher.endDate}"></td>
-            <td th:text="${voucher.status}">Active</td>
-<!--            <td th:text="${voucher.condition}"></td>-->
+            <td th:text="${voucher.value}">100</td>
+            <td th:text="${voucher.quantity}">10</td>
+            <td th:text="${voucher.nameVoucher}">Sample Voucher</td>
+            <td th:text="${voucher.startDate}">2022-01-01</td>
+            <td th:text="${voucher.endDate}">2022-12-31</td>
+            <td th:text="${voucher.status == 1 ? 'Active' : 'InActive'}">Active</td>
             <td>
                 <a class="btn btn-info" th:href="@{/voucher/edit/{id}(id=${voucher.id})}">Edit</a>
                 <a class="btn btn-danger" th:href="@{/voucher/{id}(id=${voucher.id})}">Delete</a>
@@ -45,17 +49,17 @@
     </table>
     <nav aria-label="Page navigation">
         <ul class="pagination justify-content-center">
-            <li th:class="${currentPage == 0} ? 'page-item disabled'">
-                <a class="page-link" th:href="@{/voucher?page=0}" aria-label="Previous">
+            <li th:class="${currentPage == 0 ? 'page-item disabled' : 'page-item'}">
+                <a class="page-link" th:href="@{/voucher(page=0)}" aria-label="Previous">
                     <span aria-hidden="true">&laquo;</span>
                     <span class="sr-only">Previous</span>
                 </a>
             </li>
-            <li th:each="pageNo : ${#numbers.sequence(0, totalPages-1)}" th:class="${currentPage == pageNo} ? 'page-item active' : 'page-item'">
-                <a class="page-link" th:href="@{/voucher?page=__${pageNo}__}" th:text="${pageNo+1}">1</a>
+            <li th:each="pageNo : ${#numbers.sequence(0, totalPages-1)}" th:class="${currentPage == pageNo ? 'page-item active' : 'page-item'}">
+                <a class="page-link" th:href="@{/voucher(page=${pageNo})}" th:text="${pageNo + 1}">1</a>
             </li>
-            <li th:class="${currentPage == totalPages-1} ? 'page-item disabled'">
-                <a class="page-link" th:href="@{/voucher?page=__${totalPages-1}__}" aria-label="Next">
+            <li th:class="${currentPage == totalPages-1 ? 'page-item disabled' : 'page-item'}">
+                <a class="page-link" th:href="@{/voucher(page=${totalPages-1})}" aria-label="Next">
                     <span aria-hidden="true">&raquo;</span>
                     <span class="sr-only">Next</span>
                 </a>
@@ -65,3 +69,4 @@
 </div>
 </body>
 </html>
+``

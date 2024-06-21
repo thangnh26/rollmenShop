@@ -1,10 +1,13 @@
 package com.example.shopGiay.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.PositiveOrZero;
 
 import java.time.LocalDate;
 import java.util.List;
-
 @Entity
 @Table(name = "Category")
 public class Category {
@@ -12,17 +15,17 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "name_category", nullable = false)
+    @NotBlank(message = "Tên không được để trống")
     private String nameCategory;
 
-    @Column(name = "create_date")
+
     private LocalDate createDate;
 
-    @Column(name = "update_date")
+
     private LocalDate updateDate;
 
-    @Column(name = "status", nullable = false)
     private Integer status;
+
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     private List<Product> products;
 
