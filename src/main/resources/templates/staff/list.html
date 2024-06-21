@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Staff List</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <h1>Staff List</h1>
+    <a class="btn btn-primary mb-3" th:href="@{/staff/new}">Add New Staff</a>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Code</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Gender</th>
+            <th>Description</th>
+            <th>Email</th>
+            <th>Phone Number</th>
+            <th>Create Date</th>
+            <th>Update Date</th>
+            <th>Status</th>
+            <th>Role</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="staff : ${staffPage.content}">
+            <td th:text="${staff.id}">1</td>
+            <td th:text="${staff.code}">ABC123</td>
+            <td th:text="${staff.firstName}">John</td>
+            <td th:text="${staff.lastName}">Doe</td>
+            <td th:text="${staff.gender == 1 ? 'Male' : 'Female'}">Male</td>
+            <td th:text="${staff.description}">Description</td>
+            <td th:text="${staff.email}">john.doe@example.com</td>
+            <td th:text="${staff.phoneNumber}">1234567890</td>
+            <td th:text="${staff.createDate}">2022-01-01</td>
+            <td th:text="${staff.updateDate}">2022-01-02</td>
+            <td th:text="${staff.status == 1 ? 'Active' : 'Inactive'}">Active</td>
+            <td th:text="${staff.role == 1 ? 'Admin' : 'User'}">Admin</td>
+            <td>
+                <a class="btn btn-info" th:href="@{/staff/edit/{id}(id=${staff.id})}">Edit</a>
+                <a class="btn btn-danger" th:href="@{/staff/delete/{id}(id=${staff.id})}"
+                   onclick="return confirm('Are you sure you want to delete this staff member?');">Delete</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            <li class="page-item" th:classappend="${staffPage.first ? 'disabled' : ''}">
+                <a class="page-link" th:href="@{/staff(page=${staffPage.number - 1})}">Previous</a>
+            </li>
+            <li class="page-item" th:each="pageNum : ${#numbers.sequence(0, staffPage.totalPages - 1)}"
+                th:classappend="${staffPage.number == pageNum ? 'active' : ''}">
+                <a class="page-link" th:href="@{/staff(page=${pageNum})}" th:text="${pageNum + 1}">1</a>
+            </li>
+            <li class="page-item" th:classappend="${staffPage.last ? 'disabled' : ''}">
+                <a class="page-link" th:href="@{/staff(page=${staffPage.number + 1})}">Next</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>
