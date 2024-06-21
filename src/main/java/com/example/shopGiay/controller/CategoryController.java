@@ -1,39 +1,52 @@
 package com.example.shopGiay.controller;
 
 import com.example.shopGiay.model.Category;
-
+import com.example.shopGiay.model.Material;
 import com.example.shopGiay.service.CategoryService;
-
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 
 @Controller
 @RequestMapping("/category")
 public class CategoryController {
 
     @Autowired
-    CategoryService categoryService;
+    private CategoryService categoryService;
+
     @GetMapping
-    public String listCagetory(Model model, @RequestParam(defaultValue = "0") int page) {
+    public String listCategorys(Model model,
+                                @RequestParam(defaultValue = "0") int page,
+                                @RequestParam(required = false) String keyword) {
         // Define pagination parameters
         int pageSize = 5; // Number of items per page
         Pageable pageable = PageRequest.of(page, pageSize);
 
-        // Retrieve paginated list of materials
-        Page<Category> categoryPage = categoryService.getAllCategoryPaginated(pageable);
+        // Retrieve paginated list of categories with status 1 or 0
+        Page<Category> categories;
+        if (keyword != null && !keyword.isEmpty()) {
+            categories = categoryService.searchCategoriesByName(keyword, pageable);
+        } else {
+            categories = categoryService.getCategoriesByStatusNot2(pageable);
+        }
 
         // Add pagination information to the model
-        model.addAttribute("categories", categoryPage.getContent());
+        model.addAttribute("categories", categories.getContent());
         model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", categoryPage.getTotalPages());
+        model.addAttribute("totalPages", categories.getTotalPages());
+        model.addAttribute("keyword", keyword); // Pass keyword back to the view
 
         return "category/list";
     }
+
 
     @GetMapping("/new")
     public String createCategoryForm(Model model) {
@@ -42,11 +55,19 @@ public class CategoryController {
         return "category/new";
     }
 
-    @PostMapping
-    public String saveCategory(@ModelAttribute("brand") Category category) {
+    @PostMapping("/add")
+    public String addCategory(@Valid @ModelAttribute("category") Category category, BindingResult result) {
+        if (result.hasErrors()) {
+            return "category/new"; // Trả về lại form nếu có lỗi validation
+        }
+        category.setCreateDate(LocalDate.now());
+        // Lưu category vào cơ sở dữ liệu nếu hợp lệ
         categoryService.saveCategory(category);
+
         return "redirect:/category";
     }
+
+
 
     @GetMapping("/edit/{id}")
     public String editCategoryForm(@PathVariable Integer id, Model model) {
@@ -55,24 +76,34 @@ public class CategoryController {
         return "category/edit";
     }
 
-    @PostMapping("/{id}")
-    public String updateCategory(@PathVariable Integer id, @ModelAttribute("category") Category category, Model model) {
+    @PostMapping("/edit/{id}")
+    public String updateCategory(@PathVariable Integer id,
+                                 @Valid @ModelAttribute("category") Category category,
+                                 BindingResult result) {
+        // Kiểm tra xem có lỗi validation không
+        if (result.hasErrors()) {
+            // Nếu có lỗi, trả về lại form chỉnh sửa với các thông tin lỗi
+            return "category/edit";
+        }
+
+        // Lấy danh mục hiện tại từ cơ sở dữ liệu
         Category existingCategory = categoryService.getCategoryById(id);
-        existingCategory.setId(id);
         existingCategory.setNameCategory(category.getNameCategory());
-        existingCategory.setCreateDate(category.getCreateDate());
-        existingCategory.setUpdateDate(category.getUpdateDate());
         existingCategory.setStatus(category.getStatus());
+        existingCategory.setUpdateDate(LocalDate.now());
+
+        // Lưu lại danh mục đã chỉnh sửa vào cơ sở dữ liệu
         categoryService.saveCategory(existingCategory);
+
         return "redirect:/category";
     }
+
 
     @GetMapping("/{id}")
     public String deleteCategory(@PathVariable Integer id) {
-        Category category =categoryService.getCategoryById(id);
-        category.setStatus(0);
+        Category category = categoryService.getCategoryById(id);
+        category.setStatus(2); // Set status to 2 to mark as deleted
         categoryService.saveCategory(category);
         return "redirect:/category";
     }
-
 }

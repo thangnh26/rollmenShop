@@ -1,5 +1,6 @@
 package com.example.shopGiay.service.impl;
 
+import com.example.shopGiay.model.Material;
 import com.example.shopGiay.model.Voucher;
 import com.example.shopGiay.repository.VoucherRepository;
 import com.example.shopGiay.service.VoucherService;
@@ -17,14 +18,9 @@ public class VoucherServiceImpl implements VoucherService {
     VoucherRepository voucherRepository;
 
     @Override
-    public List<Voucher> getAllVoucher() {
-        return voucherRepository.findAll();
-    }
-
-    @Override
     public Voucher getVoucherById(Integer id) {
-        return voucherRepository.findById(id).orElse(null);    }
-
+        return voucherRepository.findById(id).orElse(null);
+    }
 
     @Override
     public Voucher saveVoucher(Voucher voucher) {
@@ -32,14 +28,12 @@ public class VoucherServiceImpl implements VoucherService {
     }
 
     @Override
-    public void deleteVoucherById(Integer id) {
-
+    public Page<Voucher> getVoucherByStatusNot2(Pageable pageable) {
+        return voucherRepository.findByStatusNot(2, pageable);
     }
 
     @Override
-    public Page<Voucher> getAllVoucherPaginated(Pageable pageable) {
-        return voucherRepository.findAll(pageable);
+    public Page<Voucher> searchVoucherByName(String keyword, Pageable pageable) {
+        return voucherRepository.findByNameVoucherContainingIgnoreCaseAndStatusNot(keyword, 2, pageable);
     }
-
-
 }

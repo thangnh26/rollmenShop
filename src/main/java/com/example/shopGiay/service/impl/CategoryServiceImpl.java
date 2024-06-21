@@ -15,6 +15,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Autowired
     CategoryRepository categoryRepository;
+
     @Override
     public List<Category> getAllCategory() {
         return categoryRepository.findAll();
@@ -39,4 +40,16 @@ public class CategoryServiceImpl implements CategoryService {
     public Page<Category> getAllCategoryPaginated(Pageable pageable) {
         return categoryRepository.findAll(pageable);
     }
+
+    public Page<Category> getCategoriesByStatusNot2(Pageable pageable) {
+        return categoryRepository.findByStatusNot(2, pageable);
+    }
+
+    public Page<Category> searchCategoriesByName(String keyword, Pageable pageable) {
+        return categoryRepository.findByNameCategoryContainingIgnoreCaseAndStatusNot(keyword,2, pageable);
+    }
+
+
+
+
 }

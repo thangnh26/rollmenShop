@@ -45,7 +45,7 @@ public class SizeController {
         return "redirect:/sizes";
     }
 
-    @GetMapping("/{id}/delete")
+    @GetMapping("/{id}")
     public String deleteSize(@PathVariable Integer id) {
         sizeService.deleteSizeById(id);
         return "redirect:/sizes";

@@ -1,6 +1,9 @@
 package com.example.shopGiay.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -12,35 +15,32 @@ public class Customer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "code", nullable = false)
+    @NotBlank(message = "Code không được để trống")
     private String code;
 
-    @Column(name = "first_name", nullable = false)
+    @NotBlank(message = "Tên không được để trống")
     private String firstName;
 
-    @Column(name = "last_name", nullable = false)
+    @NotBlank(message = "Họ không được để trống")
     private String lastName;
 
-    @Column(name = "create_date")
     private LocalDate createDate;
-
-    @Column(name = "update_date")
     private LocalDate updateDate;
 
-    @Column(name = "gender", nullable = false)
     private Byte gender;
 
-    @Column(name = "email", nullable = false)
+    @NotBlank(message = "Email không được để trống")
+    @Email(message = "Định dạng email không hợp lệ")
     private String email;
 
-    @Column(name = "password", nullable = false)
+    @NotBlank(message = "Password không được để trống")
     private String password;
 
-    @Column(name = "phone_number", nullable = false)
+    @Pattern(regexp = "\\d{10}", message = "Số điện thoại phải có 10 chữ số")
     private String phoneNumber;
 
-    @Column(name = "status", nullable = false)
     private Integer status;
+
     @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL)
     private Cart cart;
 
@@ -52,6 +52,7 @@ public class Customer {
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     private List<Address> addresses;
+
 
     public Integer getId() {
         return id;

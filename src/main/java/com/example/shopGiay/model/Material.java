@@ -1,6 +1,7 @@
 package com.example.shopGiay.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
 import java.time.LocalDate;
 
@@ -11,19 +12,16 @@ public class Material {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "name", nullable = false)
+    @NotBlank(message = "Tên không được để trống")
     private String name;
 
-    @Column(name = "code", nullable = false)
+    @NotBlank(message = "Code không được để trống")
     private String code;
 
-    @Column(name = "create_date")
     private LocalDate createDate;
 
-    @Column(name = "update_date")
     private LocalDate updateDate;
 
-    @Column(name = "status", nullable = false)
     private Integer status;
 
     public Integer getId() {

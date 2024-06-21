@@ -1,6 +1,10 @@
 package com.example.shopGiay.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
@@ -13,30 +17,33 @@ public class Voucher {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "create_date")
     private LocalDate createDate;
 
-    @Column(name = "update_date")
     private LocalDate updateDate;
 
-    @Column(name = "value")
+    @NotNull(message = "Value không được để trống")
+    @PositiveOrZero(message = "Value phải là số dương hoặc bằng không")
     private Double value;
 
-    @Column(name = "quantity")
+    @NotNull(message = "Quantity không được để trống")
+    @PositiveOrZero(message = "Quantity phải là số dương hoặc bằng không")
     private Integer quantity;
 
-    @Column(name = "name_voucher")
+    @NotBlank(message = "Tên không được để trống")
     private String nameVoucher;
 
-    @Column(name = "start_date")
+    @NotNull(message = "Ngày bắt đầu không được để trống")
+    @Future(message = "Ngày bắt đầu phải là ngày trong tương lai")
     private LocalDate startDate;
 
-    @Column(name = "end_date")
+    @NotNull(message = "Ngày kết thúc không được để trống")
+    @Future(message = "Ngày kết thúc phải là ngày trong tương lai")
     private LocalDate endDate;
 
+    @NotNull(message = "Trạng thái không được để trống")
+    @PositiveOrZero(message = "Trạng thái phải là số dương hoặc bằng không")
     @Column(name = "status")
     private Integer status;
-
 //    @Column(name = "condition", nullable = false)
 //    private String condition;
 
