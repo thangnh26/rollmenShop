@@ -2,6 +2,7 @@ package com.example.shopGiay.model;
 
 import jakarta.persistence.*;
 
+import jakarta.validation.constraints.*;
 import java.time.LocalDate;
 
 @Entity
@@ -14,7 +15,7 @@ public class Address {
     @ManyToOne
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
-
+    @NotBlank(message = "Name address is mandatory")
     @Column(name = "name_address", nullable = false)
     private String nameAddress;
 

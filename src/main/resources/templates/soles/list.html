@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Brands List</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <h1>Soles List</h1>
+    <a class="btn btn-primary" th:href="@{/soles/new}">Add New Sole</a>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Create Date</th>
+            <th>Update Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="sole : ${soles}">
+            <td th:text="${sole.id}">1</td>
+            <td th:text="${sole.name}">Nike</td>
+            <td th:text="${sole.createDate}">2022-01-01</td>
+            <td th:text="${sole.updateDate}">2022-01-01</td>
+            <td th:text="${sole.status}">Active</td>
+            <td>
+                <a class="btn btn-info" th:href="@{/soles/edit/{id}(id=${sole.id})}">Edit</a>
+                <a class="btn btn-danger" th:href="@{/soles/{id}(id=${sole.id})}">Delete</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
