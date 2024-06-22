@@ -1,6 +1,9 @@
 package com.example.shopGiay.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -12,12 +15,15 @@ public class Staff {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @NotBlank(message = "Tên không được để trống")
     @Column(name = "first_name", nullable = false)
     private String firstName;
 
+    @NotBlank(message = "Họ không được để trống")
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
+    @NotBlank(message = "Code không được để trống")
     @Column(name = "code", nullable = false)
     private String code;
 
@@ -27,12 +33,17 @@ public class Staff {
     @Column(name = "description")
     private String description;
 
+    @NotBlank(message = "Email không được để trống")
+    @Email(message = "Định dạng email không hợp lệ")
     @Column(name = "email", nullable = false)
     private String email;
 
+    @NotBlank(message = "Mật khẩu không được để trống")
     @Column(name = "password", nullable = false)
     private String password;
 
+    @NotBlank(message = "Số điện thoại không được để trống")
+    @Pattern(regexp = "\\d{10}", message = "Số điện thoại phải có 10 chữ số")
     @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
 
