@@ -3,11 +3,14 @@ package com.example.shopGiay.service;
 import com.example.shopGiay.model.Staff;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import java.util.Optional;
+
+import java.util.List;
 
 public interface StaffService {
-    Page<Staff> getAllStaff(Pageable pageable);
-    Optional<Staff> getStaffById(Integer id);
+    List<Staff> getAllStaff();
+    Staff getStaffById(Integer id);
     Staff saveStaff(Staff staff);
     void deleteStaffById(Integer id);
+    public Page<Staff> getStaffByStatusNot2(Pageable pageable);
+    public Page<Staff> searchStaffByCode(String keyword, Pageable pageable);
 }

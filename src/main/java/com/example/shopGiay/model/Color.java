@@ -15,7 +15,7 @@ public class Color {
     @Column(name = "name", nullable = false)
     @NotBlank(message = "Tên không được để trống")
     private String name;
-    @NotBlank(message = "Code Không được để trống")
+    @NotBlank(message = "Code không được để trống")
     @Column(name = "code", nullable = false)
     private String code;
 
@@ -25,9 +25,12 @@ public class Color {
     @Column(name = "update_date")
     private LocalDate updateDate;
 
-    @Enumerated(EnumType.STRING)
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
     @Column(name = "status", nullable = false)
-    private Status status;
+    private Integer status;
 
     public Integer getId() {
         return id;
@@ -67,14 +70,6 @@ public class Color {
 
     public void setUpdateDate(LocalDate updateDate) {
         this.updateDate = updateDate;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
     }
 }
 

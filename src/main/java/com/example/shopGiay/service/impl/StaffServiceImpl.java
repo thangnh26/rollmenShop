@@ -8,21 +8,19 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
+import java.util.List;
 @Service
 public class StaffServiceImpl implements StaffService {
     @Autowired
-    private StaffRepository staffRepository;
-
+    StaffRepository staffRepository;
     @Override
-    public Page<Staff> getAllStaff(Pageable pageable) {
-        return staffRepository.findAll(pageable);
+    public List<Staff> getAllStaff() {
+        return staffRepository.findAll();
     }
 
     @Override
-    public Optional<Staff> getStaffById(Integer id) {
-        return staffRepository.findById(id);
+    public Staff getStaffById(Integer id) {
+        return staffRepository.findById(id).orElse(null);
     }
 
     @Override
@@ -32,6 +30,16 @@ public class StaffServiceImpl implements StaffService {
 
     @Override
     public void deleteStaffById(Integer id) {
-        staffRepository.deleteById(id);
+         staffRepository.deleteById(id);
+    }
+
+    @Override
+    public Page<Staff> getStaffByStatusNot2(Pageable pageable) {
+        return staffRepository.findByStatusNot(2,pageable);
+    }
+
+    @Override
+    public Page<Staff> searchStaffByCode(String keyword, Pageable pageable) {
+        return staffRepository.findByCodeContainingIgnoreCaseAndStatusNot(keyword,2,pageable);
     }
 }
