@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Product Form</title>
+</head>
+<body>
+<h1>Product Form</h1>
+<form th:action="@{/products}" th:object="${product}" method="post">
+    <input type="hidden" th:field="*{id}" />
+    <label>Name: </label>
+    <input type="text" th:field="*{name}" /><br/>
+    <label>Description: </label>
+    <input type="text" th:field="*{description}" /><br/>
+    <label>Category: </label>
+    <select th:field="*{category.id}">
+        <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.nameCategory}"></option>
+    </select><br/>
+    <label>Brand: </label>
+    <select th:field="*{brand.id}">
+        <option th:each="brand : ${brands}" th:value="${brand.id}" th:text="${brand.nameBrand}"></option>
+    </select><br/>
+    <label>Material: </label>
+    <select th:field="*{material.id}">
+        <option th:each="material : ${materials}" th:value="${material.id}" th:text="${material.name}"></option>
+    </select><br/>
+    <label>Sole: </label>
+    <select th:field="*{sole.id}">
+        <option th:each="sole : ${soles}" th:value="${sole.id}" th:text="${sole.name}"></option>
+    </select><br/>
+    <label>Status: </label>
+    <input type="number" th:field="*{status}" /><br/>
+    <button type="submit">Save</button>
+</form>
+</body>
+</html>

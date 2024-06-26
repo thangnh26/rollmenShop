@@ -10,7 +10,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface MaterialService {
-
+    List<Material> getAllMaterial();
     Material getMaterialById(Integer id);
     Material saveMaterial(Material material);
     Page<Material> getMaterialByStatusNot2(Pageable pageable);
