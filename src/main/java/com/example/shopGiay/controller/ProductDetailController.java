@@ -37,7 +37,7 @@ public class ProductDetailController {
     @GetMapping("/new")
     public String showCreateForm(Model model) {
         model.addAttribute("productDetail", new ProductDetail());
-        model.addAttribute("colors", colorService.findAll());
+        model.addAttribute("colors", colorService.getAllColors());
         model.addAttribute("sizes", sizeService.getAllSizes());
         model.addAttribute("products", productService.getAllProducts());
         return "productDetail/form";
@@ -53,7 +53,7 @@ public class ProductDetailController {
     public String showEditForm(@PathVariable("id") Integer id, Model model) {
         ProductDetail productDetail = productDetailService.getProductDetailById(id);
         model.addAttribute("productDetail", productDetail);
-        model.addAttribute("colors", colorService.findAll());
+        model.addAttribute("colors", colorService.getAllColors());
         model.addAttribute("sizes", sizeService.getAllSizes());
         model.addAttribute("products", productService.getAllProducts());
         return "productDetail/form";
