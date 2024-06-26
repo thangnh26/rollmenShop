@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Product Detail Form</title>
+</head>
+<body>
+<h1>Product Detail Form</h1>
+<form th:action="@{/productDetails}" th:object="${productDetail}" method="post">
+    <input type="hidden" th:field="*{id}" />
+    <label>Quantity: </label>
+    <input type="number" th:field="*{quantity}" /><br/>
+    <label>Price: </label>
+    <input type="number" th:field="*{price}" step="0.01" /><br/>
+    <label>Size: </label>
+    <select th:field="*{size.id}">
+        <option th:each="size : ${sizes}" th:value="${size.id}" th:text="${size.sizeNumber}"></option>
+    </select><br/>
+    <label>Color: </label>
+    <select th:field="*{color.id}">
+        <option th:each="color : ${colors}" th:value="${color.id}" th:text="${color.name}"></option>
+    </select><br/>
+    <label>Product: </label>
+    <select th:field="*{product.id}">
+        <option th:each="product : ${products}" th:value="${product.id}" th:text="${product.name}"></option>
+    </select><br/>
+    <label>Status: </label>
+    <input type="number" th:field="*{status}" /><br/>
+    <button type="submit">Save</button>
+</form>
+</body>
+</html>
