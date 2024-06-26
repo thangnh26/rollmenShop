@@ -22,6 +22,10 @@ public class MaterialServiceImpl implements MaterialService {
     public Material getMaterialById(Integer id) {
         return materialRepository.findById(id).orElse(null);
     }
+    @Override
+    public List<Material> getAllMaterial() {
+        return materialRepository.findAll();
+    }
 
     @Override
     public Material saveMaterial(Material material) {
