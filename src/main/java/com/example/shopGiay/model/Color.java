@@ -1,8 +1,7 @@
 package com.example.shopGiay.model;
 
 import jakarta.persistence.*;
-
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDate;
 
 @Entity
@@ -15,8 +14,9 @@ public class Color {
     @Column(name = "name", nullable = false)
     @NotBlank(message = "Tên không được để trống")
     private String name;
-    @NotBlank(message = "Code không được để trống")
+
     @Column(name = "code", nullable = false)
+    @NotBlank(message = "Code không được để trống")
     private String code;
 
     @Column(name = "create_date")
@@ -25,13 +25,21 @@ public class Color {
     @Column(name = "update_date")
     private LocalDate updateDate;
 
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
     @Column(name = "status", nullable = false)
     private Integer status;
 
+    // Constructors
+    public Color() {}
+
+    public Color(String name, String code, LocalDate createDate, LocalDate updateDate, Integer status) {
+        this.name = name;
+        this.code = code;
+        this.createDate = createDate;
+        this.updateDate = updateDate;
+        this.status = status;
+    }
+
+    // Getters and Setters
     public Integer getId() {
         return id;
     }
@@ -71,5 +79,12 @@ public class Color {
     public void setUpdateDate(LocalDate updateDate) {
         this.updateDate = updateDate;
     }
-}
 
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+}

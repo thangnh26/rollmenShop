@@ -8,7 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class ColorServiceImpl implements ColorService {
@@ -16,22 +17,37 @@ public class ColorServiceImpl implements ColorService {
     private ColorRepository colorRepository;
 
     @Override
-    public Page<Color> findAll(Pageable pageable) {
-        return colorRepository.findAll(pageable);
+    public List<Color> getAllColors() {
+        return colorRepository.findAll();
     }
 
     @Override
-    public Optional<Color> findById(Integer id) {
-        return colorRepository.findById(id);
+    public Color getColorById(Integer id) {
+        return colorRepository.findById(id).orElse(null);
     }
 
     @Override
-    public Color save(Color color) {
+    public Color saveColor(Color color) {
+        if (color.getId() == null) {
+            color.setCreateDate(LocalDate.now());
+        } else {
+            color.setUpdateDate(LocalDate.now());
+        }
         return colorRepository.save(color);
     }
 
     @Override
-    public void deleteById(Integer id) {
+    public void deleteColorById(Integer id) {
         colorRepository.deleteById(id);
+    }
+
+    @Override
+    public Page<Color> getColorByStatusNot2(Pageable pageable) {
+        return colorRepository.findByStatusNot(2,pageable);
+    }
+
+    @Override
+    public Page<Color> searchColorsByName(String name, Pageable pageable) {
+        return colorRepository.findByNameContainingIgnoreCase(name, pageable);
     }
 }
