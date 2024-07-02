@@ -45,21 +45,22 @@ public class MaterialController {
         model.addAttribute("totalPages", materialPage.getTotalPages());
         model.addAttribute("keyword", keyword); // Pass keyword back to the view
 
-        return "material/list";
+        return "admin/material/list";
     }
 
     @GetMapping("/new")
     public String createMaterialForm(Model model) {
         Material material = new Material();
         model.addAttribute("material", material);
-        return "material/new";
+        return "admin/material/new";
     }
 
     @PostMapping("/add")
     public String addMaterial(@Valid @ModelAttribute("material") Material material, BindingResult result) {
         if (result.hasErrors()) {
-            return "material/new"; // Trả về lại form nếu có lỗi validation
+            return "admin/material/new"; // Trả về lại form nếu có lỗi validation
         }
+        material.setStatus(1);
         material.setCreateDate(LocalDate.now());
         // Lưu category vào cơ sở dữ liệu nếu hợp lệ
         materialService.saveMaterial(material);
@@ -70,7 +71,7 @@ public class MaterialController {
     public String editMaterialForm(@PathVariable Integer id, Model model) {
         Material material = materialService.getMaterialById(id);
         model.addAttribute("material", material);
-        return "material/edit";
+        return "admin/material/edit";
     }
 
     @PostMapping("/edit/{id}")
@@ -78,7 +79,7 @@ public class MaterialController {
                                  @Valid @ModelAttribute("material") Material material,
                                  BindingResult result) {
         if (result.hasErrors()) {
-            return "material/edit";
+            return "admin/material/edit";
         }
 
         // Lấy danh mục hiện tại từ cơ sở dữ liệu
