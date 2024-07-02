@@ -44,21 +44,22 @@ public class VoucherController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", voucherPage.getTotalPages());
         model.addAttribute("keyword", keyword); // Pass keyword back to the view
-        return "voucher/list";
+        return "admin/voucher/list";
     }
 
     @GetMapping("/new")
     public String createVoucherForm(Model model) {
         Voucher voucher = new Voucher();
         model.addAttribute("voucher", voucher);
-        return "voucher/new";
+        return "admin/voucher/new";
     }
 
     @PostMapping("/add")
     public String addVoucher(@Valid @ModelAttribute("voucher") Voucher voucher, BindingResult result) {
         if (result.hasErrors()) {
-            return "voucher/new"; // Trả về lại form nếu có lỗi validation
+            return "admin/voucher/new"; // Trả về lại form nếu có lỗi validation
         }
+        voucher.setStatus(1);
         voucher.setCreateDate(LocalDate.now());
         // Lưu category vào cơ sở dữ liệu nếu hợp lệ
         voucherService.saveVoucher(voucher);
@@ -69,7 +70,7 @@ public class VoucherController {
     public String editVoucherForm(@PathVariable Integer id, Model model) {
         Voucher voucher = voucherService.getVoucherById(id);
         model.addAttribute("voucher", voucher);
-        return "voucher/edit"; // This should match the name of your Thymeleaf template
+        return "admin/voucher/edit"; // This should match the name of your Thymeleaf template
     }
 
     @PostMapping("/edit/{id}")
@@ -79,7 +80,7 @@ public class VoucherController {
         // Kiểm tra xem có lỗi validation không
         if (result.hasErrors()) {
             // Nếu có lỗi, trả về lại form chỉnh sửa với các thông tin lỗi
-            return "voucher/edit";
+            return "admin/voucher/edit";
         }
 
         Voucher existingVoucher = voucherService.getVoucherById(id);

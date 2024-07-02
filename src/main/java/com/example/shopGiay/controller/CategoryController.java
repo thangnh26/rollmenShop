@@ -44,7 +44,7 @@ public class CategoryController {
         model.addAttribute("totalPages", categories.getTotalPages());
         model.addAttribute("keyword", keyword); // Pass keyword back to the view
 
-        return "category/list";
+        return "admin/category/list";
     }
 
 
@@ -52,14 +52,15 @@ public class CategoryController {
     public String createCategoryForm(Model model) {
         Category category = new Category();
         model.addAttribute("category", category);
-        return "category/new";
+        return "admin/category/new";
     }
 
     @PostMapping("/add")
     public String addCategory(@Valid @ModelAttribute("category") Category category, BindingResult result) {
         if (result.hasErrors()) {
-            return "category/new"; // Trả về lại form nếu có lỗi validation
+            return "admin/category/new"; // Trả về lại form nếu có lỗi validation
         }
+        category.setStatus(1);
         category.setCreateDate(LocalDate.now());
         // Lưu category vào cơ sở dữ liệu nếu hợp lệ
         categoryService.saveCategory(category);
@@ -73,7 +74,7 @@ public class CategoryController {
     public String editCategoryForm(@PathVariable Integer id, Model model) {
         Category category = categoryService.getCategoryById(id);
         model.addAttribute("category", category);
-        return "category/edit";
+        return "admin/category/edit";
     }
 
     @PostMapping("/edit/{id}")
@@ -83,7 +84,7 @@ public class CategoryController {
         // Kiểm tra xem có lỗi validation không
         if (result.hasErrors()) {
             // Nếu có lỗi, trả về lại form chỉnh sửa với các thông tin lỗi
-            return "category/edit";
+            return "admin/category/edit";
         }
 
         // Lấy danh mục hiện tại từ cơ sở dữ liệu
