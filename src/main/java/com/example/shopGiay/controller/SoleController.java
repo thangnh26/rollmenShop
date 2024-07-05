@@ -8,6 +8,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+
 @Controller
 @RequestMapping("/soles")
 public class SoleController {
@@ -17,18 +19,20 @@ public class SoleController {
     @GetMapping
     public String listSoles(Model model) {
         model.addAttribute("soles", soleService.getAllSoles());
-        return "soles/list";
+        return "admin/soles/list";
     }
 
     @GetMapping("/new")
     public String createSoleForm(Model model) {
         Sole sole = new Sole();
         model.addAttribute("sole", sole);
-        return "soles/new";
+        return "admin/soles/new";
     }
 
     @PostMapping
     public String saveSole(@ModelAttribute("sole") Sole sole) {
+        sole.setStatus(1);
+        sole.setCreateDate(LocalDate.now());
         soleService.saveSole(sole);
         return "redirect:/soles";
     }
@@ -37,7 +41,7 @@ public class SoleController {
     public String editSoleForm(@PathVariable Integer id, Model model) {
         Sole sole = soleService.getSoleById(id);
         model.addAttribute("sole", sole);
-        return "soles/edit";
+        return "admin/soles/edit";
     }
 
     @PostMapping("/{id}")
@@ -45,8 +49,7 @@ public class SoleController {
         Sole Soletc = soleService.getSoleById(id);
         Soletc.setId(id);
         Soletc.setName(sole.getName());
-        Soletc.setCreateDate(sole.getCreateDate());
-        Soletc.setUpdateDate(sole.getUpdateDate());
+        Soletc.setUpdateDate(LocalDate.now());
         Soletc.setStatus(sole.getStatus());
         soleService.saveSole(Soletc);
         return "redirect:/soles";
