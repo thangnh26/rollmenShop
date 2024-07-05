@@ -37,7 +37,7 @@ public class ColorController {
         model.addAttribute("totalPages", colors.getTotalPages());
         model.addAttribute("keyword", keyword);
 
-        return "colors/list";
+        return "admin/colors/list";
     }
 
 
@@ -45,14 +45,15 @@ public class ColorController {
     public String createColorForm(Model model) {
         Color color = new Color();
         model.addAttribute("color", color);
-        return "colors/new";
+        return "admin/colors/new";
     }
 
     @PostMapping("/add")
     public String saveColor(@Valid @ModelAttribute("color") Color color, BindingResult result) {
         if (result.hasErrors()) {
-            return "colors/new";
+            return "admin/colors/new";
         }
+        color.setStatus(1);
         color.setCreateDate(LocalDate.now());
         colorService.saveColor(color);
         return "redirect:/colors";
@@ -62,13 +63,13 @@ public class ColorController {
     public String editColorForm(@PathVariable Integer id, Model model) {
         Color color = colorService.getColorById(id);
         model.addAttribute("color", color);
-        return "colors/edit";
+        return "admin/colors/edit";
     }
 
     @PostMapping("/edit/{id}")
     public String updateColor(@PathVariable Integer id, @Valid @ModelAttribute("color") Color color, BindingResult result) {
         if (result.hasErrors()) {
-            return "colors/edit";
+            return "admin/colors/edit";
         }
         Color existingColor = colorService.getColorById(id);
         existingColor.setName(color.getName());
