@@ -8,6 +8,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+
 @Controller
 @RequestMapping("/sizes")
 public class SizeController {
@@ -18,16 +20,18 @@ public class SizeController {
     @GetMapping
     public String listSizes(Model model) {
         model.addAttribute("sizes", sizeService.getAllSizes());
-        return "sizes/list";
+        return "admin/sizes/list";
     }
     @GetMapping("/new")
     public String createSizeForm(Model model) {
         Size size = new Size();
         model.addAttribute("size", size);
-        return "sizes/new";
+        return "admin/sizes/new";
     }
     @PostMapping
     public String saveSize(@ModelAttribute("size") Size size) {
+        size.setStatus(1);
+        size.setCreateDate(LocalDate.now());
         sizeService.saveSize(size);
         return "redirect:/sizes";
     }
@@ -36,15 +40,14 @@ public class SizeController {
     public String editSizeForm(@PathVariable Integer id, Model model) {
         Size size = sizeService.getSizeById(id);
         model.addAttribute("size", size);
-        return "sizes/edit";
+        return "admin/sizes/edit";
     }
 
     @PostMapping("/{id}")
     public String updateSize(@PathVariable Integer id, @ModelAttribute("size") Size size) {
         Size existingSize = sizeService.getSizeById(id);
         existingSize.setSizeNumber(size.getSizeNumber());
-        existingSize.setCreateDate(size.getCreateDate());
-        existingSize.setUpdateDate(size.getUpdateDate());
+        existingSize.setUpdateDate(LocalDate.now());
         existingSize.setStatus(size.getStatus());
         sizeService.saveSize(existingSize);
         return "redirect:/sizes";
