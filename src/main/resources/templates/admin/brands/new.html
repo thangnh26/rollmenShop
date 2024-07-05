@@ -277,7 +277,7 @@
                                                 th:text="${countOrderWait}"
                                         >
 
-                        </span>
+                            </span>
                                     </a>
                                 </li>
                             </ul>
@@ -288,35 +288,23 @@
         </header>
         <main class="h-full overflow-y-auto p-6 bg-gray-100">
             <div class="container mx-auto max-w-md bg-white p-6 rounded-lg shadow-lg">
-                <h1 class="text-2xl font-semibold text-gray-700 mb-4">Sửa chất liệu</h1>
-                <form th:action="@{/material/edit/{id}(id=${material.id})}" th:object="${material}" method="post">
+                <h1 class="text-2xl font-semibold text-gray-700 mb-4">Thêm mới thương hiệu</h1>
+                <form th:action="@{/brands}" th:object="${brand}" method="post">
                     <div class="mb-4">
-                        <label for="code" class="block text-sm font-medium text-gray-700">Mã chất liệu:</label>
+                        <label for="nameBrand" class="block text-sm font-medium text-gray-700">Tên thương hiệu:</label>
                         <input type="text"
-                               id="code"
-                               th:field="*{code}"
+                               id="nameBrand"
+                               th:field="*{nameBrand}"
                                class="block w-full mt-1 text-sm border-gray-300 rounded-md shadow-sm focus:border-purple-500 focus:ring-purple-500">
-                        <small class="text-red-600 mt-1 block" th:if="${#fields.hasErrors('code')}" th:errors="*{code}"></small>
                     </div>
                     <div class="mb-4">
-                        <label for="name" class="block text-sm font-medium text-gray-700">Tên chất liệu:</label>
+                        <label for="description" class="block text-sm font-medium text-gray-700">Mô tả:</label>
                         <input type="text"
-                               id="name"
-                               th:field="*{name}"
+                               id="description"
+                               th:field="*{description}"
                                class="block w-full mt-1 text-sm border-gray-300 rounded-md shadow-sm focus:border-purple-500 focus:ring-purple-500">
-                        <small class="text-red-600 mt-1 block" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></small>
                     </div>
-                    <div class="mb-4">
-                        <label for="status" class="block text-sm font-medium text-gray-700">Trạng thái:</label>
-                        <select id="status"
-                                th:field="*{status}"
-                                class="block w-full mt-1 text-sm border-gray-300 rounded-md shadow-sm focus:border-purple-500 focus:ring-purple-500">
-                            <option value="1" th:selected="${material.status == 1}">Hoạt động</option>
-                            <option value="0" th:selected="${material.status == 0}">Ngắt hoạt động</option>
-                        </select>
-                        <div class="text-red-600 mt-1 block" th:if="${#fields.hasErrors('status')}" th:errors="*{status}"></div>
-                    </div>
-                    <button type="submit" class="w-full py-2 px-4 bg-purple-600 text-white rounded-md shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">Lưu</button>
+                    <button type="submit" class="w-full py-2 px-4 bg-purple-600 text-white rounded-md shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">Thêm mới</button>
                 </form>
 
             </div>

@@ -7,6 +7,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+
 @Controller
 @RequestMapping("/brands")
 public class BrandController {
@@ -16,18 +18,20 @@ public class BrandController {
     @GetMapping
     public String listBrands(Model model) {
         model.addAttribute("brands", brandService.getAllBrands());
-        return "brands/list";
+        return "admin/brands/list";
     }
 
     @GetMapping("/new")
     public String createBrandForm(Model model) {
         Brand brand = new Brand();
         model.addAttribute("brand", brand);
-        return "brands/new";
+        return "admin/brands/new";
     }
 
     @PostMapping
     public String saveBrand(@ModelAttribute("brand") Brand brand) {
+        brand.setStatus(1);
+        brand.setCreateDate(LocalDate.now());
         brandService.saveBrand(brand);
         return "redirect:/brands";
     }
@@ -36,7 +40,7 @@ public class BrandController {
     public String editBrandForm(@PathVariable Integer id, Model model) {
         Brand brand = brandService.getBrandById(id);
         model.addAttribute("brand", brand);
-        return "brands/edit";
+        return "admin/brands/edit";
     }
 
     @PostMapping("/{id}")
@@ -45,8 +49,7 @@ public class BrandController {
         existingBrand.setId(id);
         existingBrand.setNameBrand(brand.getNameBrand());
         existingBrand.setDescription(brand.getDescription());
-        existingBrand.setCreateDate(brand.getCreateDate());
-        existingBrand.setUpdateDate(brand.getUpdateDate());
+        existingBrand.setUpdateDate(LocalDate.now());
         existingBrand.setStatus(brand.getStatus());
         brandService.saveBrand(existingBrand);
         return "redirect:/brands";
