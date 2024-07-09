@@ -8,9 +8,19 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Integer> {
     Page<Category> findByStatusNot(int status, Pageable pageable);
     Page<Category> findByNameCategoryContainingIgnoreCaseAndStatusNot(String name, Integer status, Pageable pageable);
+    @Query(nativeQuery = true, value = "SELECT * FROM  dbshopgiay1.category WHERE id = ?1")
+    Category getById(Integer id);
+
+    @Query(nativeQuery = true, value = "SELECT * FROM dbshopgiay1.category ORDER BY id DESC ")
+    List<Category> findAll();
+
+    @Query(nativeQuery = true, value = "SELECT name_category FROM category WHERE brand_id = ?1")
+    List<String> getListCategoryOfBrand(int id);
 
 }
