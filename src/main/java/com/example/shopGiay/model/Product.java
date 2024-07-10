@@ -1,6 +1,7 @@
 package com.example.shopGiay.model;
 
 import jakarta.persistence.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -11,6 +12,9 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @Column( name = "thumbnail")
+    private String thumbnail;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -40,16 +44,29 @@ public class Product {
     @Column(name = "update_date")
     private LocalDate updateDate;
 
-    @Column(name = "status", nullable = false)
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-    private List<Image> images;
+    @Column( name = "status",columnDefinition = "BOOLEAN")
+    private  boolean status;
+
+//    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+//    private List<Image> images;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<ProductDetail> productDetails;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<Comment> comments;
-    private Integer status;
+
+    @Transient
+    private MultipartFile multipartFile;
+
+    public MultipartFile getMultipartFile() {
+        return multipartFile;
+    }
+
+    public void setMultipartFile(MultipartFile multipartFile) {
+        this.multipartFile = multipartFile;
+    }
+
 
     public Integer getId() {
         return id;
@@ -123,21 +140,13 @@ public class Product {
         this.updateDate = updateDate;
     }
 
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    public List<Image> getImages() {
-        return images;
-    }
-
-    public void setImages(List<Image> images) {
-        this.images = images;
-    }
+//    public List<Image> getImages() {
+//        return images;
+//    }
+//
+//    public void setImages(List<Image> images) {
+//        this.images = images;
+//    }
 
     public List<ProductDetail> getProductDetails() {
         return productDetails;
@@ -153,5 +162,21 @@ public class Product {
 
     public void setComments(List<Comment> comments) {
         this.comments = comments;
+    }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
+
+    public String getThumbnail() {
+        return thumbnail;
+    }
+
+    public void setThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
     }
 }
