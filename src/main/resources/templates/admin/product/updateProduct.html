@@ -7,7 +7,6 @@
         class="flex h-screen bg-gray-50 dark:bg-gray-900"
         :class="{ 'overflow-hidden': isSideMenuOpen }"
 >
-    <!-- Desktop sidebar -->
     <aside
             class="z-20 hidden w-64 overflow-y-auto bg-white dark:bg-gray-800 md:block flex-shrink-0"
     >
@@ -16,177 +15,7 @@
                     class="ml-6 text-lg font-bold text-gray-800 dark:text-gray-200"
                     th:href="@{/}"
             >
-                CTN Sneakers
-            </a>
-            <ul class="mt-6">
-                <li class="relative px-6 py-3">
-                    <a
-                            class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
-                            th:href="@{/admin/index}"
-                    >
-                        <svg
-                                class="w-5 h-5"
-                                aria-hidden="true"
-                                fill="none"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                        >
-                            <path
-                                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                            ></path>
-                        </svg>
-                        <span class="ml-4">Trang Chủ</span>
-                    </a>
-                </li>
-            </ul>
-            <ul>            <li class="relative px-6 py-3">
-                <a
-                        class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
-                        th:href="@{/admin/categories}"
-                >
-                    <svg
-                            class="w-5 h-5"
-                            aria-hidden="true"
-                            fill="none"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                    >
-                        <path
-                                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-                        ></path>
-                    </svg>
-                    <span class="ml-4">Quản Lý Thể Loại</span>
-                </a>
-            </li>
-                <li class="relative px-6 py-3">
-                    <a
-                            class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
-                            th:href="@{/admin/brands}"
-                    >
-                        <svg
-                                class="w-5 h-5"
-                                aria-hidden="true"
-                                fill="none"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                        >
-                            <path
-                                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
-                            ></path>
-                        </svg>
-                        <span class="ml-4">Quản Lý Thương Hiệu</span>
-                    </a>
-                </li>
-                <li class="relative px-6 py-3">
-                    <span
-                            class="absolute inset-y-0 left-0 w-1 bg-purple-600 rounded-tr-lg rounded-br-lg"
-                            aria-hidden="true"
-                    ></span>
-                    <a
-                            class="inline-flex items-center w-full text-sm font-semibold text-gray-800 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 dark:text-gray-100"
-                            th:href="@{/admin/products}"
-                    >
-                        <svg
-                                class="w-5 h-5"
-                                aria-hidden="true"
-                                fill="none"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                        >
-                            <path
-                                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                            ></path>
-                        </svg>
-                        <span class="ml-4">Quản Lý Sản Phẩm</span>
-                    </a>
-                </li>
-                <li class="relative px-6 py-3">
-                    <a
-                            class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
-                            th:href="@{/admin/orders}"
-                    >
-                        <svg
-                                class="w-5 h-5"
-                                aria-hidden="true"
-                                fill="none"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                        >
-                            <path d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
-                        </svg>
-                        <span class="ml-4">Quản Lý Đơn Hàng</span>
-                    </a>
-                </li>
-                <li class="relative px-6 py-3">
-                    <a
-                            class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
-                            th:href="@{/admin/users}"
-                    >
-                        <svg
-                                class="w-5 h-5"
-                                aria-hidden="true"
-                                fill="none"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                        >
-                            <path
-                                    d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"
-                            ></path>
-                        </svg>
-                        <span class="ml-4">Quản Lý Khách Hàng</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </aside>
-    <!-- Mobile sidebar -->
-    <!-- Backdrop -->
-    <div
-            x-show="isSideMenuOpen"
-            x-transition:enter="transition ease-in-out duration-150"
-            x-transition:enter-start="opacity-0"
-            x-transition:enter-end="opacity-100"
-            x-transition:leave="transition ease-in-out duration-150"
-            x-transition:leave-start="opacity-100"
-            x-transition:leave-end="opacity-0"
-            class="fixed inset-0 z-10 flex items-end bg-black bg-opacity-50 sm:items-center sm:justify-center"
-    ></div>
-    <aside
-            class="fixed inset-y-0 z-20 flex-shrink-0 w-64 mt-16 overflow-y-auto bg-white dark:bg-gray-800 md:hidden"
-            x-show="isSideMenuOpen"
-            x-transition:enter="transition ease-in-out duration-150"
-            x-transition:enter-start="opacity-0 transform -translate-x-20"
-            x-transition:enter-end="opacity-100"
-            x-transition:leave="transition ease-in-out duration-150"
-            x-transition:leave-start="opacity-100"
-            x-transition:leave-end="opacity-0 transform -translate-x-20"
-            @click.away="closeSideMenu"
-            @keydown.escape="closeSideMenu"
-    >
-        <div class="py-4 text-gray-500 dark:text-gray-400">
-            <a
-                    class="ml-6 text-lg font-bold text-gray-800 dark:text-gray-200"
-                    href="#"
-            >
-                CTN Sneakers
+                RollMen Sneakers
             </a>
             <ul class="mt-6">
                 <li class="relative px-6 py-3">
@@ -213,11 +42,10 @@
                 </li>
             </ul>
             <ul>
-
                 <li class="relative px-6 py-3">
                     <a
                             class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
-                            th:href="@{/admin/categories}"
+                            th:href="@{/category}"
                     >
                         <svg
                                 class="w-5 h-5"
@@ -230,17 +58,20 @@
                                 stroke="currentColor"
                         >
                             <path
-                                    d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"
+                                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
                             ></path>
                         </svg>
                         <span class="ml-4">Quản Lý Thể Loại</span>
                     </a>
                 </li>
-
                 <li class="relative px-6 py-3">
+                    <span
+                            class="absolute inset-y-0 left-0 w-1 bg-purple-600 rounded-tr-lg rounded-br-lg"
+                            aria-hidden="true"
+                    ></span>
                     <a
-                            class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
-                            th:href="@{/admin/brands}"
+                            class="inline-flex items-center w-full text-sm font-semibold text-gray-800 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 dark:text-gray-100"
+                            th:href="@{/brands}"
                     >
                         <svg
                                 class="w-5 h-5"
@@ -252,18 +83,102 @@
                                 viewBox="0 0 24 24"
                                 stroke="currentColor"
                         >
-                            <path d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
+                            <path
+                                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
+                            ></path>
                         </svg>
                         <span class="ml-4">Quản Lý Thương Hiệu</span>
                     </a>
                 </li>
+                </li>
                 <li class="relative px-6 py-3">
-                      <span
-                              class="absolute inset-y-0 left-0 w-1 bg-purple-600 rounded-tr-lg rounded-br-lg"
-                              aria-hidden="true"
-                      ></span>
                     <a
-                            class="inline-flex items-center w-full text-sm font-semibold text-gray-800 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 dark:text-gray-100"
+                            class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
+                            th:href="@{/colors}"
+                    ><svg
+                            class="w-5 h-5"
+                            aria-hidden="true"
+                            fill="none"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                    >
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 7h.01m3.486 1.513h.01m-6.978 0h.01M6.99 12H7m9 4h2.706a1.957 1.957 0 0 0 1.883-1.325A9 9 0 1 0 3.043 12.89 9.1 9.1 0 0 0 8.2 20.1a8.62 8.62 0 0 0 3.769.9 2.013 2.013 0 0 0 2.03-2v-.857A2.036 2.036 0 0 1 16 16Z"/>
+                    </svg>
+                        <span class="ml-4">Quản Lý Màu Sắc</span>
+                    </a>
+                </li>
+                </li>
+                <li class="relative px-6 py-3">
+                    <a
+                            class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
+                            th:href="@{/material}"
+                    >
+                        <svg
+                                class="w-5 h-5"
+                                aria-hidden="true"
+                                fill="none"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                        >
+                            <path d="M12 7.205c4.418 0 8-1.165 8-2.602C20 3.165 16.418 2 12 2S4 3.165 4 4.603c0 1.437 3.582 2.602 8 2.602ZM12 22c4.963 0 8-1.686 8-2.603v-4.404c-.052.032-.112.06-.165.09a7.75 7.75 0 0 1-.745.387c-.193.088-.394.173-.6.253-.063.024-.124.05-.189.073a18.934 18.934 0 0 1-6.3.998c-2.135.027-4.26-.31-6.3-.998-.065-.024-.126-.05-.189-.073a10.143 10.143 0 0 1-.852-.373 7.75 7.75 0 0 1-.493-.267c-.053-.03-.113-.058-.165-.09v4.404C4 20.315 7.037 22 12 22Zm7.09-13.928a9.91 9.91 0 0 1-.6.253c-.063.025-.124.05-.189.074a18.935 18.935 0 0 1-6.3.998c-2.135.027-4.26-.31-6.3-.998-.065-.024-.126-.05-.189-.074a10.163 10.163 0 0 1-.852-.372 7.816 7.816 0 0 1-.493-.268c-.055-.03-.115-.058-.167-.09V12c0 .917 3.037 2.603 8 2.603s8-1.686 8-2.603V7.596c-.052.031-.112.059-.165.09a7.816 7.816 0 0 1-.745.386Z"/>
+                        </svg>
+
+                        <span class="ml-4">Quản Lý Chất Liệu</span>
+                    </a>
+                </li>
+                </li>
+                <li class="relative px-6 py-3">
+                    <a
+                            class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
+                            th:href="@{/sizes}"
+                    >
+                        <svg
+                                class="w-5 h-5"
+                                aria-hidden="true"
+                                fill="none"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                        >
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7H7m2 3H7m2 3H7m4 2v2m3-2v2m3-2v2M4 5v14a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1h-9a1 1 0 0 1-1-1V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1Z"/>
+                        </svg>
+                        <span class="ml-4">Quản Lý Kích Thước</span>
+                    </a>
+                </li>
+                </li>
+                <li class="relative px-6 py-3">
+                    <a
+                            class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
+                            th:href="@{/soles}"
+                    >
+                        <svg
+                                class="w-5 h-5"
+                                aria-hidden="true"
+                                fill="none"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                        >
+                            <path fill-rule="evenodd" d="M4 5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H4Zm0 6h16v6H4v-6Z" clip-rule="evenodd"/>
+                            <path fill-rule="evenodd" d="M5 14a1 1 0 0 1 1-1h2a1 1 0 1 1 0 2H6a1 1 0 0 1-1-1Zm5 0a1 1 0 0 1 1-1h5a1 1 0 1 1 0 2h-5a1 1 0 0 1-1-1Z" clip-rule="evenodd"/>
+                        </svg>
+
+                        <span class="ml-4">Quản Lý Đế Giày</span>
+                    </a>
+                </li>
+                <li class="relative px-6 py-3">
+                    <a
+                            class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
                             th:href="@{/admin/products}"
                     >
                         <svg
@@ -276,9 +191,32 @@
                                 viewBox="0 0 24 24"
                                 stroke="currentColor"
                         >
-                            <path d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
+                            <path
+                                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                            ></path>
                         </svg>
                         <span class="ml-4">Quản Lý Sản Phẩm</span>
+                    </a>
+                </li>
+                </li>
+                <li class="relative px-6 py-3">
+                    <a
+                            class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
+                            th:href="@{/voucher}"
+                    >
+                        <svg
+                                class="w-5 h-5"
+                                aria-hidden="true"
+                                fill="none"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                        >
+                            <path d="M20 7h-.7c.229-.467.349-.98.351-1.5a3.5 3.5 0 0 0-3.5-3.5c-1.717 0-3.215 1.2-4.331 2.481C10.4 2.842 8.949 2 7.5 2A3.5 3.5 0 0 0 4 5.5c.003.52.123 1.033.351 1.5H4a2 2 0 0 0-2 2v2a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1V9a2 2 0 0 0-2-2Zm-9.942 0H7.5a1.5 1.5 0 0 1 0-3c.9 0 2 .754 3.092 2.122-.219.337-.392.635-.534.878Zm6.1 0h-3.742c.933-1.368 2.371-3 3.739-3a1.5 1.5 0 0 1 0 3h.003ZM13 14h-2v8h2v-8Zm-4 0H4v6a2 2 0 0 0 2 2h3v-8Zm6 0v8h3a2 2 0 0 0 2-2v-6h-5Z"/>
+                        </svg>
+                        <span class="ml-4">Quản Lý Voucher</span>
                     </a>
                 </li>
                 <li class="relative px-6 py-3">
@@ -323,6 +261,8 @@
             </ul>
         </div>
     </aside>
+    <!-- Mobile sidebar -->
+    <!-- Backdrop -->
     <div class="flex flex-col flex-1 w-full">
         <header class="z-10 py-4 bg-white shadow-md dark:bg-gray-800">
             <div
@@ -353,25 +293,13 @@
                             class="relative w-full max-w-xl mr-6 focus-within:text-purple-500"
                     >
                         <div class="absolute inset-y-0 flex items-center pl-2">
-                            <svg
-                                    class="w-4 h-4"
-                                    aria-hidden="true"
-                                    fill="currentColor"
-                                    viewBox="0 0 20 20"
-                            >
-                                <path
-                                        fill-rule="evenodd"
-                                        d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                                        clip-rule="evenodd"
-                                ></path>
+                            <path
+                                    fill-rule="evenodd"
+                                    d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                                    clip-rule="evenodd"
+                            ></path>
                             </svg>
                         </div>
-                        <input
-                                class="w-full pl-8 pr-2 text-sm text-gray-700 placeholder-gray-600 bg-gray-100 border-0 rounded-md dark:placeholder-gray-500 dark:focus:shadow-outline-gray dark:focus:placeholder-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:placeholder-gray-500 focus:bg-white focus:border-purple-300 focus:outline-none focus:shadow-outline-purple form-input"
-                                type="text"
-                                placeholder="Search"
-                                aria-label="Search"
-                        />
                     </div>
                 </div>
                 <ul class="flex items-center flex-shrink-0 space-x-6">
@@ -460,10 +388,17 @@
                                 </li>
                             </ul>
                         </template>
-                    </li>f
+                    </li>
                 </ul>
             </div>
         </header>
+        <h2
+                class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"
+                style="padding: 20px;"
+        >
+            CHI TIẾT SẢN PHẨM
+        </h2>
+
         <main class="h-full overflow-y-auto">
             <div class="container px-6 mx-auto grid">
                 <form th:action="@{/admin/product/update}"
@@ -504,29 +439,72 @@
                         <span class="text-gray-700 dark:text-gray-400">
                           Chọn thể loại
                         </span>
-                                <select
-                                        class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
-                                        name="categoryId"
-                                >
-                                    <div th:each="cate :${listCategory}" th:if="${product.category == cate}" >
-                                        <option th:text="${cate.nameCategory}" th:value="${cate.id}"></option>
-                                    </div>
-                                    <div th:each="cate :${listCategory}" th:if="${product.category != cate}" >
-                                        <option th:text="${cate.nameCategory}" th:value="${cate.id}"></option>
-                                    </div>
-                                </select>
+                            <select
+                                    class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+                                    name="categoryId"
+                            >
+                                <div th:each="cate :${listCategory}" th:if="${product.category == cate}" >
+                                    <option th:text="${cate.nameCategory}" th:value="${cate.id}"></option>
+                                </div>
+                                <div th:each="cate :${listCategory}" th:if="${product.category != cate}" >
+                                    <option th:text="${cate.nameCategory}" th:value="${cate.id}"></option>
+                                </div>
+                            </select>
 
                         </label>
 
-                        <!--giá-->
                         <label class="block mt-4 text-sm">
-                            <span class="text-gray-700 dark:text-gray-400">Đơn giá</span>
-                            <input
-                                    name="price"
-                                    class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                                    placeholder="Đơn giá"
-                                    th:value="*{price}"
-                            />
+                        <span class="text-gray-700 dark:text-gray-400">
+                          Chọn thương hiệu
+                        </span>
+                            <select
+                                    class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+                                    name="brandId"
+                            >
+                                <div th:each="cate :${listBrand}" th:if="${product.brand == cate}" >
+                                    <option th:text="${cate.nameBrand}" th:value="${cate.id}"></option>
+                                </div>
+                                <div th:each="cate :${listBrand}" th:if="${product.brand != cate}" >
+                                    <option th:text="${cate.nameBrand}" th:value="${cate.id}"></option>
+                                </div>
+                            </select>
+
+                        </label>
+
+                        <label class="block mt-4 text-sm">
+                        <span class="text-gray-700 dark:text-gray-400">
+                          Chọn chất liệu
+                        </span>
+                            <select
+                                    class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+                                    name="materialId"
+                            >
+                                <div th:each="cate :${listMaterial}" th:if="${product.material == cate}" >
+                                    <option th:text="${cate.name}" th:value="${cate.id}"></option>
+                                </div>
+                                <div th:each="cate :${listMaterial}" th:if="${product.material != cate}" >
+                                    <option th:text="${cate.name}" th:value="${cate.id}"></option>
+                                </div>
+                            </select>
+
+                        </label>
+
+                        <label class="block mt-4 text-sm">
+                        <span class="text-gray-700 dark:text-gray-400">
+                          Chọn đế giày
+                        </span>
+                            <select
+                                    class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+                                    name="soleId"
+                            >
+                                <div th:each="cate :${listSole}" th:if="${product.sole == cate}" >
+                                    <option th:text="${cate.name}" th:value="${cate.id}"></option>
+                                </div>
+                                <div th:each="cate :${listSole}" th:if="${product.sole != cate}" >
+                                    <option th:text="${cate.name}" th:value="${cate.id}"></option>
+                                </div>
+                            </select>
+
                         </label>
 
                         <!--Mô tả-->
@@ -541,13 +519,13 @@
                             ></textarea>
                         </label>
 
-<!--                        &lt;!&ndash;Chon ảnh&ndash;&gt;-->
-<!--                        <label class="block mt-4 text-sm">-->
-<!--                            <input  class="text-gray-700 dark:text-gray-400"    type="file" name="thumbnailUrl" id="thumbnailUrl" accept="image/png, image/jpeg" th:value="*{multipartFile}" >-->
-<!--                        </label>-->
-<!--                        <label class="block mt-4 text-sm">-->
-<!--                            <img id="thumbnail" alt="Logo Preview" th:src="@{*{thumbnail}}" />-->
-<!--                        </label>-->
+                        <!--                        &lt;!&ndash;Chon ảnh&ndash;&gt;-->
+                        <!--                        <label class="block mt-4 text-sm">-->
+                        <!--                            <input  class="text-gray-700 dark:text-gray-400"    type="file" name="thumbnailUrl" id="thumbnailUrl" accept="image/png, image/jpeg" th:value="*{multipartFile}" >-->
+                        <!--                        </label>-->
+                        <!--                        <label class="block mt-4 text-sm">-->
+                        <!--                            <img id="thumbnail" alt="Logo Preview" th:src="@{*{thumbnail}}" />-->
+                        <!--                        </label>-->
 
                     </div>
 
@@ -584,19 +562,4 @@
 </div>
 </body>
 </html>
-<script type="text/javascript">
-    $(document).ready(function (){
-        $('#thumbnailUrl').change(function (){
-            showImageThumbnail(this);
-        });
-    });
-    function showImageThumbnail(fileInput){
-        file = fileInput.files[0];
-        reader = new FileReader();
-        reader.onload = function (e) {
-            $('#thumbnail').attr('src', e.target.result);
-        };
-        reader.readAsDataURL(file);
-    }
 </script>
-

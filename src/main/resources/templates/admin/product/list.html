@@ -392,13 +392,20 @@
                 </ul>
             </div>
         </header>
+        <h2
+                class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"
+                style="padding: 20px;"
+        >
+            CHI TIẾT SẢN PHẨM
+        </h2>
+
         <main class="h-full overflow-y-auto">
             <div class="container px-6 mx-auto grid">
-                <form th:action="@{/admin/createProduct}"
+                <form th:action="@{/admin/product/update}"
                       method="post"
-                      enctype="multipart/form-data"
+                      enctype="multipart/form-data" th:object="${product}"
                 >
-
+                    <input type="hidden" name="id" th:value="*{id}">
                     <h2
                             class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"
                     >
@@ -422,6 +429,8 @@
                                     class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
                                     placeholder="Nhập tên sản phẩm"
                                     name="name"
+                                    th:value="*{name}"
+
                             />
                         </label>
 
@@ -434,8 +443,14 @@
                                     class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
                                     name="categoryId"
                             >
-                                <option th:value="${category.id}"  th:each="category: ${listCategory}" th:text="${category.nameCategory}"></option>
+                                <div th:each="cate :${listCategory}" th:if="${product.category == cate}" >
+                                    <option th:text="${cate.nameCategory}" th:value="${cate.id}"></option>
+                                </div>
+                                <div th:each="cate :${listCategory}" th:if="${product.category != cate}" >
+                                    <option th:text="${cate.nameCategory}" th:value="${cate.id}"></option>
+                                </div>
                             </select>
+
                         </label>
 
                         <label class="block mt-4 text-sm">
@@ -446,8 +461,14 @@
                                     class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
                                     name="brandId"
                             >
-                                <option th:value="${brand.id}"  th:each="brand: ${listBrand}" th:text="${brand.nameBrand}"></option>
+                                <div th:each="cate :${listBrand}" th:if="${product.brand == cate}" >
+                                    <option th:text="${cate.nameBrand}" th:value="${cate.id}"></option>
+                                </div>
+                                <div th:each="cate :${listBrand}" th:if="${product.brand != cate}" >
+                                    <option th:text="${cate.nameBrand}" th:value="${cate.id}"></option>
+                                </div>
                             </select>
+
                         </label>
 
                         <label class="block mt-4 text-sm">
@@ -458,41 +479,34 @@
                                     class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
                                     name="materialId"
                             >
-                                <option th:value="${material.id}"  th:each="material: ${listMaterial}" th:text="${material.name}"></option>
+                                <div th:each="cate :${listMaterial}" th:if="${product.material == cate}" >
+                                    <option th:text="${cate.name}" th:value="${cate.id}"></option>
+                                </div>
+                                <div th:each="cate :${listMaterial}" th:if="${product.material != cate}" >
+                                    <option th:text="${cate.name}" th:value="${cate.id}"></option>
+                                </div>
                             </select>
+
                         </label>
 
                         <label class="block mt-4 text-sm">
                         <span class="text-gray-700 dark:text-gray-400">
-                          Chọn sole
+                          Chọn đế giày
                         </span>
                             <select
                                     class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
                                     name="soleId"
                             >
-                                <option th:value="${sole.id}"  th:each="sole: ${listSole}" th:text="${sole.name}"></option>
+                                <div th:each="cate :${listSole}" th:if="${product.sole == cate}" >
+                                    <option th:text="${cate.name}" th:value="${cate.id}"></option>
+                                </div>
+                                <div th:each="cate :${listSole}" th:if="${product.sole != cate}" >
+                                    <option th:text="${cate.name}" th:value="${cate.id}"></option>
+                                </div>
                             </select>
+
                         </label>
 
-                        <!--size-->
-                        <!--                        <label class="block mt-4 text-sm">-->
-                        <!--                            <span class="text-gray-700 dark:text-gray-400">Size</span>-->
-                        <!--                            <select-->
-                        <!--                                    class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"-->
-                        <!--                                    name="sizeId"-->
-                        <!--                            >-->
-                        <!--                                <option th:value="${size.id}"  th:each="size: ${listSize}" th:text="${size.numberSize}"></option>-->
-                        <!--                            </select>-->
-                        <!--                        </label>-->
-                        <!--                        &lt;!&ndash;Số lượng&ndash;&gt;-->
-                        <!--                        <label class="block mt-4 text-sm">-->
-                        <!--                            <span class="text-gray-700 dark:text-gray-400">Số lượng</span>-->
-                        <!--                            <input-->
-                        <!--                                    name="quantity"-->
-                        <!--                                    class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"-->
-                        <!--                                    placeholder="Số lượng"-->
-                        <!--                            />-->
-                        <!--                        </label>-->
                         <!--Mô tả-->
                         <label class="block mt-4 text-sm">
                             <span class="text-gray-700 dark:text-gray-400">Mô tả</span>
@@ -501,16 +515,17 @@
                                     class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-textarea focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
                                     rows="3"
                                     placeholder="Nhập mô tả sản phẩm..."
+                                    th:value="*{description}"
                             ></textarea>
                         </label>
 
-                        Chon ảnh
-                        <label class="block mt-4 text-sm">
-                            <input  class="text-gray-700 dark:text-gray-400"    type="file" name="thumbnailUrl" id="thumbnailUrl" accept="image/png, image/jpeg" >
-                        </label>
-                        <label class="block mt-4 text-sm">
-                            <img id="thumbnail" alt="Logo Preview" />
-                        </label>
+                        <!--                        &lt;!&ndash;Chon ảnh&ndash;&gt;-->
+                        <!--                        <label class="block mt-4 text-sm">-->
+                        <!--                            <input  class="text-gray-700 dark:text-gray-400"    type="file" name="thumbnailUrl" id="thumbnailUrl" accept="image/png, image/jpeg" th:value="*{multipartFile}" >-->
+                        <!--                        </label>-->
+                        <!--                        <label class="block mt-4 text-sm">-->
+                        <!--                            <img id="thumbnail" alt="Logo Preview" th:src="@{*{thumbnail}}" />-->
+                        <!--                        </label>-->
 
                     </div>
 
@@ -535,7 +550,7 @@
                             <ul class="inline-flex items-center">
                                 <li>
                                     <!-- CTA -->
-                                    <button type="submit"  class="flex items-center justify-between p-4 mb-8 text-sm font-semibold text-purple-100 bg-purple-600 rounded-lg shadow-md focus:outline-none focus:shadow-outline-purple">Thêm mới &RightArrow;</button>
+                                    <button type="submit"  class="flex items-center justify-between p-4 mb-8 text-sm font-semibold text-purple-100 bg-purple-600 rounded-lg shadow-md focus:outline-none focus:shadow-outline-purple">Cập nhật &RightArrow;</button>
                                 </li>
                             </ul>
                         </div>
@@ -547,18 +562,4 @@
 </div>
 </body>
 </html>
-<script type="text/javascript">
-    $(document).ready(function (){
-        $('#thumbnailUrl').change(function (){
-            showImageThumbnail(this);
-        });
-    });
-    function showImageThumbnail(fileInput){
-        file = fileInput.files[0];
-        reader = new FileReader();
-        reader.onload = function (e) {
-            $('#thumbnail').attr('src', e.target.result);
-        };
-        reader.readAsDataURL(file);
-    }
 </script>
