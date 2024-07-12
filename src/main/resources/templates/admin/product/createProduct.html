@@ -438,6 +438,8 @@
                             </select>
                         </label>
 
+
+
                         <label class="block mt-4 text-sm">
                         <span class="text-gray-700 dark:text-gray-400">
                           Chọn thương hiệu
@@ -475,25 +477,43 @@
                         </label>
 
                         <!--size-->
-                        <!--                        <label class="block mt-4 text-sm">-->
-                        <!--                            <span class="text-gray-700 dark:text-gray-400">Size</span>-->
-                        <!--                            <select-->
-                        <!--                                    class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"-->
-                        <!--                                    name="sizeId"-->
-                        <!--                            >-->
-                        <!--                                <option th:value="${size.id}"  th:each="size: ${listSize}" th:text="${size.numberSize}"></option>-->
-                        <!--                            </select>-->
-                        <!--                        </label>-->
-                        <!--                        &lt;!&ndash;Số lượng&ndash;&gt;-->
-                        <!--                        <label class="block mt-4 text-sm">-->
-                        <!--                            <span class="text-gray-700 dark:text-gray-400">Số lượng</span>-->
-                        <!--                            <input-->
-                        <!--                                    name="quantity"-->
-                        <!--                                    class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"-->
-                        <!--                                    placeholder="Số lượng"-->
-                        <!--                            />-->
-                        <!--                        </label>-->
-                        <!--Mô tả-->
+                        <label class="block mt-4 text-sm">
+                            <span class="text-gray-700 dark:text-gray-400">Kích thước</span>
+                            <select
+                                    class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+                                    name="sizeId"
+                            >
+                                <option th:value="${size.id}"  th:each="size: ${listSize}" th:text="${size.sizeNumber}"></option>
+                            </select>
+                        </label>
+                        <!--size-->
+                        <label class="block mt-4 text-sm">
+                            <span class="text-gray-700 dark:text-gray-400">Màu sắc</span>
+                            <select
+                                    class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+                                    name="colorId"
+                            >
+                                <option th:value="${color.id}"  th:each="color: ${listColor}" th:text="${color.name}"></option>
+                            </select>
+                        </label>
+                        <!--Số lượng-->
+                        <label class="block mt-4 text-sm">
+                            <span class="text-gray-700 dark:text-gray-400">Số lượng</span>
+                            <input
+                                    name="quantity"
+                                    class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                                    placeholder="Số lượng"
+                            />
+                        </label>
+                        <!--giá-->
+                        <label class="block mt-4 text-sm">
+                            <span class="text-gray-700 dark:text-gray-400">Đơn giá</span>
+                            <input
+                                    name="price"
+                                    class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                                    placeholder="Đơn giá"
+                            />
+                        </label>
                         <label class="block mt-4 text-sm">
                             <span class="text-gray-700 dark:text-gray-400">Mô tả</span>
                             <textarea
