@@ -1,5 +1,6 @@
 package com.example.shopGiay.service.impl;
 
+import com.example.shopGiay.model.Customer;
 import com.example.shopGiay.model.Material;
 import com.example.shopGiay.model.Voucher;
 import com.example.shopGiay.repository.VoucherRepository;
@@ -16,6 +17,11 @@ public class VoucherServiceImpl implements VoucherService {
 
     @Autowired
     VoucherRepository voucherRepository;
+
+    @Override
+    public List<Voucher> getAllVoucher() {
+        return voucherRepository.findAll();
+    }
 
     @Override
     public Voucher getVoucherById(Integer id) {

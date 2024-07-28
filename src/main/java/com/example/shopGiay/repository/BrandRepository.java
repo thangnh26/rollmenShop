@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BrandRepository extends JpaRepository<Brand, Integer> {
-    @Query(nativeQuery = true, value = "SELECT * FROM dbshopgiay1.brand WHERE id = ?1")
+    @Query(nativeQuery = true, value = "SELECT * FROM brand WHERE id = ?1")
     Brand getById(Integer id);
 }

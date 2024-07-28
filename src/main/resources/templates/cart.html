@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zxx" class="no-js" xmlns:th="http://www.thymeleaf.org" >
+
+<head th:replace=" fragment/fragment :: html_head" />
+<body>
+<header th:replace="fragment/header:: header" />
+    <!-- Start Banner Area -->
+    <section class="banner-area organic-breadcrumb">
+        <div class="container">
+            <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
+                <div class="col-first">
+                    <h1 style="font-weight: 600;color: #ff9933;">Giỏ hàng</h1>
+                    <nav class="d-flex align-items-center">
+                        <a >Trang chủ<span class="lnr lnr-arrow-right"></span>Giỏ hàng </a>
+                    </nav>
+
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- End Banner Area -->
+
+    <!--================Cart Area =================-->
+    <section class="cart_area">
+        <div class="container">
+            <div class="cart_inner">
+                <div class="table-responsive">
+                    <div th:if="${result != null}">
+                        <p th:if="${result.success}" th:text="${result.message}" style="color: green;"></p>
+                        <p th:if="${not result.success}" th:text="${result.message}" style="color: red;"></p>
+                    </div>
+
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Sản phẩm</th>
+                                <th scope="col">Đơn giá</th>
+                                <th scope="col" style="width: 10%;">Size</th>
+                                <th scope="col" style="width: 15%;">Số lượng</th>
+                                <th scope="col" style="width: 15%;">Chức năng</th>
+                            </tr>
+                        </thead>
+                        <tbody >
+
+                                <div th:each="item : ${listItem}">
+                                    <form th:action="@{/update}" th:method="post">
+                                    <input type="hidden" name="id" th:value="${item.productDetail.product.id}"/>
+                                    <tr>
+                                        <td>
+                                            <div class="media">
+                                                <div class="d-flex">
+                                                    <img th:src="@{${item.productDetail.product.thumbnail}}" style="width: 132px; height: 102px;" alt="thumbanil">
+                                                </div>
+                                                <div class="media-body">
+                                                    <a style="color: grey;" th:href="@{/{id}(id = ${item.productDetail.product.id})}" th:text="${item.productDetail.product.name}"></a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <h5 th:text="${#numbers.formatDecimal(item.productDetail.price, 0, 'COMMA', 0, 'POINT') +' đ'}"></h5>
+                                        </td>
+                                        <td>
+                                            <div class="default-select" id="default-select">
+                                                <input type="hidden" name="size" th:value="${item.productDetail.size.sizeNumber}">
+                                              <p th:text="${item.productDetail.size.sizeNumber}"></p>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="product_count">
+                                                <input type="number" min="1" name="qty" id="sst" maxlength="12" th:value="${item.quantity}" title="Số lượng:"
+                                                    class="input-text qty" onblur="this.form.submit()"/>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <a th:href="@{delete/{id}(id = ${item.productDetail.product.id},size = ${item.productDetail.size.sizeNumber})}" th:class="ti-close"></a>
+                                        </td>
+                                    </tr>
+
+                                    </form>
+                                </div>
+                                <tr class="bottom_button" th:if="${listItem.size() != 0}">
+                                    <td >
+                                        <a class="gray_btn" th:href="@{clear}">Xóa giỏ hàng</a>
+                                    </td>
+                                    <td>
+
+                                    </td>
+                                    <td>
+
+                                    </td>
+                                    <td>
+
+                                    </td>
+                                    <td>
+
+                                    </td>
+                                </tr>
+
+                                <tr th:if="${listItem.size() != 0}">
+                                    <td>
+
+                                    </td>
+                                    <td>
+
+                                    </td>
+                                    <td>
+
+                                    </td>
+                                    <td>
+                                        Tổng tiền:
+                                    </td>
+                                    <td>
+                                        <h5 th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 0, 'POINT')+ 'đ'}"></h5>
+                                    </td>
+                                </tr>
+
+
+                        </tbody>
+                    </table>
+                    <div style="display: flex;flex-direction: row; justify-content: center; width: 100%;" th:if="${listItem.size() == 0}">
+                        <img src="img/shopping-cart-icon.png" style="width: 100%;width: 300px; height: 163px;" alt="thumbnail" >
+                    </div>
+                    <div style="display: flex;flex-direction: row; justify-content: right; width: 100%;" >
+                        <div class="checkout_btn_inner d-flex align-items-center" style="">
+                            <a class="gray_btn" th:href="@{/products}">Tiếp tục mua sắm</a>
+                            &ensp;
+                            <div th:if="${#request.userPrincipal == null}">
+                                <a th:if="${listItem.size() != 0}" class="primary-btn" style="border-radius: 4px; line-height: 40px;" th:href="@{/login}">Thanh toán</a>
+                            </div>
+                            <div th:if="${#request.userPrincipal != null}">
+                                <a th:if="${listItem.size() != 0}" class="primary-btn" style="border-radius: 4px; line-height: 40px;" th:href="@{/checkout}">Thanh toán</a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--================End Cart Area =================-->
+    <footer th:replace="fragment/footer :: footer"/>
+
+    <script src="js/vendor/jquery-2.2.4.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
+	 crossorigin="anonymous"></script>
+	<script src="js/vendor/bootstrap.min.js"></script>
+	<script src="js/jquery.ajaxchimp.min.js"></script>
+	<script src="js/jquery.nice-select.min.js"></script>
+	<script src="js/jquery.sticky.js"></script>
+    <script src="js/nouislider.min.js"></script>
+	<script src="js/jquery.magnific-popup.min.js"></script>
+	<script src="js/owl.carousel.min.js"></script>
+	<!--gmaps Js-->
+	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCjCGmQ0Uq4exrzdcL6rvxywDDOvfAu6eE"></script>
+	<script src="js/gmaps.min.js"></script>
+	<script src="js/main.js"></script>
+</body>
+
+</html>

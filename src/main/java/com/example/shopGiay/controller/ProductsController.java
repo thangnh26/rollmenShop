@@ -1,6 +1,7 @@
 package com.example.shopGiay.controller;
 
 
+import com.example.shopGiay.dto.ProductDto;
 import com.example.shopGiay.model.*;
 import com.example.shopGiay.repository.*;
 import com.example.shopGiay.service.*;
@@ -172,7 +173,7 @@ public class ProductsController {
 
         Pageable pageable = PageRequest.of(currentPage - 1,sizePage);
 
-        Page<Product> listProduct = productService.searchProduct(keyword,pageable);//Lấy các
+        Page<ProductDto> listProduct = productService.searchProduct(keyword,pageable);//Lấy các
         model.addAttribute("listProduct", listProduct);
         model.addAttribute("keyword",keyword);
 

@@ -2,6 +2,9 @@
 package com.example.shopGiay.repository;
 
 
+import com.example.shopGiay.dto.ProductColorResponse;
+import com.example.shopGiay.dto.ProductDto;
+import com.example.shopGiay.dto.ProductSizeResponse;
 import com.example.shopGiay.model.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,27 +13,45 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
-public interface ProductRepository extends JpaRepository<Product, Integer>{
+public interface ProductRepository extends JpaRepository<Product, Integer> {
 
-    @Query(nativeQuery = true, value = "SELECT * FROM dbshopgiay1.product WHERE status = 1 ORDER BY created_at DESC limit ?1")
-    List<Product> getListNewProducts(int limit);
+    @Query(value = "SELECT distinct new com.example.shopGiay.dto.ProductDto(p.id,p.thumbnail,p.name,p.description,p.status,pd.quantity,pd.price,p.createDate) FROM Product p join ProductDetail pd on p.id = pd.product.id where p.status=1 and pd.status=1 and p.id = :id")
+    Optional<ProductDto> getOne(int id);
+
+    @Query(value = "SELECT distinct new com.example.shopGiay.dto.ProductDto(p.id,p.thumbnail,p.name,p.description,p.status,pd.quantity,pd.price,p.createDate) FROM Product p join ProductDetail pd on p.id = pd.product.id where p.status=1 and pd.status=1 ORDER BY p.createDate DESC")
+    List<ProductDto> getListNewProducts(Pageable pageable);
+
+    @Query(value = "SELECT distinct new com.example.shopGiay.dto.ProductDto(p.id,p.thumbnail,p.name,p.description,p.status,pd.quantity,pd.price,p.createDate) FROM Product p join ProductDetail pd on p.id = pd.product.id where p.status=1 and pd.status=1")
+    Page<ProductDto> getAll(Pageable pageable);
 
     //Tìm kiếm sản phẩm
-    @Query("SELECT p FROM Product p WHERE p.name LIKE %?1%")
-    Page<Product> searchProduct(String keyword,Pageable pageable);
+    @Query("SELECT distinct new com.example.shopGiay.dto.ProductDto(p.id,p.thumbnail,p.name,p.description,p.status,pd.quantity,pd.price,p.createDate) FROM Product p join ProductDetail pd on p.id = pd.product.id where p.status=1 and pd.status=1 and p.name LIKE lower(concat('%', :keyword, '%')) or p.brand.nameBrand LIKE lower(concat('%', :keyword, '%')) ")
+    Page<ProductDto> searchProduct(String keyword, Pageable pageable);
 
     Page<Product> findAll(Pageable pageable);
+
     //lấy  sản phẩm
     @Query(nativeQuery = true, value = "SELECT COUNT( p.id)  FROM product p ")
     int countProduct();
 
-    @Query(nativeQuery = true, value = "SELECT * FROM dbshopgiay1.product ORDER BY Id DESC")
+    @Query(nativeQuery = true, value = "SELECT * FROM product ORDER BY Id DESC")
     Page<Product> findAllOrderById(Pageable pageable);
 
 
-    @Query(nativeQuery = true, value = "SELECT * FROM dbshopgiay1.product ORDER BY RAND() LIMIT ?1")
-    List<Product> getRandomListProduct(int limit);
+//    @Query(value = "SELECT new com.example.shopGiay.dto.ProductDto(p.id,p.thumbnail,p.name,p.description,p.status,pd.quantity,pd.price) FROM product ORDER BY RAND()")
+//    List<ProductDto> getRandomListProduct(Pageable pageable);
 
+    @Query(value = "select new com.example.shopGiay.dto.ProductSizeResponse(s.id,pd.size.sizeNumber) from ProductDetail pd " +
+            "join Size s on pd.size.id = s.id " +
+            "join Color c on pd.color.id = c.id " +
+            "WHERE pd.product.id = :productId")
+    List<ProductSizeResponse> sizeInProductSize(int productId);
+
+    @Query(value = "select distinct new com.example.shopGiay.dto.ProductColorResponse(c.id,c.name) from ProductDetail pd " +
+            "join Color c on pd.color.id = c.id " +
+            "WHERE pd.product.id = :productId")
+    List<ProductColorResponse> colorInProduct(int productId);
 }

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+>
+<head>
+    <meta charset="UTF-8"/>
+    <title>Đăng nhập</title>
+    <link rel="stylesheet" type="text/css" href="\cssLogin\login.css"/>
+    <script type="text/javascript" src="/webjars/jquery/jquery.min.js"></script>
+    <script
+            type="text/javascript"
+            src="/webjars/bootstrap/js/bootstrap.min.js"
+    ></script>
+</head>
+<body>
+<div class="container" id="container">
+    <div class="form-container sign-up-container">
+        <form
+                th:action="@{/process_register}"
+                th:object="${user}"
+                method="post"
+        >
+            <h1>Đăng ký</h1>
+            <input
+                    type="text"
+                    th:field="*{lastName}"
+                    class="form-control"
+                    placeholder="Họ và tên đệm"
+                    required
+                    minlength="2"
+                    maxlength="20"
+            />
+            <input
+                    type="text"
+                    th:field="*{firstName}"
+                    class="form-control"
+                    placeholder="Tên"
+                    required
+                    minlength="2"
+                    maxlength="20"
+            />
+            <input
+                    type="email"
+                    th:field="*{email}"
+                    class="form-control"
+                    placeholder="Email"
+                    required
+            />
+            <input
+                    type="password"
+                    th:field="*{password}"
+                    placeholder="Mật khẩu"
+                    class="form-control"
+            />
+            <input
+                    type="text"
+                    th:field="*{address}"
+                    placeholder="Địa chỉ"
+                    class="form-control"
+            />
+            <input
+                    type="text"
+                    th:field="*{phoneNumber}"
+                    placeholder="Số điện thoại"
+                    class="form-control"
+            />
+            <br/>
+            <button type="submit" class="btn btn-primary">Đăng ký</button>
+        </form>
+    </div>
+    <div class="form-container sign-in-container">
+        <form th:action="@{/loginn}" method="post">
+            <h2>ĐĂNG NHẬP</h2>
+            <br/>
+            <input
+                    type="email"
+                    name="email"
+                    placeholder="Email"
+                    required
+                    autofocus
+            />
+            <input
+                    type="pass"
+                    name="pass"
+                    placeholder="Mật khẩu"
+                    required
+            />
+<!--            <p th:if="${error != null}" style="color: red;">Tài khoản và mật khẩu không chính xác</p>-->
+<!--            <input type="hidden" id="error" th:value="${error}">-->
+            <!--			<a href="#">Bạn quên mật khẩu ?</a>-->
+            <br/>
+            <button type="submit">Đăng nhập</button>
+        </form>
+    </div>
+    <div class="overlay-container">
+        <div class="overlay">
+            <img src="./img/bannerLogin.jpg" style="margin-left: -10px"/>
+            <div class="overlay-panel overlay-left">
+                <h1>Chào mừng đã đến với sneaker NTC</h1>
+                <p>Bạn có đã có tài khoản và muốn đăng nhập.</p>
+                <button
+                        class="ghost"
+                        id="signIn"
+                        style="background-color: white; color: black"
+                >
+                    Đăng nhập
+                </button>
+            </div>
+            <div class="overlay-panel overlay-right">
+                <h1>Đăng ký</h1>
+                <p>Bạn chưa có tài khoản. Vui lòng đăng ký ở đây.</p>
+                <button
+                        class="ghost"
+                        id="signUp"
+                        style="background-color: white; color: black"
+                >
+                    Đăng ký
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+<script>
+    const signUpButton = document.getElementById("signUp");
+    const signInButton = document.getElementById("signIn");
+    const container = document.getElementById("container");
+    // const error = document.getElementById("error");
+
+    signUpButton.addEventListener("click", () => {
+        container.classList.add("right-panel-active");
+    });
+
+    signInButton.addEventListener("click", () => {
+        container.classList.remove("right-panel-active");
+    });
+    // console.log(error.valueOf(error).value)
+    // if (error.valueOf(error).value == 'Optional[email]') {
+    //     container.classList.add("right-panel-active");
+    //
+    // }
+</script>

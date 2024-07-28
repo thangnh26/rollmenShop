@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zxx" class="no-js" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace=" fragment/fragment :: html_head" />
+
+<body>
+
+<header th:replace="fragment/header:: header" />
+
+    <!-- Start Banner Area -->
+    <section class="banner-area organic-breadcrumb">
+        <div class="container">
+            <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
+                <div class="col-first">
+                    <h1 style="font-weight: 600;color: #ff9933;">Thông tin giỏ hàng</h1>
+                    <nav class="d-flex align-items-center">
+                        <a >Trang chủ<span class="lnr lnr-arrow-right"></span>Thông tin đơn hàng</a>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- End Banner Area -->
+    <!--================Checkout Area =================-->
+    <section class="checkout_area section_gap">
+        <div class="container" >
+
+                <div class="row" style="margin-left: 15px; margin-right: 15px;">
+                    <form class="row contact_form" th:action="@{/checkout}" method="post" >
+                        <input type="hidden" name="userId" th:value="${user.id}">
+                        <div class="col-lg-7">
+                            <h3>Chi tiết thanh toán</h3>
+
+                                <div class="col-md-12 form-group p_star">
+                                    <input type="text" class="form-control" id="first" name="name_receiver" placeholder="Họ và tên người nhận" th:value="${user.getFullName()}">
+                                </div>
+                                <div class="col-md-12 form-group p_star">
+                                    <input type="text" class="form-control" id="number" name="phone_number_receiver" placeholder="Số điện thoại người nhận" th:value="${user.phoneNumber}" required minlength="10" maxlength="15">
+                                </div>
+                                <div class="col-md-12 form-group p_star">
+                                    <input type="text" class="form-control" id="add1" name="address_receiver" placeholder="Địa chỉ nhận hàng" th:value="${user.address}" required minlength="20">
+                                </div>
+                                <div class="col-md-12 form-group">
+                                    <div class="creat_account">
+                                        <h3>Chi tiết vận chuyển</h3>
+                                        <label>Gửi đến một địa chỉ khác ?</label>
+                                    </div>
+                                    <textarea class="form-control" name="note" id="message" rows="1" placeholder="Ghi chú đơn hàng"></textarea>
+                                </div>
+                        </div>
+                        <div class="col-lg-5">
+                            <div class="order_box">
+                                <h2>Đơn hàng</h2>
+                                <table class="d-inline-flex" style="width: 100%;">
+                                    <tbody style="width: 100%;">
+                                    <tr style="width: 100%;">
+                                        <th style="width: 70%;">Sản phẩm</th>
+                                        <th style="width: 10%;">Size</th>
+                                        <th style="width: 20%;">Số lượng</th>
+                                    </tr>
+                                    <tr style="width: 100%;" th:each="item: ${listItem}">
+                                        <td  th:text="${item.productDetail.product.name}"></td>
+                                        <td  style="justify-content: center;" th:text="${item.productDetail.size.sizeNumber}"></td>
+                                        <td  th:text="${item.quantity}"></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <ul class="list list_2">
+                                    <input type="hidden" name="price" th:value="${total}">
+                                    <li><a>Tổng tiền <span  th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 0, 'POINT')+ 'đ'}"></span></a></li>
+                                </ul>
+                                <button class="primary-btn" style="width: 100%;" type="submit">Xác nhận thanh toán</button>
+                                <br>
+                                <div id="paypal-button-container"></div>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+
+        </div>
+    </section>
+    <!--================End Checkout Area =================-->
+    <footer th:replace="fragment/footer :: footer"/>
+
+
+    <script src="js/vendor/jquery-2.2.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
+        crossorigin="anonymous"></script>
+    <script src="js/vendor/bootstrap.min.js"></script>
+    <script src="js/jquery.ajaxchimp.min.js"></script>
+    <script src="js/jquery.nice-select.min.js"></script>
+    <script src="js/jquery.sticky.js"></script>
+    <script src="js/nouislider.min.js"></script>
+    <script src="js/jquery.magnific-popup.min.js"></script>
+    <script src="js/owl.carousel.min.js"></script>
+    <!--gmaps Js-->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCjCGmQ0Uq4exrzdcL6rvxywDDOvfAu6eE"></script>
+    <script src="js/gmaps.min.js"></script>
+    <script src="js/main.js"></script>
+    <script type="text/javascript" src="https://www.paypal.com/sdk/js?client-id=Aa59KmHTIuSPTEkR8i2bAZLBnoWECkS2TomhETkd9uu2emswucAFoPFIIW75LrOwmp2sebotG_-5Wavp"></script>
+    <script>
+        paypal.Buttons({
+            createOrder: function(data, actions){
+                return actions.order.create({
+                    intent: 'CAPTURE',
+                    payer: {
+                        name: {
+                            given_name: "[[${user.firstName}]]",
+                            surname: "[[${user.lastName}]]"
+                        },
+                        email_address: "[[${user.email}]]",
+                    },
+                    purchase_units: [{
+                        amount: {
+                            value: '[[${total}]]'
+                        }
+                    }]
+                });
+            },
+
+            onApprove: function( data, actions){
+                return actions.order.capture().then(function(details){
+                    console.log(details);
+                    alert("Bạn đã thanh toán thành công!");
+                });
+            },
+
+            onCancel: function(data){
+                alert("Giao dịch đã bị hủy!");
+            },
+
+            onError: function(err) {
+                alert("Bạn hãy kiểm tra lại địa chỉ để tiếp tục thanh toán!");
+            }
+        }).render("#paypal-button-container");
+    </script>
+</body>
+
+</html>

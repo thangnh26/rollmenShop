@@ -11,6 +11,6 @@ import org.springframework.stereotype.Repository;
 public interface MaterialRepository extends JpaRepository<Material, Integer> {
     Page<Material> findByStatusNot(int status, Pageable pageable);
     Page<Material> findByNameContainingIgnoreCaseAndStatusNot(String name, Integer status, Pageable pageable);
-    @Query(nativeQuery = true, value = "SELECT * FROM dbshopgiay1.material WHERE id = ?1")
+    @Query(nativeQuery = true, value = "SELECT * FROM material WHERE id = ?1")
     Material getById(Integer id);
 }

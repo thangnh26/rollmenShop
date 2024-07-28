@@ -1,6 +1,7 @@
 package com.example.shopGiay.model;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
+import javax.validation.constraints.*;
 
 import java.time.LocalDate;
 
@@ -13,6 +14,17 @@ public class Brand {
 
     @Column(name = "name_brand", nullable = false)
     private String nameBrand;
+
+    public String getThumbnail() {
+        return thumbnail;
+    }
+
+    public void setThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
+    }
+
+    @Column( name = "thumbnail")
+    private String thumbnail;
 
     @Column(name = "description")
     private String description;

@@ -1,11 +1,15 @@
 
 package com.example.shopGiay.service.impl;
 
+import com.example.shopGiay.dto.ProductColorResponse;
+import com.example.shopGiay.dto.ProductDto;
+import com.example.shopGiay.dto.ProductSizeResponse;
 import com.example.shopGiay.model.Product;
 import com.example.shopGiay.repository.ProductRepository;
 import com.example.shopGiay.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
@@ -26,28 +30,24 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> getListNewProducts(int limit){
-        List<Product> products = productRepository.getListNewProducts(limit);
+    public List<ProductDto> getListNewProducts(int limit){
+        Pageable pageable = PageRequest.of(0,limit);
+        List<ProductDto> products = productRepository.getListNewProducts(pageable);
         return products;
     }
 
     @Override
-    public Product getDetailProductById(int id){
-        Optional<Product> rs = productRepository.findById(id);
-        if(rs.isEmpty()){
-            throw new NotFoundException("Sản phẩm không tồn tại");
-        }
-        Product product = rs.get();
-        return product;
+    public ProductDto getDetailProductById(int id){
+        return productRepository.getOne(id).orElseThrow(()-> new NotFoundException("Sản phẩm không tồn tại"));
     }
 
     //Tìm kiếm sản phẩm
     @Override
-    public Page<Product> searchProduct(String keyword, Pageable pageable){
+    public Page<ProductDto> searchProduct(String keyword, Pageable pageable){
         if(keyword != null){
             return productRepository.searchProduct(keyword, pageable);
         }else{
-            return productRepository.findAll(pageable);
+            return productRepository.getAll(pageable);
         }
     }
 
@@ -58,8 +58,21 @@ public class ProductServiceImpl implements ProductService {
         return pageList;
     }
 
+//    @Override
+//    public List<ProductDto> getRandomListProduct(int limit){
+//        Pageable pageable = PageRequest.of(0,limit);
+//        return productRepository.getRandomListProduct(pageable);
+//    }
+
     @Override
-    public List<Product> getRandomListProduct(int limit){
-        return productRepository.getRandomListProduct(limit);
+    public List<ProductSizeResponse> listSize(int productId) {
+        return productRepository.sizeInProductSize(productId);
     }
+
+    @Override
+    public List<ProductColorResponse> listColor(int productId) {
+        return productRepository.colorInProduct(productId);
+    }
+
+
 }

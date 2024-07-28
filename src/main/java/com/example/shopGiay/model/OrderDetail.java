@@ -1,9 +1,6 @@
 package com.example.shopGiay.model;
-
-import jakarta.persistence.*;
-
-
-
+import javax.persistence.*;
+import javax.validation.constraints.*;
 @Entity
 @Table(name = "OrderDetail")
 public class OrderDetail {

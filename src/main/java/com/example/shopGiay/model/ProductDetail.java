@@ -1,8 +1,9 @@
 package com.example.shopGiay.model;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
+import javax.validation.constraints.*;
 
-
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
@@ -16,7 +17,7 @@ public class ProductDetail {
     private Integer quantity;
 
     @Column(name = "price", nullable = false)
-    private Double price;
+    private BigDecimal price;
 
     @ManyToOne
     @JoinColumn(name = "size_id", nullable = false)
@@ -55,11 +56,11 @@ public class ProductDetail {
         this.quantity = quantity;
     }
 
-    public Double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 

@@ -1,6 +1,6 @@
 package com.example.shopGiay.model;
-
-import jakarta.persistence.*;
+import javax.persistence.*;
+import javax.validation.constraints.*;
 
 import java.time.LocalDate;
 

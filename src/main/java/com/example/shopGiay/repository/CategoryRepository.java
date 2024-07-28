@@ -14,10 +14,10 @@ import java.util.List;
 public interface CategoryRepository extends JpaRepository<Category, Integer> {
     Page<Category> findByStatusNot(int status, Pageable pageable);
     Page<Category> findByNameCategoryContainingIgnoreCaseAndStatusNot(String name, Integer status, Pageable pageable);
-    @Query(nativeQuery = true, value = "SELECT * FROM  dbshopgiay1.category WHERE id = ?1")
+    @Query(nativeQuery = true, value = "SELECT * FROM category WHERE id = ?1")
     Category getById(Integer id);
 
-    @Query(nativeQuery = true, value = "SELECT * FROM dbshopgiay1.category ORDER BY id DESC ")
+    @Query(nativeQuery = true, value = "SELECT * FROM category ORDER BY id DESC ")
     List<Category> findAll();
 
     @Query(nativeQuery = true, value = "SELECT name_category FROM category WHERE brand_id = ?1")

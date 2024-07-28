@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SoleRepository extends JpaRepository<Sole, Integer> {
-    @Query(nativeQuery = true, value = "SELECT * FROM dbshopgiay1.sole WHERE id = ?1")
+    @Query(nativeQuery = true, value = "SELECT * FROM sole WHERE id = ?1")
     Sole getById(Integer id);}

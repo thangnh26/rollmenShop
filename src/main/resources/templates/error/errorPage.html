@@ -1,0 +1,15 @@
+<!-- errorPage.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Error</title>
+    <link rel="stylesheet" type="text/css" href="/css/style.css"> <!-- Optional: Link to your CSS -->
+</head>
+<body>
+<div class="error-container">
+    <h1>Error</h1>
+    <p th:text="${errorMessage}"></p>
+    <a href="/">Go back to home</a>
+</div>
+</body>
+</html>
