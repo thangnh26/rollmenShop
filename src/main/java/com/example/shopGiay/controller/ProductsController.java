@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,6 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -61,6 +63,15 @@ public class ProductsController {
     @Autowired
     ProductRepository productRepository;
 
+    @Autowired
+    ProductDetailRepository productDetailRepository;
+
+    @Autowired
+    SizeRepository sizeRepository;
+
+    @Autowired
+    ColorRepository colorRepository;
+
 
 
     @GetMapping("/admin/products")
@@ -98,6 +109,8 @@ public class ProductsController {
         model.addAttribute("listBrand",brandRepository.findAll());
         model.addAttribute("listMaterial",materialRepository.findAll());
         model.addAttribute("listSole",soleRepository.findAll());
+        model.addAttribute("listSize",sizeRepository.findAll());
+        model.addAttribute("listColor",colorRepository.findAll());
         return "admin/product/createProduct";
     }
 
@@ -107,6 +120,10 @@ public class ProductsController {
                                      @RequestParam("brandId") Integer brandId,
                                      @RequestParam("materialId") Integer materialId,
                                      @RequestParam("soleId") Integer soleId,
+                                     @RequestParam("sizeId") int idSize,
+                                     @RequestParam("colorId") int idColor,
+                                     @RequestParam("quantity") int quantity,
+                                     @RequestParam("price") double price,
                                      @RequestParam("description") String description,
                                      @RequestParam("thumbnailUrl") MultipartFile multipartFile) throws IOException {
         Product product = new Product();
@@ -122,11 +139,21 @@ public class ProductsController {
         Sole sole = soleRepository.getById(soleId);
         product.setSole(sole);
         product.setThumbnail("~/img/product/"+filename);
+        ProductDetail productdetail = new ProductDetail();
+        product.setStatus(true);
+        productdetail.setProduct(product);
+        Size size = sizeRepository.getById(idSize);
+        productdetail.setSize(size);
+        Color color = colorRepository.getById(idColor);
+        productdetail.setColor(color);
+        productdetail.setQuantity(quantity);
+        productdetail.setPrice(price);
         productRepository.save(product);
         categoryRepository.save(category);
         brandRepository.save(brand);
         materialRepository.save(material);
         soleRepository.save(sole);
+        productDetailRepository.save(productdetail);
 
         String uploadDir = "./src/main/resources/static/img/product/";
         Path uploadPath = Paths.get(uploadDir);
@@ -166,6 +193,10 @@ public class ProductsController {
         model.addAttribute("listSolesReputation",solesReputation);
 
 
+        List<Size> sizesReputation = sizeRepository.findAll();
+        model.addAttribute("listSizesReputation",sizesReputation);
+
+
         //Tìm kiếm sản phẩm
 
         int currentPage = page.orElse(1);//Trang hiển thị
@@ -198,5 +229,60 @@ public class ProductsController {
 
     }
 
+    @GetMapping("/admin/product/{id}")
+    public String productDetail(Model model,@PathVariable("id") Integer id){
+        Product product = productService.getDetailProductById(id);
+        List<ProductDetail> listSize = productDetailRepository.findAllByProductId(id);
+        model.addAttribute("product",product);
+        model.addAttribute("listSize",listSize);
+        return "admin/product/productDetail";
+    }
 
+//    @PostMapping("/admin/product/{id}/update")
+//    public String updateSize(@PathVariable("id") int id, @RequestParam("productId") int productId, @RequestParam("qty") int quantity, @RequestParam("price") double price){
+//        ProductDetail product_size = productDetailRepository.findByProductIdAndSizeId(productId,id);
+//        int a = product_size.getQuantity();
+//        double b = product_size.getPrice();
+//        product_size.setQuantity(quantity);
+//        product_size.setPrice(price);
+//        Product product = productRepository.getById(productId);
+//        productRepository.save(product);
+//        productDetailRepository.save(product_size);
+//        return "redirect:/admin/product/"+productId;
+//    }
+@GetMapping("/admin/product/update/{id}")
+public String updateProduct(Model model,@PathVariable("id") Integer id){
+    Product product = productService.getDetailProductById(id);
+    model.addAttribute("product",product);
+    model.addAttribute("listCategory",categoryRepository.findAll());
+    model.addAttribute("listBrand",brandRepository.findAll());
+    model.addAttribute("listMaterial",materialRepository.findAll());
+    model.addAttribute("listSole",soleRepository.findAll());
+
+    return "admin/product/updateProduct";
+}
+    @PostMapping("/admin/product/update")
+    public String adminCreateProduct(@RequestParam("id") Integer id,
+                                     @RequestParam("name") String name,
+                                     @RequestParam("categoryId") Integer categoryId,
+                                     @RequestParam("brandId") Integer brandId,
+                                     @RequestParam("materialId") Integer materialId,
+                                     @RequestParam("soleId") Integer soleId
+    ) throws IOException {
+        Product product = productService.getDetailProductById(id);
+        product.setName(name);
+        Category category = categoryRepository.getById(categoryId);
+        Brand brand = brandRepository.getById(brandId);
+        Material material = materialRepository.getById(materialId);
+        Sole sole = soleRepository.getById(soleId);
+
+        product.setCategory(category);
+        product.setBrand(brand);
+        product.setMaterial(material);
+        product.setSole(sole);
+        productRepository.save(product);
+        String uploadDir = "./src/main/resources/static/img/product/";
+        Path uploadPath = Paths.get(uploadDir);
+        return "redirect:/admin/products";
+    }
 }
