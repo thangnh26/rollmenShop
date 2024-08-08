@@ -2,6 +2,8 @@ package com.example.shopGiay.model;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -16,11 +18,22 @@ public class Cart {
     private Customer customer;
 
     @Column(name = "create_date")
+    private LocalDate createDate;
+    @Column(name = "is_check")
+    private Integer isCheck;
+
+    public Integer getIsCheck() {
+        return isCheck;
+    }
+
+    public void setIsCheck(Integer isCheck) {
+        this.isCheck = isCheck;
+    }
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
     private List<CartItem> cartItems;
 
-    private LocalDate createDate;
+
 
     public Integer getId() {
         return id;

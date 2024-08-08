@@ -12,6 +12,9 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(name = "code")
+    private String code;
+
     @ManyToOne
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
@@ -36,7 +39,7 @@ public class Order {
     @Column(name = "status", nullable = false)
     private Integer status;
 
-    @Column(name = "address_receiver", nullable = false)
+    @Column(name = "address_receiver")
     private String addressReceiver;
 
     @Column(name = "name_receiver", nullable = false)
@@ -145,6 +148,14 @@ public class Order {
 
     public void setTotalAmount(Double totalAmount) {
         this.totalAmount = totalAmount;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public List<OrderDetail> getOrderDetails() {

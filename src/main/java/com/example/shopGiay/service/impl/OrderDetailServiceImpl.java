@@ -23,6 +23,10 @@ public class OrderDetailServiceImpl implements OrderDetailService {
 
     @Autowired
     OrderDetailRepository orderDetailRepository;
+
+    @Autowired
+    EmailService emailService;
+
 //
 //    @Autowired
 //    ProductSizeRepository productSizeRepository;
@@ -37,7 +41,7 @@ public class OrderDetailServiceImpl implements OrderDetailService {
     public OrderDetail createOrderDetail(int productId, int orderId, int qty, int size, int colorId){
         OrderDetail orderDetail = new OrderDetail();
         Order order = orderRepository.getById(orderId);
-        Product product = productRepository.getById(productId);
+//        Product product = productRepository.getById(productId);
         ProductDetail productDetail = productDetailRepository.getOneProductDetail(productId,colorId,size);
         orderDetail.setOrder(order);
         orderDetail.setProductDetail(productDetail);
@@ -45,12 +49,12 @@ public class OrderDetailServiceImpl implements OrderDetailService {
 
         BigDecimal price = productDetail.getPrice().multiply(BigDecimal.valueOf(qty));
         orderDetail.setPrice(price.doubleValue());
-//        orderDetail.setSize(size);
-
-
-//        productRepository.save(product);
         orderDetail.setStatus(order.getStatus());
         orderDetailRepository.save(orderDetail);
+        String to = order.getCustomer().getEmail();
+        String subject = "Đơn hàng "+ order.getCode();
+        String text = "Dear: "+order.getCustomer().getFirstName() +" "+order.getCustomer().getLastName()+" chúng tôi sẽ gửi đơn hàng đêns địa chỉ "+order.getAddressReceiver();
+        emailService.sendEmail(to,subject,text);
         return orderDetail;
     }
 }

@@ -1,6 +1,7 @@
 package com.example.shopGiay.service.impl;
 
 import com.example.shopGiay.dto.AddCart;
+import com.example.shopGiay.dto.OrderRequest;
 import com.example.shopGiay.dto.Result;
 import com.example.shopGiay.model.CartItem;
 import com.example.shopGiay.repository.CartItemRepository;
@@ -38,33 +39,42 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     //    @Autowired
 //    ProductSizeRepository productSizeRepository;
     @Override
-    public Result add(AddCart addCart) {
+    public Result add(AddCart addCart, int cusId) {
         if (cartItemRepository.checkSP(productDetailRepository.getOneProductDetail(addCart.getProId(), addCart.getColorId(), addCart.getSizeId()).getId()) > 0) {
-            CartItem cartItem = cartItemRepository.getCartItemByProIdAndCartId(productDetailRepository.getOneProductDetail(addCart.getProId(), addCart.getColorId(), addCart.getSizeId()).getId(), 1);
-            if (addCart.getQuantity() > productDetailRepository.checkQuantity(productDetailRepository.getOneProductDetail(addCart.getProId(), addCart.getColorId(), addCart.getSizeId()).getId())) {
-                return new Result(false, "Không đủ số lượng");
-            } else {
-                cartItemRepository.updateQuantity(addCart.getQuantity()+cartItem.getQuantity(),cartItem.getCart().getId(),cartItem.getProductDetail().getId());
-                return new Result(true, "Cart item quantity updated successfully");
+            if(cartItemRepository.getOneByCusId(cusId)==null){
+                cartItemRepository.addCart(cusId);
+                return null;
+            }else {
+                CartItem cartItem = cartItemRepository.getCartItemByProIdAndCartId(productDetailRepository.getOneProductDetail(addCart.getProId(), addCart.getColorId(), addCart.getSizeId()).getId(), cartItemRepository.getOneByCusId(cusId));
+                if (addCart.getQuantity() > productDetailRepository.checkQuantity(productDetailRepository.getOneProductDetail(addCart.getProId(), addCart.getColorId(), addCart.getSizeId()).getId())) {
+                    return new Result(false, "Không đủ số lượng");
+                } else {
+                    cartItemRepository.updateQuantity(addCart.getQuantity() + cartItem.getQuantity(), cartItem.getCart().getId(), cartItem.getProductDetail().getId());
+                    return new Result(true, "Cart item quantity updated successfully");
+                }
             }
         } else {
             if (addCart.getQuantity() > productDetailRepository.checkQuantity(productDetailRepository.getOneProductDetail(addCart.getProId(), addCart.getColorId(), addCart.getSizeId()).getId())) {
                 return new Result(false, "Không đủ số lượng");
             } else {
-                cartItemRepository.create(addCart);
-                return new Result(true, "New cart item added successfully");
+                if(cartItemRepository.getOneByCusId(cusId)==null){
+                    cartItemRepository.addCart(cusId);
+                    addCart.setCartId(cartItemRepository.getOneByCusId(cusId));
+                    cartItemRepository.create(addCart);
+                    return new Result(true, "New cart item added successfully");
+//                    return null;
+                }
+                else {
+                    addCart.setCartId(cartItemRepository.getOneByCusId(cusId));
+                    cartItemRepository.create(addCart);
+                    return new Result(true, "New cart item added successfully");
+                }
             }
         }
-//            CartItem cartItem = maps.get(item.getProductId());
-//            if( cartItem == null ){
-//                maps.put(item.getProductId(),item);
-//            }else {
-//                if(cartItem.getSize() == size){
-//                    cartItem.setQuantity(cartItem.getQuantity() + quantity );
-//                }else{
-//                    maps.put(item.getSize(),item);
-//                }
-//            }
+    }
+
+    @Override
+    public void buyNow(OrderRequest orderRequest) {
 
     }
 
@@ -94,12 +104,12 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Override
     public void clear(int id) {
         cartItemRepository.clearCartItem(id);
-        cartItemRepository.clear(id);
+//        cartItemRepository.clear(id);
     }
 
     @Override
-    public List<CartItem> getAllItems() {
-        return cartItemRepository.findAll();
+    public List<CartItem> getAllItems(int cusId) {
+        return cartItemRepository.finAllByUser(cusId);
     }
 
     @Override
@@ -116,5 +126,10 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     public BigDecimal getAmount() {
 //        return maps.values().stream().mapToDouble(item -> item.getQuantity() * item.getPrice()).sum();
         return cartItemRepository.total();
+    }
+
+    @Override
+    public void deletePro(int proId) {
+        cartItemRepository.deleteByIdPro(proId);
     }
 }

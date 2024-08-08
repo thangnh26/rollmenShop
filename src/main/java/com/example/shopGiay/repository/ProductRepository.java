@@ -54,4 +54,12 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             "join Color c on pd.color.id = c.id " +
             "WHERE pd.product.id = :productId")
     List<ProductColorResponse> colorInProduct(int productId);
+
+    //lấy 4
+    @Query("SELECT  new com.example.shopGiay.dto.ProductDto(pd.product.id, pd.product.thumbnail, pd.product.name, pd.product.description, pd.status, pd.quantity, pd.price, pd.createDate) " +
+            "FROM ProductDetail pd " +
+            "JOIN OrderDetail od ON pd.id = od.productDetail.id " +
+            "GROUP BY pd.id " +
+            "ORDER BY SUM(od.quantity) DESC")
+    List<ProductDto> getProductHot();
 }

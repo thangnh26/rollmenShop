@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="zxx" class="no-js" xmlns:th="http://www.thymeleaf.org">
-<head th:replace=" fragment/fragment :: html_head"/>
+<head th:replace="fragment/fragment :: html_head"/>
 
 <body>
 <header th:replace="fragment/header:: header"/>
@@ -27,20 +27,15 @@
     <div class="row" style="display: inline-flex; width: 100%;">
         <img class="col-lg-7" th:src="@{${product.thumbnail}}" alt="thumbnail"/>
 
-        <form th:action="@{/add-cart}" method="post" class="col-lg-5">
-            <div class="s_product_text">
-                <h3 th:text="${product.name}"></h3>
-                <br>
-                <h2 th:text="${product.price}"> VNĐ</h2>
-                <p th:utext="${product.description}"></p>
-                <!--						<div>-->
-                <!--							<div th:if="${listSize.size() == 0}">Tình trạng: Hết hàng</div>-->
-                <!--							<div th:unless="${listSize.size() == 0}">Tình trạng: Còn hàng</div>-->
-                <!--						</div>-->
-                <br>
+        <div class="s_product_text">
+            <h3 th:text="${product.name}"></h3>
+            <h2 th:text="${product.price}"> VNĐ</h2>
+            Mô tả: <p th:utext="${product.description}"></p>
+            Số lượng còn: <p th:utext="${product.quantity}"></p>
+
+            <form id="productForm" method="post" class="col-lg-5">
                 <label>Size: </label>
                 <div class="default-select" id="default-select">
-
                     <select id="size" name="sizeId">
                         <div th:each="item:${listSize}">
                             <option th:value="${item.id}" th:text="${item.sizeNumber}"></option>
@@ -50,7 +45,6 @@
                 <br>
                 <label>Color: </label>
                 <div class="default-select" id="default-select">
-
                     <select id="color" name="colorId">
                         <div th:each="item:${listColor}">
                             <option th:value="${item.id}" th:text="${item.nameColor}"></option>
@@ -60,52 +54,65 @@
                 <br>
                 <div class="product_count">
                     <label> Số lượng:</label>
-                    <input type="number" min="1" style="padding: 5px;" name="quantity" id="sst" maxlength="12" th:value="1"
-                           title="Quantity:" class="input-text qty">
+                    <input type="number" min="1" style="padding: 5px;" name="quantity" id="quantity" maxlength="12"
+                           th:value="1" title="Quantity:" class="input-text qty">
+                    <span id="quantityError" style="color: red; display: none;"></span>
                 </div>
-                <!--						<div class="card_area d-flex align-items-center" th:if="${listSize.size() != 0}">-->
-                <!--							<input type="submit" class="primary-btn" value="Thêm vào giỏ hàng">-->
 
-                <!--						</div>-->
-                <!--						<div class="card_area d-flex align-items-center" th:if="${listSize.size() == 0}">-->
-                <!--						</div>-->
+<!--                    <h6>Số lượng còn: <h6 th:text="${product.quantity}"></h6></h6>-->
+
                 <input type="hidden" name="proId" th:value="${product.id}">
-                <div class="card_area d-flex align-items-center">
-                    <button type="submit" class="primary-btn">Thêm vào giỏ hàng</button>
+                <div class="button-container">
+                    <button type="button" class="primary-btn" onclick="submitForm('/add-cart')"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-cart" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M5 6h15l2 11H7l-2 -11" />
+                        <path d="M3 6v-2" />
+                        <path d="M7 6v-2" />
+                        <path d="M17 6v-2" />
+                        <path d="M20 6h-2v-2" />
+                        <path d="M7 19a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                        <path d="M17 19a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                    </svg>
+
+                    </button>
+                    <button type="button" class="primary-btn" onclick="submitForm('/buy-now')"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-plus" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M12 5v14m-7-7h14" />
+                    </svg>
+                    </button>
                 </div>
+            </form>
+        </div>
 
-            </div>
-        </form>
     </div>
-</div>
-<!--================End Single Product Area =================-->
+    <!--================End Single Product Area =================-->
 
-<!--================Product Description Area =================-->
-<div class="container" style="margin: 20px auto; background-color: rgba(153,152,152,0.27);">
-    <ul class="nav nav-tabs" style="padding: 20px;">
-        <li class="nav-item">
-            <a class="nav-link" style="    color: #495057;
+    <!--================Product Description Area =================-->
+    <div class="container" style="margin: 20px auto; background-color: rgba(153,152,152,0.27);">
+        <ul class="nav nav-tabs" style="padding: 20px;">
+            <li class="nav-item">
+                <a class="nav-link" style="    color: #495057;
     							background-color: rgba(73,73,73,0.42);
 								border-color: #dee2e6 #dee2e6 #fff;">Bình luận</a>
-        </li>
+            </li>
 
-    </ul>
-    <div class="row" style="padding: 20px;">
-        <div class="col-lg-6">
-            <div class="comment_list" th:each="comment: ${listCommnet}">
-                <div class="review_item reply" style="padding-top: 10px;">
-                    <div class="media">
-                        <div class="media-body">
-                            <h4 th:text="${comment.user.fullName}"></h4>
-                            <h5 th:text="${comment.createdAt}"></h5>
+        </ul>
+        <div class="row" style="padding: 20px;">
+            <div class="col-lg-6">
+                <div class="comment_list" th:each="comment: ${listCommnet}">
+                    <div class="review_item reply" style="padding-top: 10px;">
+                        <div class="media">
+                            <div class="media-body">
+                                <h4 th:text="${comment.user.fullName}"></h4>
+                                <h5 th:text="${comment.createdAt}"></h5>
+                            </div>
                         </div>
+                        <p th:text="${comment.content}"></p>
                     </div>
-                    <p th:text="${comment.content}"></p>
+                    <hr>
                 </div>
-                <hr>
-            </div>
-            <!-- Pagination -->
-            <span class="flex col-span-4 mt-2 sm:mt-auto sm:justify-center" th:if="${listCommnet.totalPages > 1}">
+                <!-- Pagination -->
+                <span class="flex col-span-4 mt-2 sm:mt-auto sm:justify-center" th:if="${listCommnet.totalPages > 1}">
                   <nav aria-label="Table navigation">
                     <ul class="inline-flex items-center">
                         <a th:href="@{/{id}(id = ${product.id}, page = ${1}, size = ${listCommnet.size})}"
@@ -128,51 +135,85 @@
                     </ul>
                   </nav>
                 </span>
-        </div>
-        <div class="col-lg-6">
-            <div class="review_box" th:if="${#request.userPrincipal == null  }">
             </div>
-            <div class="review_box" th:unless="${#request.userPrincipal == null}">
-                <div th:if="${user.status == true}">
-                    <h4>Thêm bình luận</h4>
-                    <form class="row contact_form" th:action="@{/comment}" th:method="post" id="contactForm"
-                          novalidate="novalidate">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <input type="hidden" name="productId" th:value="${product.id}">
-                                <textarea class="form-control" name="message" id="message" rows="1"
-                                          placeholder="Message"></textarea>
+            <div class="col-lg-6">
+                <div class="review_box" th:if="${#request.userPrincipal == null  }">
+                </div>
+                <div class="review_box" th:unless="${#request.userPrincipal == null}">
+                    <div th:if="${user.status == true}">
+                        <h4>Thêm bình luận</h4>
+                        <form class="row contact_form" th:action="@{/comment}" th:method="post" id="contactForm"
+                              novalidate="novalidate">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <input type="hidden" name="productId" th:value="${product.id}">
+                                    <textarea class="form-control" name="message" id="message" rows="1"
+                                              placeholder="Message"></textarea>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-12 text-right">
-                            <button type="submit" value="submit" class="btn primary-btn">Gửi bình luận</button>
-                        </div>
-                    </form>
+                            <div class="col-md-12 text-right">
+                                <button type="submit" value="submit" class="btn primary-btn">Gửi bình luận</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
 
-<footer th:replace="fragment/footer :: footer"/>
+    <footer th:replace="fragment/footer :: footer"/>
 
-<script src="js/vendor/jquery-2.2.4.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"
-        integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
-        crossorigin="anonymous"></script>
-<script src="js/vendor/bootstrap.min.js"></script>
-<script src="js/jquery.ajaxchimp.min.js"></script>
-<script src="js/jquery.nice-select.min.js"></script>
-<script src="js/jquery.sticky.js"></script>
-<script src="js/nouislider.min.js"></script>
-<script src="js/jquery.magnific-popup.min.js"></script>
-<script src="js/owl.carousel.min.js"></script>
-<!--gmaps Js-->
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCjCGmQ0Uq4exrzdcL6rvxywDDOvfAu6eE"></script>
-<script src="js/gmaps.min.js"></script>
-<script src="js/main.js"></script>
+    <script src="js/vendor/jquery-2.2.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"
+            integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
+            crossorigin="anonymous"></script>
+    <script src="js/vendor/bootstrap.min.js"></script>
+    <script src="js/jquery.ajaxchimp.min.js"></script>
+    <script src="js/jquery.nice-select.min.js"></script>
+    <script src="js/jquery.sticky.js"></script>
+    <script src="js/nouislider.min.js"></script>
+    <script src="js/jquery.magnific-popup.min.js"></script>
+    <script src="js/owl.carousel.min.js"></script>
+    <!--gmaps Js-->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCjCGmQ0Uq4exrzdcL6rvxywDDOvfAu6eE"></script>
+    <script src="js/gmaps.min.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        function submitForm(action) {
+            var form = document.getElementById('productForm');
+            form.action = action;
+            form.submit();
+        }
+    </script>
+    <script>
+        function validateQuantity() {
+            var maxQuantity = [[${product.quantity}]];
+            var inputQuantity = document.getElementById('quantity').value;
+
+            var errorElement = document.getElementById('quantityError');
+
+            if (parseInt(inputQuantity) > parseInt(maxQuantity)) {
+                errorElement.textContent = "Số lượng vượt quá số lượng sản phẩm có sẵn!";
+                errorElement.style.display = "inline"; // Hiển thị thông báo lỗi
+                return false; // Ngăn không cho form gửi đi
+            } else {
+                errorElement.style.display = "none"; // Ẩn thông báo lỗi nếu nhập đúng
+            }
+
+
+            return true; // Allow form submission
+        }
+
+        function submitForm(action) {
+            if (validateQuantity()) {
+                var form = document.getElementById('productForm');
+                form.action = action;
+                form.submit();
+            }
+        }
+    </script>
+
 
 </body>
-
 </html>

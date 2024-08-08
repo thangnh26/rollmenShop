@@ -10,11 +10,6 @@ import java.util.List;
 
 @Repository
 public interface OrderDetailRepository extends JpaRepository<OrderDetail,Integer> {
-    @Query(nativeQuery = true,value = "SELECT * FROM dbshopgiay.order_details WHERE order_id = ?1")
+    @Query(nativeQuery = true,value = "SELECT * FROM dbshopgiay.order_detail WHERE order_id = ?1")
     List<OrderDetail> findAllByOrderId(int orderId);
-    @Query(nativeQuery = true, value = "DELETE FROM dbshopgiay.order_details WHERE order_id = ?1")
-    void deleteOrderDetail(int id);
-
-    @Query(value = "select sum(od.quantity) from OrderDetail od where od.order.id=:id")
-    Integer sumQuantity(int id);
 }

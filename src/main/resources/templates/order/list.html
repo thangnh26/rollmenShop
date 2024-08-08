@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Order List</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <h1>Order List</h1>
+<!--    <a class="btn btn-primary" th:href="@{/order/new}">Add New Order</a>-->
+    <form th:action="@{/order}" method="get" class="form-inline mt-2">
+        <input class="form-control mr-sm-2" type="search" placeholder="Search by customer code" aria-label="Search" name="codeCustomer" th:value="${codeCustomer != null ? codeCustomer : ''}">
+        <select class="form-control mr-sm-2" name="status" aria-label="Search">
+            <option value="" th:selected="${status != null && status == null}">Tất cả</option>
+            <option value="0" th:selected="${status != null && status == 0}">Chờ xác nhận</option>
+            <option value="1" th:selected="${status != null && status == 1}">Xác nhận</option>
+            <option value="2" th:selected="${status != null && status == 2}">Đang giao hàng</option>
+            <option value="3" th:selected="${status != null && status == 3}">Giao hàng thành công</option>
+            <option value="4" th:selected="${status != null && status == 4}">Hủy</option>
+        </select>
+        <input class="form-control mr-sm-2" type="search" placeholder="Search by phone" aria-label="Search" name="phone" th:value="${phone != null ? phone : ''}">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+    </form>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Customer</th>
+<!--            <th>Staff</th>-->
+<!--            <th>Voucher</th>-->
+            <th>Create Date</th>
+            <th>Update Date</th>
+            <th>Status</th>
+            <th>Address Receiver</th>
+            <th>Name Receiver</th>
+            <th>Phone Receiver</th>
+            <th>Total Amount</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="order : ${orders}">
+            <td th:text="${order.id}">1</td>
+            <td th:text="${order.customer.code}">Customer</td>
+<!--            <td th:text="${order.staff.lastName}">Staff</td>-->
+<!--            <td th:text="${order.voucher.nameVoucher}">Voucher</td>-->
+            <td th:text="${order.createDate}">2022-01-01</td>
+            <td th:text="${order.updateDate}">2022-01-01</td>
+            <td th:text="${order.status == 0 ? 'Chờ xác nhận' :
+              order.status == 1 ? 'Xác nhận' :
+              order.status == 2 ? 'Đang giao hàng' :
+              order.status == 3 ? 'Giao hàng thành công' :
+              order.status == 4 ? 'Đã hủy' : 'Unknown'}"></td>
+
+            <td th:text="${order.addressReceiver}">Address</td>
+            <td th:text="${order.nameReceiver}">Name</td>
+            <td th:text="${order.phoneReceiver}">Phone</td>
+            <td th:text="${order.totalAmount}">1000</td>
+            <td>
+                <a class="btn btn-success" th:if="${order.status == 0}" th:href="@{/order/confirm-payment/{id}(id=${order.id})}">Xác nhận</a>
+                <a class="btn btn-danger" th:if="${order.status == 0}" th:href="@{/order/cancelled/{id}(id=${order.id})}">Hủy</a>
+                <a class="btn btn-success" th:if="${order.status == 1}" th:href="@{/order/shipping/{id}(id=${order.id})}">Xác nhận giao hàng</a>
+                <a class="btn btn-success" th:if="${order.status == 2}" th:href="@{/order/ok/{id}(id=${order.id})}">Giao hàng thành công</a>
+                <a class="btn btn-success" th:if="${order.status == 3}" >Đã thành công</a>
+                <a class="btn btn-danger" th:if="${order.status == 4}">Đã hủy</a>
+            </td>
+<!--            <td>-->
+<!--                <a class="btn btn-info" th:href="@{/order/edit/{id}(id=${order.id})}">Edit</a>-->
+<!--                <a class="btn btn-danger" th:href="@{/order/delete/{id}(id=${order.id})}">Delete</a>-->
+<!--            </td>-->
+        </tr>
+        </tbody>
+    </table>
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            <li th:classappend="${currentPage == 0} ? 'disabled' : ''">
+                <a class="page-link" th:href="@{/order(page=0)}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                    <span class="sr-only">Previous</span>
+                </a>
+            </li>
+            <li th:each="page : ${#numbers.sequence(0, totalPages - 1)}" th:classappend="${currentPage == page} ? 'active' : ''">
+                <a class="page-link" th:href="@{/order(page=${page})}" th:text="${page}">1</a>
+            </li>
+            <li th:classappend="${currentPage == totalPages - 1} ? 'disabled' : ''">
+                <a class="page-link" th:href="@{/order(page=${totalPages - 1})}" aria-label="Next">
+                    <span aria-hidden="true">»</span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+</div>
+</body>
+</html>

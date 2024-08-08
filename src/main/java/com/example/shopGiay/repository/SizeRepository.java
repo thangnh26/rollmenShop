@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SizeRepository extends JpaRepository<Size, Integer> {
-    @Query("SELECT s FROM Size s WHERE s.Id = ?1")
+    @Query("SELECT s FROM Size s WHERE s.id = ?1")
     Size getById(int id);
 }

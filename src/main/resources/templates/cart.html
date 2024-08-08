@@ -72,7 +72,7 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <a th:href="@{delete/{id}(id = ${item.productDetail.product.id},size = ${item.productDetail.size.sizeNumber})}" th:class="ti-close"></a>
+                                            <a th:href="@{/delete(proId=${item.productDetail.product.id})}" th:class="ti-close"></a>
                                         </td>
                                     </tr>
 
@@ -80,7 +80,7 @@
                                 </div>
                                 <tr class="bottom_button" th:if="${listItem.size() != 0}">
                                     <td >
-                                        <a class="gray_btn" th:href="@{clear}">Xóa giỏ hàng</a>
+                                        <a class="gray_btn" th:href="@{/clear}">Xóa giỏ hàng</a>
                                     </td>
                                     <td>
 

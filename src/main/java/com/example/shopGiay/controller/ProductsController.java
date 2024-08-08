@@ -1,6 +1,7 @@
 package com.example.shopGiay.controller;
 
 
+import com.example.shopGiay.dto.ProductDetailForm;
 import com.example.shopGiay.dto.ProductDto;
 import com.example.shopGiay.model.*;
 import com.example.shopGiay.repository.*;
@@ -12,14 +13,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -115,21 +115,39 @@ public class ProductsController {
     }
 
     @PostMapping("/admin/createProduct")
-    public String adminCreateProduct(@RequestParam("name") String name,
-                                     @RequestParam("categoryId") Integer categoryId,
-                                     @RequestParam("brandId") Integer brandId,
-                                     @RequestParam("materialId") Integer materialId,
-                                     @RequestParam("soleId") Integer soleId,
-                                     @RequestParam("sizeId") int idSize,
-                                     @RequestParam("colorId") int idColor,
-                                     @RequestParam("quantity") int quantity,
-                                     @RequestParam("price") double price,
-                                     @RequestParam("description") String description,
-                                     @RequestParam("thumbnailUrl") MultipartFile multipartFile) throws IOException {
+    public String adminCreateProducts(@ModelAttribute ProductDetailForm productDTO,
+                                      RedirectAttributes redirectAttributes) {
+        try {
+            createProducts(productDTO);
+            redirectAttributes.addFlashAttribute("successMessage", "Products created successfully");
+        } catch (IOException e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("errorMessage", "Error creating products");
+        }
+        return "redirect:/admin/products";
+    }
+    private void createProducts(ProductDetailForm productDTO) throws IOException {
+        for (Integer categoryId : productDTO.getCategoryId()) {
+            for (Integer brandId : productDTO.getBrandId()) {
+                for (Integer materialId : productDTO.getMaterialId()) {
+                    for (Integer soleId : productDTO.getSoleId()) {
+                        for (Integer sizeId : productDTO.getSizeId()) {
+                            for (Integer colorId : productDTO.getColorId()) {
+                                createProduct(productDTO, categoryId, brandId, materialId, soleId, sizeId, colorId);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void createProduct(ProductDetailForm productDTO, Integer categoryId, Integer brandId, Integer materialId,
+                               Integer soleId, Integer sizeId, Integer colorId) throws IOException {
         Product product = new Product();
-        String filename = StringUtils.cleanPath(multipartFile.getOriginalFilename());
-        product.setName(name);
-        product.setDescription(description);
+        String filename = StringUtils.cleanPath(productDTO.getThumbnailUrl().getOriginalFilename());
+        product.setName(productDTO.getName());
+        product.setDescription(productDTO.getDescription());
         Category category = categoryRepository.getById(categoryId);
         product.setCategory(category);
         Brand brand = brandRepository.getById(brandId);
@@ -138,37 +156,89 @@ public class ProductsController {
         product.setMaterial(material);
         Sole sole = soleRepository.getById(soleId);
         product.setSole(sole);
-        product.setThumbnail("~/img/product/"+filename);
-        ProductDetail productdetail = new ProductDetail();
-        product.setStatus(true);
-        productdetail.setProduct(product);
-        Size size = sizeRepository.getById(idSize);
-        productdetail.setSize(size);
-        Color color = colorRepository.getById(idColor);
-        productdetail.setColor(color);
-        productdetail.setQuantity(quantity);
-        productdetail.setPrice(price);
+        product.setThumbnail("~/img/product/" + filename);
+        product.setStatus(1);
+
+        ProductDetail productDetail = new ProductDetail();
+        productDetail.setProduct(product);
+        Size size = sizeRepository.getById(sizeId);
+        productDetail.setSize(size);
+        Color color = colorRepository.getById(colorId);
+        productDetail.setColor(color);
+        productDetail.setQuantity(productDTO.getQuantity());
+        productDetail.setPrice(BigDecimal.valueOf(productDTO.getPrice()));
+        productDetail.setStatus(1);
+
         productRepository.save(product);
-        categoryRepository.save(category);
-        brandRepository.save(brand);
-        materialRepository.save(material);
-        soleRepository.save(sole);
-        productDetailRepository.save(productdetail);
+        productDetailRepository.save(productDetail);
 
         String uploadDir = "./src/main/resources/static/img/product/";
         Path uploadPath = Paths.get(uploadDir);
-        if(!Files.exists(uploadPath)){
+        if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
         }
-        try{
-            InputStream inputStream = multipartFile.getInputStream();
+        try (InputStream inputStream = productDTO.getThumbnailUrl().getInputStream()) {
             Path filePath = uploadPath.resolve(filename);
             Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
-        }catch (IOException e){
-            throw new IOException("Không thể tải file: "+filename);
+        } catch (IOException e) {
+            throw new IOException("Cannot upload file: " + filename);
         }
-        return "redirect:/admin/products";
     }
+//    public String adminCreateProduct(@RequestParam("name") String name,
+//                                     @RequestParam("categoryId") Integer categoryId,
+//                                     @RequestParam("brandId") Integer brandId,
+//                                     @RequestParam("materialId") Integer materialId,
+//                                     @RequestParam("soleId") Integer soleId,
+//                                     @RequestParam("sizeId") int idSize,
+//                                     @RequestParam("colorId") int idColor,
+//                                     @RequestParam("quantity") int quantity,
+//                                     @RequestParam("price") BigDecimal price,
+//                                     @RequestParam("description") String description,
+//                                     @RequestParam("thumbnailUrl") MultipartFile multipartFile) throws IOException {
+//        Product product = new Product();
+//        String filename = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+//        product.setName(name);
+//        product.setDescription(description);
+//        Category category = categoryRepository.getById(categoryId);
+//        product.setCategory(category);
+//        Brand brand = brandRepository.getById(brandId);
+//        product.setBrand(brand);
+//        Material material = materialRepository.getById(materialId);
+//        product.setMaterial(material);
+//        Sole sole = soleRepository.getById(soleId);
+//        product.setSole(sole);
+//        product.setThumbnail("~/img/product/"+filename);
+//        ProductDetail productdetail = new ProductDetail();
+//        product.setStatus(1);
+//        productdetail.setProduct(product);
+//        Size size = sizeRepository.getById(idSize);
+//        productdetail.setSize(size);
+//        Color color = colorRepository.getById(idColor);
+//        productdetail.setColor(color);
+//        productdetail.setQuantity(quantity);
+//        productdetail.setPrice(price);
+//        productdetail.setStatus(1);
+//        productRepository.save(product);
+//        categoryRepository.save(category);
+//        brandRepository.save(brand);
+//        materialRepository.save(material);
+//        soleRepository.save(sole);
+//        productDetailRepository.save(productdetail);
+//
+//        String uploadDir = "./src/main/resources/static/img/product/";
+//        Path uploadPath = Paths.get(uploadDir);
+//        if(!Files.exists(uploadPath)){
+//            Files.createDirectories(uploadPath);
+//        }
+//        try{
+//            InputStream inputStream = multipartFile.getInputStream();
+//            Path filePath = uploadPath.resolve(filename);
+//            Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+//        }catch (IOException e){
+//            throw new IOException("Không thể tải file: "+filename);
+//        }
+//        return "redirect:/admin/products";
+//    }
 
     @GetMapping("/products")
     public String showListProduct(Model model, @RequestParam( name = "name", required = false) String keyword,
@@ -231,7 +301,7 @@ public class ProductsController {
 
     @GetMapping("/admin/product/{id}")
     public String productDetail(Model model,@PathVariable("id") Integer id){
-        Product product = productService.getDetailProductById(id);
+        ProductDto product = productService.getDetailProductById(id);
         List<ProductDetail> listSize = productDetailRepository.findAllByProductId(id);
         model.addAttribute("product",product);
         model.addAttribute("listSize",listSize);
@@ -252,7 +322,7 @@ public class ProductsController {
 //    }
 @GetMapping("/admin/product/update/{id}")
 public String updateProduct(Model model,@PathVariable("id") Integer id){
-    Product product = productService.getDetailProductById(id);
+    ProductDto product = productService.getDetailProductById(id);
     model.addAttribute("product",product);
     model.addAttribute("listCategory",categoryRepository.findAll());
     model.addAttribute("listBrand",brandRepository.findAll());
@@ -261,28 +331,28 @@ public String updateProduct(Model model,@PathVariable("id") Integer id){
 
     return "admin/product/updateProduct";
 }
-    @PostMapping("/admin/product/update")
-    public String adminCreateProduct(@RequestParam("id") Integer id,
-                                     @RequestParam("name") String name,
-                                     @RequestParam("categoryId") Integer categoryId,
-                                     @RequestParam("brandId") Integer brandId,
-                                     @RequestParam("materialId") Integer materialId,
-                                     @RequestParam("soleId") Integer soleId
-    ) throws IOException {
-        Product product = productService.getDetailProductById(id);
-        product.setName(name);
-        Category category = categoryRepository.getById(categoryId);
-        Brand brand = brandRepository.getById(brandId);
-        Material material = materialRepository.getById(materialId);
-        Sole sole = soleRepository.getById(soleId);
-
-        product.setCategory(category);
-        product.setBrand(brand);
-        product.setMaterial(material);
-        product.setSole(sole);
-        productRepository.save(product);
-        String uploadDir = "./src/main/resources/static/img/product/";
-        Path uploadPath = Paths.get(uploadDir);
-        return "redirect:/admin/products";
-    }
+//    @PostMapping("/admin/product/update")
+//    public String adminCreateProduct(@RequestParam("id") Integer id,
+//                                     @RequestParam("name") String name,
+//                                     @RequestParam("categoryId") Integer categoryId,
+//                                     @RequestParam("brandId") Integer brandId,
+//                                     @RequestParam("materialId") Integer materialId,
+//                                     @RequestParam("soleId") Integer soleId
+//    ) throws IOException {
+//        ProductDto product = productService.getDetailProductById(id);
+//        product.setName(name);
+//        Category category = categoryRepository.getById(categoryId);
+//        Brand brand = brandRepository.getById(brandId);
+//        Material material = materialRepository.getById(materialId);
+//        Sole sole = soleRepository.getById(soleId);
+//
+//        product.setCategory(category);
+//        product.setBrand(brand);
+//        product.setMaterial(material);
+//        product.setSole(sole);
+//        productRepository.save(product);
+//        String uploadDir = "./src/main/resources/static/img/product/";
+//        Path uploadPath = Paths.get(uploadDir);
+//        return "redirect:/admin/products";
+//    }
 }

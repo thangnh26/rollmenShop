@@ -1,9 +1,5 @@
 package com.example.shopGiay.dto;
 
-import com.example.shopGiay.model.Brand;
-import com.example.shopGiay.model.Category;
-import com.example.shopGiay.model.Material;
-import com.example.shopGiay.model.Sole;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

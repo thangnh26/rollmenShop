@@ -2,6 +2,7 @@ package com.example.shopGiay.controller;
 
 import com.example.shopGiay.dto.*;
 import com.example.shopGiay.model.*;
+import com.example.shopGiay.repository.ProductDetailRepository;
 import com.example.shopGiay.repository.RolesRepository;
 import com.example.shopGiay.repository.UserRepository;
 import com.example.shopGiay.service.*;
@@ -10,14 +11,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
+import java.security.Principal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.*;
@@ -26,6 +30,7 @@ import java.util.stream.IntStream;
 
 @Controller
 public class HomeController {
+
 
     private final BrandService brandService;
     private final ProductService productService;
@@ -40,8 +45,10 @@ public class HomeController {
     private final OrderService orderService;
     private final OrderDetailService orderDetailService;
     private final CartService cartService;
+    private final ProductDetailRepository productDetailRepository;
 
-    public HomeController(BrandService brandService, ProductService productService, CategoryService categoryService, MaterialService materialService, SoleService soleService, CommentService commentService, ShoppingCartService shoppingCartService, ColorService colorService, UserRepository userRepo, RolesRepository rolesRepository, OrderService orderService, OrderDetailService orderDetailService, CartService cartService) {
+
+    public HomeController(BrandService brandService, ProductService productService, CategoryService categoryService, MaterialService materialService, SoleService soleService, CommentService commentService, ShoppingCartService shoppingCartService, ColorService colorService, UserRepository userRepo, RolesRepository rolesRepository, OrderService orderService, OrderDetailService orderDetailService, CartService cartService, ProductDetailRepository productDetailRepository) {
         this.brandService = brandService;
         this.productService = productService;
         this.categoryService = categoryService;
@@ -55,10 +62,14 @@ public class HomeController {
         this.orderService = orderService;
         this.orderDetailService = orderDetailService;
         this.cartService = cartService;
+        this.productDetailRepository = productDetailRepository;
     }
 
+
     @GetMapping("/")
-    public String homePage(Model model) {
+    public String homePage(Model model, HttpServletRequest request) {
+        String currentUrl = request.getRequestURI();
+        model.addAttribute("currentUrl", currentUrl);
         //Lấy các thương hiệu
         List<Brand> brandsReputation = brandService.getAllBrands();
         model.addAttribute("listBrandsReputation", brandsReputation);
@@ -73,6 +84,9 @@ public class HomeController {
 //        List<ProductDto> newProducts = productService.getListNewProducts(8);
 //        model.addAttribute("listNewProduct", newProducts);
 
+        //sp bán chạy
+        List<ProductDto> productHot = productService.getProductHot();
+        model.addAttribute("hot", productHot);
         //Lấy 8 sản phẩm ngẫu nhiên
         List<ProductDto> randomProducts = productService.getListNewProducts(3);
         model.addAttribute("listRandomProduct", randomProducts);
@@ -90,9 +104,9 @@ public class HomeController {
         model.addAttribute("listBrandsReputation", brandsReputation);
 
         //Lấy thông tin sản phẩm
-        ProductDto product;
+        ProductDto productDto;
         try {
-            product = productService.getDetailProductById(id);
+            productDto = productService.getDetailProductById(id);
         } catch (Exception ex) {
             return "error/404";
         }
@@ -107,14 +121,14 @@ public class HomeController {
         DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.US);
         symbols.setGroupingSeparator(',');
         DecimalFormat df = new DecimalFormat("#,##0.00", symbols);
-        String formatPrice = df.format(product.getPrice());
+        String formatPrice = df.format(productDto.getPrice());
 
         // Loại bỏ dấu phẩy trước khi chuyển đổi lại thành BigDecimal
         String plainStringPrice = formatPrice.replace(",", "");
         BigDecimal formatBig = new BigDecimal(plainStringPrice);
-        product.setPrice(formatBig);
+        productDto.setPrice(formatBig);
 
-        model.addAttribute("product", product);
+        model.addAttribute("product", productDto);
         model.addAttribute("listCommnet", listComment);
 
         int totalPage = listComment.getTotalPages();
@@ -146,12 +160,21 @@ public class HomeController {
 //        }
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth.getPrincipal() != "anonymousUser") {
-            User user = ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            String email = null;
+            if (principal instanceof UserDetails) {
+                email = ((UserDetails) principal).getUsername();
+            } else if (principal instanceof String) {
+                email = (String) principal;
+            }
+
+            // Lấy User từ email
+            Customer user = userRepo.findByEmail(email);
             model.addAttribute("user", user);
         }
         model.addAttribute("listSize", listSizeByProduct);
         List<ProductColorResponse> listColor = productService.listColor(id);
-        model.addAttribute("listColor",listColor);
+        model.addAttribute("listColor", listColor);
 
         return "single-product";
     }
@@ -163,10 +186,9 @@ public class HomeController {
                                   @RequestParam("size") Optional<Integer> size,
                                   @RequestParam("category") Optional<Integer> category,
                                   @RequestParam("material") Optional<Integer> material,
-                                  @RequestParam("sole") Optional<Integer> sole
-    ) {
-
-
+                                  @RequestParam("sole") Optional<Integer> sole, HttpServletRequest request) {
+        String currentUrl = request.getRequestURI();
+        model.addAttribute("currentUrl", currentUrl);
         List<Category> categoryReputation = categoryService.getAllCategory();
         model.addAttribute("listCategoryReputation", categoryReputation);
 
@@ -219,98 +241,228 @@ public class HomeController {
     }
 
     @GetMapping("cart")
-    public String list(Model model) {
+    public String list(Model model, HttpServletRequest request) {
+        String currentUrl = request.getRequestURI();
+        model.addAttribute("currentUrl", currentUrl);
         //Lấy các thương hiệu
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email = null;
+        if (principal instanceof UserDetails) {
+            email = ((UserDetails) principal).getUsername();
+        } else if (principal instanceof String) {
+            email = (String) principal;
+        }
+
+        // Lấy User từ email
+        Customer user = userRepo.findByEmail(email);
         List<Brand> brandsReputation = brandService.getAllBrands();
         Result result = null;
         model.addAttribute("listBrandsReputation", brandsReputation);
         model.addAttribute("result", result);
-        model.addAttribute("listItem", shoppingCartService.getAllItems());
+        model.addAttribute("listItem", shoppingCartService.getAllItems(user.getId()));
         model.addAttribute("total", shoppingCartService.getAmount());
         return "cart";
     }
 
     @PostMapping("/add-cart")
-    public String addCart(Model model,@ModelAttribute AddCart cartItem){
-        Result result = shoppingCartService.add(cartItem);
+    public String addCart(Model model, @ModelAttribute AddCart cartItem) {
+
+
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email = null;
+        if (principal instanceof UserDetails) {
+            email = ((UserDetails) principal).getUsername();
+        } else if (principal instanceof String) {
+            email = (String) principal;
+        }
+
+        // Lấy User từ email
+        Customer user = userRepo.findByEmail(email);
+        Result result = shoppingCartService.add(cartItem, user.getId());
         List<Brand> brandsReputation = brandService.getAllBrands();
         model.addAttribute("listBrandsReputation", brandsReputation);
         model.addAttribute("result", result);
-        model.addAttribute("listItem", shoppingCartService.getAllItems());
+        model.addAttribute("listItem", shoppingCartService.getAllItems(user.getId()));
         model.addAttribute("total", shoppingCartService.getAmount());
         return "cart";
     }
 
-    @GetMapping("/checkout")
-    public String checkoutCart(Model model){
+    @PostMapping("/buy-now")
+    public String buyNow(@ModelAttribute OrderRequest orderRequest, Model model) {
         //Lấy các thương hiệu
         List<Brand> brandsReputation = brandService.getAllBrands();
-        model.addAttribute("listBrandsReputation",brandsReputation);
-        String email = "tranducdo@gmail.com";
-//        User user = ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
-        model.addAttribute("user",userRepo.findByEmail(email));
-        model.addAttribute("listItem",shoppingCartService.getAllItems());
-        model.addAttribute("total",shoppingCartService.getAmount());
+        model.addAttribute("listBrandsReputation", brandsReputation);
+//        String email = "tranducdo@gmail.com";
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email = null;
+        if (principal instanceof UserDetails) {
+            email = ((UserDetails) principal).getUsername();
+        } else if (principal instanceof String) {
+            email = (String) principal;
+        }
+
+        // Lấy User từ email
+        Customer user = userRepo.findByEmail(email);
+        model.addAttribute("user", userRepo.findByEmail(user.getEmail()));
+        ProductDetail productDetail = productDetailRepository.getOneProductDetail(orderRequest.getProId(), orderRequest.getColorId(), orderRequest.getSizeId());
+        model.addAttribute("listItem", productDetail);
+        model.addAttribute("quantity", orderRequest.getQuantity());
+        model.addAttribute("proId", orderRequest.getProId());
+        model.addAttribute("sizeId", orderRequest.getSizeId());
+        model.addAttribute("colorId", orderRequest.getColorId());
+        model.addAttribute("total", productDetail.getPrice().multiply(new BigDecimal(orderRequest.getQuantity())));
+        return "checkoutBuyNow";
+    }
+
+    @GetMapping("/checkout")
+    public String checkoutCart(Model model) {
+        //Lấy các thương hiệu
+        List<Brand> brandsReputation = brandService.getAllBrands();
+        model.addAttribute("listBrandsReputation", brandsReputation);
+//        String email = "tranducdo@gmail.com";
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email = null;
+        if (principal instanceof UserDetails) {
+            email = ((UserDetails) principal).getUsername();
+        } else if (principal instanceof String) {
+            email = (String) principal;
+        }
+
+        // Lấy User từ email
+        Customer user = userRepo.findByEmail(email);
+        model.addAttribute("user", userRepo.findByEmail(user.getEmail()));
+        model.addAttribute("listItem", shoppingCartService.getAllItems(user.getId()));
+        model.addAttribute("total", shoppingCartService.getAmount());
         return "checkout";
     }
 
     @PostMapping("/checkout")
-    public String createOrder( @RequestParam("name_receiver") String nameReceiver,@RequestParam("phone_number_receiver") String phoneReceiver,@RequestParam("address_receiver") String addressReceiver,@RequestParam("note") String note, @RequestParam("price") String price, @RequestParam("userId") Integer id) {
-        Order order = orderService.createOrder(nameReceiver,phoneReceiver,addressReceiver,note,price, id);
-        Cart cart = cartService.getOneByUserId(1);
-        Collection<CartItem> cartItemMap = shoppingCartService.getAllItemsByCartId(cart.getId());
-        for (var item : cartItemMap
-        ) {
-            ProductDto productDto = productService.getDetailProductById(item.getProductDetail().getProduct().getId());
-            Product product = new ModelMapper().map(productDto,Product.class);
-            orderDetailService.createOrderDetail(product.getId(),order.getId(),item.getQuantity(),item.getProductDetail().getSize().getId(),item.getProductDetail().getColor().getId());
+    public String createOrder(@RequestParam("name_receiver") String nameReceiver, @RequestParam("phone_number_receiver") String phoneReceiver, @RequestParam(value = "address_receiver", defaultValue = "qn") String addressReceiver, @RequestParam("note") String note, @RequestParam("price") String price, @RequestParam("userId") Integer id, @RequestParam(value = "proId",required = false) int proId, @RequestParam(value = "sizeId",required = false) int sizeId, @RequestParam(value = "colorId",required = false) int colorId, @RequestParam(value = "quantity",required = false) int quantity, @RequestParam(value = "check",required = false) int check) {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email = null;
+        if (principal instanceof UserDetails) {
+            email = ((UserDetails) principal).getUsername();
+        } else if (principal instanceof String) {
+            email = (String) principal;
         }
+
+        // Lấy User từ email
+        Customer user = userRepo.findByEmail(email);
+
+        Order order = orderService.createOrder(nameReceiver, phoneReceiver, addressReceiver, note, price, id);
+        Cart cart = cartService.getOneByUserId(user.getId());
+        if (check == 1) {
+            orderDetailService.createOrderDetail(proId, order.getId(), quantity, sizeId, colorId);
+            return "redirect:/";
+        } else {
+            Collection<CartItem> cartItemMap = shoppingCartService.getAllItemsByCartId(cart.getId());
+            for (var item : cartItemMap
+            ) {
+                ProductDto productDto = productService.getDetailProductById(item.getProductDetail().getProduct().getId());
+                Product product = new ModelMapper().map(productDto, Product.class);
+                orderDetailService.createOrderDetail(product.getId(), order.getId(), item.getQuantity(), item.getProductDetail().getSize().getId(), item.getProductDetail().getColor().getId());
+            }
+            shoppingCartService.clear(cart.getId());
+            return "redirect:/cart";
+        }
+    }
+
+    @GetMapping("/delete")
+    public String deleteProInCart(@RequestParam("proId") int proId) {
+        shoppingCartService.deletePro(proId);
+        return "redirect:/cart";
+    }
+
+    @GetMapping("/clear")
+    public String clearCart() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email = null;
+        if (principal instanceof UserDetails) {
+            email = ((UserDetails) principal).getUsername();
+        } else if (principal instanceof String) {
+            email = (String) principal;
+        }
+
+        // Lấy User từ email
+        Customer user = userRepo.findByEmail(email);
+        Cart cart = cartService.getOneByUserId(user.getId());
         shoppingCartService.clear(cart.getId());
         return "redirect:/cart";
     }
 
     @PostMapping("/process_register")
-    public String processRegister(User user ) {
-        if( userRepo.findByEmail(user.getEmail()) != null){
-            return "redirect:/login";
+    public String handleRegister(@RequestParam("email") String email,
+                                 @RequestParam("password") String password,
+                                 @RequestParam("firstName") String firstName,
+                                 @RequestParam("lastName") String lastName,
+                                 @RequestParam("address") String address,
+                                 @RequestParam("phoneNumber") String phoneNumber,
+                                 Model model) {
+        if (userRepo.findByEmail(email) != null) {
+            // Email đã tồn tại, thông báo lỗi
+            model.addAttribute("error", "Email đã được sử dụng");
+            return "login";
         }
 
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        String encodedPassword = passwordEncoder.encode(user.getPassword());
-        user.setPassword(encodedPassword);
-        user.setStatus(false);
-        Set<Roles> roles = new HashSet<>();
-        roles.add(rolesRepository.getById(1));
-        user.setRoles(roles);
-        userRepo.save(user);
+        // Tạo người dùng mới
+        User newUser = new User();
+        newUser.setEmail(email);
+        newUser.setPassword(password); // Không mã hóa mật khẩu
+        newUser.setFirstName(firstName);
+        newUser.setLastName(lastName);
+        newUser.setAddress(address);
+        newUser.setPhoneNumber(phoneNumber);
+        newUser.setStatus(true); // Hoặc set tùy thuộc vào logic của bạn
 
+        userRepo.save(newUser);
+
+        // Đăng ký thành công, chuyển hướng về trang đăng nhập
         return "redirect:/login";
     }
-    @GetMapping("/logout")
-    public  String logout(HttpSession session){
-        session.removeAttribute("user");
-        return "redirect:/login";
-    }
 
-    @GetMapping("/loginn")
-    public String showLoginPage(Model model, @RequestParam("error") Optional<String> error) {
+    @GetMapping("/login")
+    public String showLoginPage(Model model, @RequestParam("error") Optional<String> error,
+                                Principal principal) {
         model.addAttribute("user", new User());
-//        error.ifPresent(e -> model.addAttribute("error", e));
+        if (error.isPresent()) {
+            model.addAttribute("error", error);
+        }
+        if (principal != null) {
+            model.addAttribute("username", principal.getName());
+        }
+
         return "login";
     }
 
-    @PostMapping("/loginn")
-    public String handleLogin(@RequestParam("email") String email,
-                              @RequestParam("pass") String pass,
-                              Model model) {
-//        if (userRepo.countByEmail(email, pass) != 0) {
-//            return "login";
-//        } else {
-//            model.addAttribute("error", "Tài khoản và mật khẩu không chính xác");
-//            model.addAttribute("user", new User());
-//            return "login";
-//        }
-        return "redirect:/";
+    @GetMapping("/user/profile")
+    public String showUserProfile(Model model, HttpSession session) {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email;
+        if (principal instanceof UserDetails) {
+            email = ((UserDetails) principal).getUsername();
+        } else {
+            email = principal.toString();
+        }
+        Customer user = userRepo.findByEmail(email);
+        if (user != null) {
+            session.setAttribute("loggedInUser", user);
+            model.addAttribute("user", user);
+            return "user_profile";
+        } else {
+            model.addAttribute("error", "User not found");
+            return "error";
+        }
+    }
+
+
+    @GetMapping("/logout")
+    public String logout() {
+        // Xử lý logout
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null) {
+            auth.setAuthenticated(false);
+        }
+        return "redirect:/login";
     }
 
 }

@@ -4,9 +4,9 @@
         xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
 >
 <head>
-    <meta charset="UTF-8"/>
+    <meta charset="UTF-8" />
     <title>Đăng nhập</title>
-    <link rel="stylesheet" type="text/css" href="\cssLogin\login.css"/>
+    <link rel="stylesheet" type="text/css" href="\cssLogin\login.css" />
     <script type="text/javascript" src="/webjars/jquery/jquery.min.js"></script>
     <script
             type="text/javascript"
@@ -65,37 +65,37 @@
                     placeholder="Số điện thoại"
                     class="form-control"
             />
-            <br/>
+            <br />
             <button type="submit" class="btn btn-primary">Đăng ký</button>
         </form>
     </div>
     <div class="form-container sign-in-container">
-        <form th:action="@{/loginn}" method="post">
+        <form th:action="@{/login}" method="post" >
             <h2>ĐĂNG NHẬP</h2>
-            <br/>
+            <br />
             <input
                     type="email"
-                    name="email"
+                    name="username"
                     placeholder="Email"
                     required
                     autofocus
             />
             <input
-                    type="pass"
-                    name="pass"
+                    type="password"
+                    name="password"
                     placeholder="Mật khẩu"
                     required
             />
-<!--            <p th:if="${error != null}" style="color: red;">Tài khoản và mật khẩu không chính xác</p>-->
-<!--            <input type="hidden" id="error" th:value="${error}">-->
+            <p th:if="${error != null}" style="color: red;">Tài khoản và mật khẩu không chính xác</p>
+            <input type="hidden" id="error" th:value="${error}">
             <!--			<a href="#">Bạn quên mật khẩu ?</a>-->
-            <br/>
+            <br />
             <button type="submit">Đăng nhập</button>
         </form>
     </div>
     <div class="overlay-container">
         <div class="overlay">
-            <img src="./img/bannerLogin.jpg" style="margin-left: -10px"/>
+            <img src="./img/bannerLogin.jpg" style="margin-left: -10px" />
             <div class="overlay-panel overlay-left">
                 <h1>Chào mừng đã đến với sneaker NTC</h1>
                 <p>Bạn có đã có tài khoản và muốn đăng nhập.</p>
@@ -127,7 +127,7 @@
     const signUpButton = document.getElementById("signUp");
     const signInButton = document.getElementById("signIn");
     const container = document.getElementById("container");
-    // const error = document.getElementById("error");
+    const error = document.getElementById("error");
 
     signUpButton.addEventListener("click", () => {
         container.classList.add("right-panel-active");
@@ -136,9 +136,9 @@
     signInButton.addEventListener("click", () => {
         container.classList.remove("right-panel-active");
     });
-    // console.log(error.valueOf(error).value)
-    // if (error.valueOf(error).value == 'Optional[email]') {
-    //     container.classList.add("right-panel-active");
-    //
-    // }
+    console.log(error.valueOf(error).value)
+    if(error.valueOf(error).value == 'Optional[email]') {
+        container.classList.add("right-panel-active");
+
+    }
 </script>

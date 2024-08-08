@@ -36,4 +36,6 @@ public interface ProductService {
     List<ProductSizeResponse> listSize(int productId);
 
     List<ProductColorResponse> listColor(int productId);
+
+    List<ProductDto> getProductHot();
 }

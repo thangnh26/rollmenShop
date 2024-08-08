@@ -1,21 +1,69 @@
 package com.example.shopGiay.controller;
 
+import com.example.shopGiay.repository.OrderRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.math.BigDecimal;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 @Controller
 public class AdminController {
+
+    @Autowired
+    OrderRepository orderRepository;
+
     @GetMapping("/admin")
     public String adminPage(){
         return "redirect:admin/index";
     }
     @GetMapping("/admin/index")
     public String adminHome(Model model){
-//        model.addAttribute("totalProduct",productRepository.countProduct());
-//        model.addAttribute("countUser",userRepository.countUser());
-//        model.addAttribute("countOrder", orderRepository.countOrder());
-//        model.addAttribute("countOrderWait", orderRepository.countDonHangCho());
+        BigDecimal total =BigDecimal.valueOf(orderRepository.total());
+        model.addAttribute("total",total);
+        model.addAttribute("countUser",orderRepository.countUser());
+        model.addAttribute("countOrder", orderRepository.countOrder());
+        model.addAttribute("countOrderWait", orderRepository.countDonHangCho());
+        Map<String, Integer> data = new LinkedHashMap<String, Integer>();
+        data.put("Tháng 1", orderRepository.soLuongTheoThang(1));
+        data.put("Tháng 2", orderRepository.soLuongTheoThang(2));
+        data.put("Tháng 3", orderRepository.soLuongTheoThang(3));
+        data.put("Tháng 4", orderRepository.soLuongTheoThang(4));
+        data.put("Tháng 5", orderRepository.soLuongTheoThang(5));
+        data.put("Tháng 6", orderRepository.soLuongTheoThang(6));
+        data.put("Tháng 7", orderRepository.soLuongTheoThang(7));
+        data.put("Tháng 8", orderRepository.soLuongTheoThang(8));
+        data.put("Tháng 9", orderRepository.soLuongTheoThang(9));
+        data.put("Tháng 10", orderRepository.soLuongTheoThang(10));
+        data.put("Tháng 11", orderRepository.soLuongTheoThang(11));
+        data.put("Tháng 12", orderRepository.soLuongTheoThang(12));
+        model.addAttribute("keySet", data.keySet());
+        model.addAttribute("values", data.values());
         return "admin/index";
     }
+    @GetMapping("admin/barChart")
+    public String barChart(Model model)
+    {
+        Map<String, Integer> data = new LinkedHashMap<String, Integer>();
+        data.put("Tháng 1", 30);
+        data.put("Tháng 2", 30);
+        data.put("Tháng 3", 30);
+        data.put("Tháng 4", 30);
+        data.put("Tháng 5", 30);
+        data.put("Tháng 6", 30);
+        data.put("Tháng 7", 30);
+        data.put("Tháng 8", 30);
+        data.put("Tháng 9", 30);
+        data.put("Tháng 10", 30);
+        data.put("Tháng 11", 30);
+        data.put("Tháng 12", 30);
+        model.addAttribute("keySet", data.keySet());
+        model.addAttribute("values", data.values());
+        return "admin/index";
+
+    }
+    //tổng thu theo tháng
 }

@@ -14,6 +14,6 @@ public interface ColorRepository extends JpaRepository<Color, Integer> {
     Page<Color> findByNameContainingIgnoreCase(String name, Pageable pageable);
     Page<Color> findByStatusNot(int status, Pageable pageable);
 
-    @Query("SELECT s FROM Color s WHERE s.Id = ?1")
+    @Query("SELECT s FROM Color s WHERE s.id = ?1")
     Color getById(int id);
 }

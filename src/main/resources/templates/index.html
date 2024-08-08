@@ -114,6 +114,7 @@
                             <div class="product-details" >
                                 <h6 th:text="${product.name}"></h6>
                                 <div class="price">
+                                    <h5 style="padding-left: 8px;">Số lượng còn: </h5>
 <!--                                    <h5 style="padding-left: 10px;" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT') +' vnđ'}"></h5>-->
                                     <h5 style="padding-left: 10px;" th:text="${product.quantity}"></h5>
                                 </div>
@@ -149,21 +150,21 @@
             <div class="row">
                 <!-- single product -->
                 <div class="col-lg-3 col-md-6" th:each="product: ${listNewProduct}">
-                    <div class="single-product" style="height: 90%;">
+                    <div class="single-product" style="height: 90%;"  >
                         <a th:href="@{/{id}(id=${product.id})}">
                             <img class="img-fluid" th:src="@{${product.thumbnail}}" alt="">
-                            <div class="product-details">
+                            <div class="product-details" >
                                 <h6 th:text="${product.name}"></h6>
                                 <div class="price">
-                                    <h5 style="padding-left: 10px;" th:text="${product.price}"></h5>
-                                    <!--                                    <h6 th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT') +' vnđ'}"></h6>-->
+                                    <!--                                    <h5 style="padding-left: 10px;" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT') +' vnđ'}"></h5>-->
+                                    <h5 style="padding-left: 10px;" th:text="${product.quantity}"></h5>
                                 </div>
                                 <div style="padding-left: 10px; color: gray;" th:if="${product.quantity > 0}">
                                     <p>Tình trạng: Còn hàng</p>
                                 </div>
                                 <div style="padding-left: 10px; color: gray;" th:if="${product.quantity <= 0}">
                                     <p>Tình trạng: Hết hàng</p>
-<!--                                </div>-->
+                                </div>
                                 <div class="prd-bottom">
                                     <a th:href="@{/{id}(id = ${product.id})}" style="width: 100%;" class="social-info">
                                         <span class="ti-info"></span>
@@ -178,6 +179,47 @@
         </div>
     </div>
 </section>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 text-center">
+                <div class="section-title">
+                    <h1 style="text-shadow: 1px 1px 2px black, 0 0 25px gray, 0 0 5px gray; padding-top: 10px;">Sản phẩm bán chạy</h1>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <!-- single product -->
+            <div class="col-lg-3 col-md-6" th:each="product: ${hot}">
+                <div class="single-product" style="height: 90%;"  >
+                    <a th:href="@{/{id}(id=${product.id})}">
+                        <img class="img-fluid" th:src="@{${product.thumbnail}}" alt="">
+                        <div class="product-details" >
+                            <h6 th:text="${product.name}"></h6>
+                            <div class="price">
+                                <h5 style="padding-left: 8px;">Số lượng còn: </h5>
+
+                                <!--                                    <h5 style="padding-left: 10px;" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT') +' vnđ'}"></h5>-->
+                                <h5 style="padding-left: 10px;" th:text="${product.quantity}"></h5>
+                            </div>
+                            <div style="padding-left: 10px; color: gray;" th:if="${product.quantity > 0}">
+                                <p>Tình trạng: Còn hàng</p>
+                            </div>
+                            <div style="padding-left: 10px; color: gray;" th:if="${product.quantity <= 0}">
+                                <p>Tình trạng: Hết hàng</p>
+                            </div>
+                            <div class="prd-bottom">
+                                <a th:href="@{/{id}(id = ${product.id})}" style="width: 100%;" class="social-info">
+                                    <span class="ti-info"></span>
+                                    <p class="hover-text ">Chi tiết</p>
+                                </a>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 <!-- end product Area -->
 
 

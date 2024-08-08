@@ -74,5 +74,10 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.colorInProduct(productId);
     }
 
+    @Override
+    public List<ProductDto> getProductHot() {
+        return productRepository.getProductHot();
+    }
+
 
 }
