@@ -2,6 +2,7 @@ package com.example.shopGiay.controller;
 
 import com.example.shopGiay.dto.*;
 import com.example.shopGiay.model.*;
+import com.example.shopGiay.repository.AddressRepository;
 import com.example.shopGiay.repository.ProductDetailRepository;
 import com.example.shopGiay.repository.RolesRepository;
 import com.example.shopGiay.repository.UserRepository;
@@ -46,9 +47,10 @@ public class HomeController {
     private final OrderDetailService orderDetailService;
     private final CartService cartService;
     private final ProductDetailRepository productDetailRepository;
+    private final AddressRepository addressRepository;
 
 
-    public HomeController(BrandService brandService, ProductService productService, CategoryService categoryService, MaterialService materialService, SoleService soleService, CommentService commentService, ShoppingCartService shoppingCartService, ColorService colorService, UserRepository userRepo, RolesRepository rolesRepository, OrderService orderService, OrderDetailService orderDetailService, CartService cartService, ProductDetailRepository productDetailRepository) {
+    public HomeController(BrandService brandService, ProductService productService, CategoryService categoryService, MaterialService materialService, SoleService soleService, CommentService commentService, ShoppingCartService shoppingCartService, ColorService colorService, UserRepository userRepo, RolesRepository rolesRepository, OrderService orderService, OrderDetailService orderDetailService, CartService cartService, ProductDetailRepository productDetailRepository, AddressRepository addressRepository) {
         this.brandService = brandService;
         this.productService = productService;
         this.categoryService = categoryService;
@@ -63,6 +65,7 @@ public class HomeController {
         this.orderDetailService = orderDetailService;
         this.cartService = cartService;
         this.productDetailRepository = productDetailRepository;
+        this.addressRepository = addressRepository;
     }
 
 
@@ -257,10 +260,24 @@ public class HomeController {
         Customer user = userRepo.findByEmail(email);
         List<Brand> brandsReputation = brandService.getAllBrands();
         Result result = null;
+       List<CartItem> list= shoppingCartService.getAllItems(user.getId());
+        List<ProductDetail> productDetails = productDetailRepository.findAllByProduct(list.stream()
+                .map(item -> item.getProductDetail().getProduct().getId())
+                .collect(Collectors.toList())
+        );
+        Set<Size> distinctSizes = new HashSet<>();
+        Set<Color> distinctColors = new HashSet<>();
+        for (ProductDetail detail : productDetails) {
+            distinctColors.add(detail.getColor());
+            distinctSizes.add(detail.getSize());
+        }
+
         model.addAttribute("listBrandsReputation", brandsReputation);
         model.addAttribute("result", result);
-        model.addAttribute("listItem", shoppingCartService.getAllItems(user.getId()));
+        model.addAttribute("listItem", list);
         model.addAttribute("total", shoppingCartService.getAmount());
+        model.addAttribute("sizes", distinctSizes);
+        model.addAttribute("colors", distinctColors);
         return "cart";
     }
 
@@ -284,7 +301,37 @@ public class HomeController {
         model.addAttribute("result", result);
         model.addAttribute("listItem", shoppingCartService.getAllItems(user.getId()));
         model.addAttribute("total", shoppingCartService.getAmount());
-        return "cart";
+        return "redirect:/cart";
+    }
+
+    @PostMapping("/update")
+    public String updateCartItem(
+            @RequestParam("id") int productId,
+            @RequestParam("color") int colorId,
+            @RequestParam("size") int sizeId,
+            @RequestParam("qty") int quantity,
+            RedirectAttributes redirectAttributes) {
+
+        try {
+            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            String email = null;
+            if (principal instanceof UserDetails) {
+                email = ((UserDetails) principal).getUsername();
+            } else if (principal instanceof String) {
+                email = (String) principal;
+            }
+
+            // Lấy User từ email
+            Customer user = userRepo.findByEmail(email);
+            Cart cart = cartService.getOneByUserId(user.getId());
+            shoppingCartService.updateCartItem(cart.getId(),productId,colorId, sizeId, quantity);
+            redirectAttributes.addFlashAttribute("successMessage", "Cart item updated successfully");
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("errorMessage", "Error updating cart item");
+        }
+
+        return "redirect:/cart"; // Redirect to the cart page or any other page as needed
     }
 
     @PostMapping("/buy-now")
@@ -303,6 +350,8 @@ public class HomeController {
 
         // Lấy User từ email
         Customer user = userRepo.findByEmail(email);
+        Address address = addressRepository.findByCustomerId(user.getId());
+        List<Address> allAddressByCusId = addressRepository.findByCusId(user.getId());
         model.addAttribute("user", userRepo.findByEmail(user.getEmail()));
         ProductDetail productDetail = productDetailRepository.getOneProductDetail(orderRequest.getProId(), orderRequest.getColorId(), orderRequest.getSizeId());
         model.addAttribute("listItem", productDetail);
@@ -310,6 +359,8 @@ public class HomeController {
         model.addAttribute("proId", orderRequest.getProId());
         model.addAttribute("sizeId", orderRequest.getSizeId());
         model.addAttribute("colorId", orderRequest.getColorId());
+        model.addAttribute("selectedAddressId",address.getId());
+        model.addAttribute("addresses",allAddressByCusId);
         model.addAttribute("total", productDetail.getPrice().multiply(new BigDecimal(orderRequest.getQuantity())));
         return "checkoutBuyNow";
     }
@@ -330,14 +381,19 @@ public class HomeController {
 
         // Lấy User từ email
         Customer user = userRepo.findByEmail(email);
+
+        Address address = addressRepository.findByCustomerId(user.getId());
+        List<Address> allAddressByCusId = addressRepository.findByCusId(user.getId());
         model.addAttribute("user", userRepo.findByEmail(user.getEmail()));
         model.addAttribute("listItem", shoppingCartService.getAllItems(user.getId()));
         model.addAttribute("total", shoppingCartService.getAmount());
+        model.addAttribute("selectedAddressId",address.getId());
+        model.addAttribute("addresses",allAddressByCusId);
         return "checkout";
     }
 
     @PostMapping("/checkout")
-    public String createOrder(@RequestParam("name_receiver") String nameReceiver, @RequestParam("phone_number_receiver") String phoneReceiver, @RequestParam(value = "address_receiver", defaultValue = "qn") String addressReceiver, @RequestParam("note") String note, @RequestParam("price") String price, @RequestParam("userId") Integer id, @RequestParam(value = "proId",required = false) int proId, @RequestParam(value = "sizeId",required = false) int sizeId, @RequestParam(value = "colorId",required = false) int colorId, @RequestParam(value = "quantity",required = false) int quantity, @RequestParam(value = "check",required = false) int check) {
+    public String createOrder(@RequestParam("name_receiver") String nameReceiver, @RequestParam("phone_number_receiver") String phoneReceiver, @RequestParam(value = "address_receiver") Integer addressReceiverRequest, @RequestParam("note") String note, @RequestParam("price") String price, @RequestParam("userId") Integer id, @RequestParam(value = "proId",required = false) int proId, @RequestParam(value = "sizeId",required = false) int sizeId, @RequestParam(value = "colorId",required = false) int colorId, @RequestParam(value = "quantity",required = false) int quantity, @RequestParam(value = "check",required = false) int check) {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String email = null;
         if (principal instanceof UserDetails) {
@@ -348,13 +404,28 @@ public class HomeController {
 
         // Lấy User từ email
         Customer user = userRepo.findByEmail(email);
-
-        Order order = orderService.createOrder(nameReceiver, phoneReceiver, addressReceiver, note, price, id);
-        Cart cart = cartService.getOneByUserId(user.getId());
-        if (check == 1) {
+        Address address = addressRepository.findById(addressReceiverRequest).get();
+        Order order = orderService.createOrder(nameReceiver, phoneReceiver, address.getNameAddress(), note, price, id);
             orderDetailService.createOrderDetail(proId, order.getId(), quantity, sizeId, colorId);
-            return "redirect:/";
-        } else {
+            return "success";
+
+    }
+    @PostMapping("/checkout-by-cart")
+    public String createOrderByCart(@RequestParam("name_receiver") String nameReceiver, @RequestParam("phone_number_receiver") String phoneReceiver, @RequestParam(value = "address_receiver") Integer addressReceiverRequest, @RequestParam("note") String note, @RequestParam("price") String price, @RequestParam("userId") Integer id) {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email = null;
+        if (principal instanceof UserDetails) {
+            email = ((UserDetails) principal).getUsername();
+        } else if (principal instanceof String) {
+            email = (String) principal;
+        }
+
+        // Lấy User từ email
+        Customer user = userRepo.findByEmail(email);
+        Address address = addressRepository.findById(addressReceiverRequest).get();
+
+        Order order = orderService.createOrder(nameReceiver, phoneReceiver, address.getNameAddress(), note, price, id);
+        Cart cart = cartService.getOneByUserId(user.getId());
             Collection<CartItem> cartItemMap = shoppingCartService.getAllItemsByCartId(cart.getId());
             for (var item : cartItemMap
             ) {
@@ -363,8 +434,7 @@ public class HomeController {
                 orderDetailService.createOrderDetail(product.getId(), order.getId(), item.getQuantity(), item.getProductDetail().getSize().getId(), item.getProductDetail().getColor().getId());
             }
             shoppingCartService.clear(cart.getId());
-            return "redirect:/cart";
-        }
+            return "success";
     }
 
     @GetMapping("/delete")

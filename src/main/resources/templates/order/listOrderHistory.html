@@ -13,28 +13,28 @@
     <table class="table table-striped">
         <thead>
         <tr>
-            <th>ID</th>
-            <th>Customer</th>
-                        <th>Code</th>
+<!--            <th>ID</th>-->
+<!--            <th>Tên khách hàng</th>-->
+                        <th>Mã hóa đơn</th>
             <!--            <th>Voucher</th>-->
-            <th>Create Date</th>
-            <th>Update Date</th>
+            <th>Ngày mua</th>
+<!--            <th>Update Date</th>-->
             <!--            <th>Status</th>-->
-            <th>Address Receiver</th>
-            <th>Name Receiver</th>
-            <th>Phone Receiver</th>
-            <th>Total Amount</th>
+            <th>Địa chỉ giao</th>
+            <th>Tên khách hàng</th>
+            <th>Số điện thoại đặt hàng</th>
+            <th>Tổng tiền</th>
             <th>Actions</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="order : ${orders}">
-            <td th:text="${order.id}">1</td>
-            <td th:text="${order.customer.code}">Customer</td>
+<!--            <td th:text="${order.id}">1</td>-->
+<!--            <td th:text="${order.customer.code}">Customer</td>-->
                         <td th:text="${order.code}"></td>
             <!--            <td th:text="${order.voucher.nameVoucher}">Voucher</td>-->
             <td th:text="${order.createDate}">2022-01-01</td>
-            <td th:text="${order.updateDate}">2022-01-01</td>
+<!--            <td th:text="${order.updateDate}">2022-01-01</td>-->
             <!--            <td th:text="${order.status == 0 ? 'Chờ xác nhận' :-->
             <!--              order.status == 1 ? 'Xác nhận' :-->
             <!--              order.status == 2 ? 'Đang giao hàng' :-->
@@ -47,13 +47,13 @@
             <td th:text="${order.totalAmount}">1000</td>
             <td>
                 <a class="btn btn-success" th:if="${order.status == 0}">Chờ xác nhận</a>
-                <a class="btn btn-danger" th:if="${order.status == 0}"
+                <a class="btn btn-danger" th:if="${order.status == 0 || order.status == 1 || order.status == 2}"
                    th:href="@{/order/cancelled/{id}(id=${order.id})}">Hủy</a>
                 <a class="btn btn-success" th:if="${order.status == 1}">Đã xác nhận</a>
                 <a class="btn btn-success" th:if="${order.status == 2}">Đang giao hàng</a>
                 <a class="btn btn-success" th:if="${order.status == 3}">Đã giao thành công</a>
-                <a class="btn btn-success" th:if="${order.status == 4}">Thành công</a>
-                <a class="btn btn-danger" th:if="${order.status == 5}">Đã hủy</a>
+<!--                <a class="btn btn-success" th:if="${order.status == 4}">Thành công</a>-->
+                <a class="btn btn-danger" th:if="${order.status == 4}">Đã hủy</a>
             </td>
             <!--            <td>-->
             <!--                <a class="btn btn-info" th:href="@{/order/edit/{id}(id=${order.id})}">Edit</a>-->

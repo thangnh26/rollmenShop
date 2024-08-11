@@ -5,6 +5,8 @@ import com.example.shopGiay.dto.ProductColorResponse;
 import com.example.shopGiay.dto.ProductDto;
 import com.example.shopGiay.dto.ProductSizeResponse;
 import com.example.shopGiay.model.Product;
+import com.example.shopGiay.model.ProductDetail;
+import com.example.shopGiay.repository.ProductDetailRepository;
 import com.example.shopGiay.repository.ProductRepository;
 import com.example.shopGiay.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +26,8 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     ProductRepository productRepository;
 
+    @Autowired
+    ProductDetailRepository productDetailRepository;
     @Override
     public List<Product> findAll(){
         List<Product> listProduct = productRepository.findAll();
@@ -70,8 +75,43 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public List<ProductSizeResponse> listSizeByList(List<Integer> productDetailIds) {
+        List<ProductSizeResponse> sizeResponses = new ArrayList<>();
+
+        // Assuming there's a method in your repository to fetch product details by their IDs
+        List<ProductDetail> productDetails = productDetailRepository.findAllByProduct(productDetailIds);
+
+//        for (ProductDetail productDetail : productDetails) {
+//            ProductSizeResponse response = new ProductSizeResponse();
+//            response.setSizeNumber(productDetail.getSize().getSizeNumber());
+//            response.setId(productDetail.getSize().getId());
+//            sizeResponses.add(response);
+//        }
+
+        return sizeResponses;
+    }
+
+
+    @Override
     public List<ProductColorResponse> listColor(int productId) {
         return productRepository.colorInProduct(productId);
+    }
+
+    @Override
+    public List<ProductColorResponse> listColorByList(List<Integer> productDetailIds) {
+        List<ProductColorResponse> sizeResponses = new ArrayList<>();
+
+        // Assuming there's a method in your repository to fetch product details by their IDs
+        List<ProductDetail> productDetails = productDetailRepository.findAllByProduct (productDetailIds);
+
+        for (ProductDetail productDetail : productDetails) {
+            ProductColorResponse response = new ProductColorResponse();
+            response.setNameColor(productDetail.getColor().getName());
+            response.setId(productDetail.getColor().getId());
+            sizeResponses.add(response);
+        }
+
+        return sizeResponses;
     }
 
     @Override

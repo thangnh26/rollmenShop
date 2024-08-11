@@ -34,8 +34,10 @@ public interface ProductService {
 //    List<ProductDto> getRandomListProduct(int limit);
 
     List<ProductSizeResponse> listSize(int productId);
+    List<ProductSizeResponse> listSizeByList(List<Integer> productDetailIds);
 
     List<ProductColorResponse> listColor(int productId);
+    List<ProductColorResponse> listColorByList(List<Integer> productDetailIds);
 
     List<ProductDto> getProductHot();
 }

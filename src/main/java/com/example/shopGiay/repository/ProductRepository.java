@@ -44,10 +44,8 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 //    @Query(value = "SELECT new com.example.shopGiay.dto.ProductDto(p.id,p.thumbnail,p.name,p.description,p.status,pd.quantity,pd.price) FROM product ORDER BY RAND()")
 //    List<ProductDto> getRandomListProduct(Pageable pageable);
 
-    @Query(value = "select new com.example.shopGiay.dto.ProductSizeResponse(s.id,pd.size.sizeNumber) from ProductDetail pd " +
-            "join Size s on pd.size.id = s.id " +
-            "join Color c on pd.color.id = c.id " +
-            "WHERE pd.product.id = :productId")
+    @Query(value = "select new com.example.shopGiay.dto.ProductSizeResponse(s.id,s.sizeNumber) from Size s " +
+            "where s.id in (select pd.size.id from ProductDetail pd where pd.product.id=:productId)")
     List<ProductSizeResponse> sizeInProductSize(int productId);
 
     @Query(value = "select distinct new com.example.shopGiay.dto.ProductColorResponse(c.id,c.name) from ProductDetail pd " +

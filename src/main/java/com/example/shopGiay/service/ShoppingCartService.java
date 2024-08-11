@@ -31,4 +31,6 @@ public interface ShoppingCartService {
     BigDecimal getAmount();
 
     void deletePro(int proId);
+
+    void updateCartItem(int cartId,int productId, int colorId, int sizeId, int quantity);
 }

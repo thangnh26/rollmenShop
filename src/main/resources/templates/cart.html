@@ -35,6 +35,7 @@
                             <tr>
                                 <th scope="col">Sản phẩm</th>
                                 <th scope="col">Đơn giá</th>
+                                <th scope="col">Màu sắc</th>
                                 <th scope="col" style="width: 10%;">Size</th>
                                 <th scope="col" style="width: 15%;">Số lượng</th>
                                 <th scope="col" style="width: 15%;">Chức năng</th>
@@ -60,11 +61,30 @@
                                             <h5 th:text="${#numbers.formatDecimal(item.productDetail.price, 0, 'COMMA', 0, 'POINT') +' đ'}"></h5>
                                         </td>
                                         <td>
-                                            <div class="default-select" id="default-select">
-                                                <input type="hidden" name="size" th:value="${item.productDetail.size.sizeNumber}">
-                                              <p th:text="${item.productDetail.size.sizeNumber}"></p>
+                                            <div class="default-select" id="default-select-color">
+                                                <select name="color" id="colorSelect" onchange="this.form.submit()">
+                                                    <option value="" disabled>Select a Color</option>
+                                                    <option th:each="color : ${colors}"
+                                                            th:value="${color.id}"
+                                                            th:text="${color.name}"
+                                                            th:selected="${color.id == item.productDetail.color.id}">
+                                                    </option>
+                                                </select>
                                             </div>
                                         </td>
+                                        <td>
+                                            <div class="default-select" id="default-select-size">
+                                                <select name="size" id="sizeSelect" onchange="this.form.submit()">
+                                                    <option value="" disabled>Select a Size</option>
+                                                    <option th:each="size : ${sizes}"
+                                                            th:value="${size.id}"
+                                                            th:text="${size.sizeNumber}"
+                                                            th:selected="${size.id == item.productDetail.size.id}">
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </td>
+
                                         <td>
                                             <div class="product_count">
                                                 <input type="number" min="1" name="qty" id="sst" maxlength="12" th:value="${item.quantity}" title="Số lượng:"
@@ -72,7 +92,7 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <a th:href="@{/delete(proId=${item.productDetail.product.id})}" th:class="ti-close"></a>
+                                            <a th:href="@{/delete(proId=${item.productDetail.id})}" th:class="ti-close"></a>
                                         </td>
                                     </tr>
 
@@ -94,9 +114,15 @@
                                     <td>
 
                                     </td>
+                                    <td>
+
+                                    </td>
                                 </tr>
 
                                 <tr th:if="${listItem.size() != 0}">
+                                    <td>
+
+                                    </td>
                                     <td>
 
                                     </td>

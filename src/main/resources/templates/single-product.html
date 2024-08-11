@@ -31,8 +31,10 @@
             <h3 th:text="${product.name}"></h3>
             <h2 th:text="${product.price}"> VNĐ</h2>
             Mô tả: <p th:utext="${product.description}"></p>
-            Số lượng còn: <p th:utext="${product.quantity}"></p>
-
+            <div style="display: flex">
+                <span>Số lượng còn:</span>
+                <p style="position: relative; bottom: 40px; left: 10px" th:utext="${product.quantity}"></p>
+            </div>
             <form id="productForm" method="post" class="col-lg-5">
                 <label>Size: </label>
                 <div class="default-select" id="default-select">
@@ -59,26 +61,32 @@
                     <span id="quantityError" style="color: red; display: none;"></span>
                 </div>
 
-<!--                    <h6>Số lượng còn: <h6 th:text="${product.quantity}"></h6></h6>-->
+                <!--                    <h6>Số lượng còn: <h6 th:text="${product.quantity}"></h6></h6>-->
 
                 <input type="hidden" name="proId" th:value="${product.id}">
                 <div class="button-container">
-                    <button type="button" class="primary-btn" onclick="submitForm('/add-cart')"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-cart" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                        <path d="M5 6h15l2 11H7l-2 -11" />
-                        <path d="M3 6v-2" />
-                        <path d="M7 6v-2" />
-                        <path d="M17 6v-2" />
-                        <path d="M20 6h-2v-2" />
-                        <path d="M7 19a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-                        <path d="M17 19a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-                    </svg>
+                    <button type="button" class="primary-btn" onclick="submitForm('/add-cart')">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-cart" width="24"
+                             height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                             stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M5 6h15l2 11H7l-2 -11"/>
+                            <path d="M3 6v-2"/>
+                            <path d="M7 6v-2"/>
+                            <path d="M17 6v-2"/>
+                            <path d="M20 6h-2v-2"/>
+                            <path d="M7 19a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/>
+                            <path d="M17 19a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/>
+                        </svg>
 
                     </button>
-                    <button type="button" class="primary-btn" onclick="submitForm('/buy-now')"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-plus" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                        <path d="M12 5v14m-7-7h14" />
-                    </svg>
+                    <button type="button" class="primary-btn" onclick="submitForm('/buy-now')">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-plus" width="24"
+                             height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                             stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M12 5v14m-7-7h14"/>
+                        </svg>
                     </button>
                 </div>
             </form>

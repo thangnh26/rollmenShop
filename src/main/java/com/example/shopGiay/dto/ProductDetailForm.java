@@ -11,17 +11,16 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductDetailForm {
-    private List<Integer> categoryId;
-    private List<Integer> brandId;
-    private List<Integer> materialId;
-    private List<Integer> soleId;
-    private List<Integer> sizeId;
-    private List<Integer> colorId;
+    private Integer categoryId;
+    private Integer brandId;
+    private Integer materialId;
+    private Integer soleId;
     private String name;
     private Integer quantity;
     private Double price;
     private String description;
     private MultipartFile thumbnailUrl;
-    // Getters and Setters
 }
+
+
 

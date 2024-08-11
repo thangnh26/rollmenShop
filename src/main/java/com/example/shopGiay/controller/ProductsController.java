@@ -2,6 +2,7 @@ package com.example.shopGiay.controller;
 
 
 import com.example.shopGiay.dto.ProductDetailForm;
+import com.example.shopGiay.dto.ProductDetailRequest;
 import com.example.shopGiay.dto.ProductDto;
 import com.example.shopGiay.model.*;
 import com.example.shopGiay.repository.*;
@@ -116,62 +117,97 @@ public class ProductsController {
 
     @PostMapping("/admin/createProduct")
     public String adminCreateProducts(@ModelAttribute ProductDetailForm productDTO,
+                                      @RequestParam("sizeIds") List<Integer> sizeIds,
+                                      @RequestParam("colorIds") List<Integer> colorIds,
                                       RedirectAttributes redirectAttributes) {
         try {
-            createProducts(productDTO);
-            redirectAttributes.addFlashAttribute("successMessage", "Products created successfully");
+            createProductAndDetails(productDTO, sizeIds, colorIds);
+            redirectAttributes.addFlashAttribute("successMessage", "Product created successfully with multiple details");
         } catch (IOException e) {
             e.printStackTrace();
-            redirectAttributes.addFlashAttribute("errorMessage", "Error creating products");
+            redirectAttributes.addFlashAttribute("errorMessage", "Error creating product");
         }
         return "redirect:/admin/products";
     }
-    private void createProducts(ProductDetailForm productDTO) throws IOException {
-        for (Integer categoryId : productDTO.getCategoryId()) {
-            for (Integer brandId : productDTO.getBrandId()) {
-                for (Integer materialId : productDTO.getMaterialId()) {
-                    for (Integer soleId : productDTO.getSoleId()) {
-                        for (Integer sizeId : productDTO.getSizeId()) {
-                            for (Integer colorId : productDTO.getColorId()) {
-                                createProduct(productDTO, categoryId, brandId, materialId, soleId, sizeId, colorId);
-                            }
-                        }
-                    }
-                }
+
+    private void createProductAndDetails(ProductDetailForm productDTO, List<Integer> sizeIds, List<Integer> colorIds) throws IOException {
+        Product product = createProduct(productDTO);
+
+        // Validate size and color lists
+        if (sizeIds == null || colorIds == null || sizeIds.isEmpty() || colorIds.isEmpty()) {
+            throw new IllegalArgumentException("Size IDs and Color IDs cannot be null or empty");
+        }
+
+        // Generate ProductDetailRequest for each combination of size and color
+        for (Integer sizeId : sizeIds) {
+            for (Integer colorId : colorIds) {
+                ProductDetailRequest detailRequest = new ProductDetailRequest();
+                detailRequest.setSizeId(sizeId);
+                detailRequest.setColorId(colorId);
+                detailRequest.setQuantity(productDTO.getQuantity());
+                detailRequest.setPrice(productDTO.getPrice());
+
+                createProductDetail(product, detailRequest);
             }
         }
     }
 
-    private void createProduct(ProductDetailForm productDTO, Integer categoryId, Integer brandId, Integer materialId,
-                               Integer soleId, Integer sizeId, Integer colorId) throws IOException {
-        Product product = new Product();
-        String filename = StringUtils.cleanPath(productDTO.getThumbnailUrl().getOriginalFilename());
-        product.setName(productDTO.getName());
-        product.setDescription(productDTO.getDescription());
-        Category category = categoryRepository.getById(categoryId);
-        product.setCategory(category);
-        Brand brand = brandRepository.getById(brandId);
-        product.setBrand(brand);
-        Material material = materialRepository.getById(materialId);
-        product.setMaterial(material);
-        Sole sole = soleRepository.getById(soleId);
-        product.setSole(sole);
-        product.setThumbnail("~/img/product/" + filename);
-        product.setStatus(1);
+    private void createProductDetail(Product product, ProductDetailRequest detailRequest) {
+        if (detailRequest.getSizeId() == null || detailRequest.getColorId() == null || detailRequest.getQuantity() == null || detailRequest.getPrice() == null) {
+            throw new IllegalArgumentException("Product detail fields cannot be null");
+        }
 
         ProductDetail productDetail = new ProductDetail();
         productDetail.setProduct(product);
-        Size size = sizeRepository.getById(sizeId);
+
+        Size size = sizeRepository.findById(detailRequest.getSizeId())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid size ID"));
         productDetail.setSize(size);
-        Color color = colorRepository.getById(colorId);
+
+        Color color = colorRepository.findById(detailRequest.getColorId())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid color ID"));
         productDetail.setColor(color);
-        productDetail.setQuantity(productDTO.getQuantity());
-        productDetail.setPrice(BigDecimal.valueOf(productDTO.getPrice()));
+
+        productDetail.setQuantity(detailRequest.getQuantity());
+        productDetail.setPrice(BigDecimal.valueOf(detailRequest.getPrice()));
         productDetail.setStatus(1);
 
-        productRepository.save(product);
         productDetailRepository.save(productDetail);
+    }
+    private Product createProduct(ProductDetailForm productDTO) throws IOException {
+        // Create a new Product instance
+        Product product = new Product();
+        String filename = StringUtils.cleanPath(productDTO.getThumbnailUrl().getOriginalFilename());
 
+        // Set product attributes
+        product.setName(productDTO.getName());
+        product.setDescription(productDTO.getDescription());
+
+        // Fetch and set product category, brand, material, and sole
+        Category category = categoryRepository.findById(productDTO.getCategoryId())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid category ID"));
+        product.setCategory(category);
+
+        Brand brand = brandRepository.findById(productDTO.getBrandId())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid brand ID"));
+        product.setBrand(brand);
+
+        Material material = materialRepository.findById(productDTO.getMaterialId())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid material ID"));
+        product.setMaterial(material);
+
+        Sole sole = soleRepository.findById(productDTO.getSoleId())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid sole ID"));
+        product.setSole(sole);
+
+        // Set thumbnail URL and status
+        product.setThumbnail("~/img/product/" + filename);
+        product.setStatus(1);
+
+        // Save product to the repository
+        productRepository.save(product);
+
+        // Save the thumbnail image
         String uploadDir = "./src/main/resources/static/img/product/";
         Path uploadPath = Paths.get(uploadDir);
         if (!Files.exists(uploadPath)) {
@@ -181,9 +217,14 @@ public class ProductsController {
             Path filePath = uploadPath.resolve(filename);
             Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-            throw new IOException("Cannot upload file: " + filename);
+            throw new IOException("Cannot upload file: " + filename, e);
         }
+
+        return product;
     }
+
+
+
 //    public String adminCreateProduct(@RequestParam("name") String name,
 //                                     @RequestParam("categoryId") Integer categoryId,
 //                                     @RequestParam("brandId") Integer brandId,
@@ -302,7 +343,7 @@ public class ProductsController {
     @GetMapping("/admin/product/{id}")
     public String productDetail(Model model,@PathVariable("id") Integer id){
         ProductDto product = productService.getDetailProductById(id);
-        List<ProductDetail> listSize = productDetailRepository.findAllByProductId(id);
+        List<ProductDetail> listSize = productDetailRepository.findByProductId(id);
         model.addAttribute("product",product);
         model.addAttribute("listSize",listSize);
         return "admin/product/productDetail";

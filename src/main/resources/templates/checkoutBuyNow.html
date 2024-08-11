@@ -42,9 +42,17 @@
                                 <div class="col-md-12 form-group p_star">
                                     <input type="text" class="form-control" id="number" name="phone_number_receiver" placeholder="Số điện thoại người nhận" th:value="${user.phoneNumber}" required minlength="10" maxlength="15">
                                 </div>
-                                <div class="col-md-12 form-group p_star">
-<!--                                    <input type="text" class="form-control" id="add1" name="address_receiver" placeholder="Địa chỉ nhận hàng" th:value="${user.address.nameAddress}" required minlength="20">-->
-                                </div>
+                            <div class="col-md-12 form-group p_star">
+                                <!--                        <label style="display: flex" for="address_receiver">Địa chỉ nhận hàng</label>-->
+                                <select id="address_receiver" name="address_receiver" class="form-control" required>
+                                    <option value="" disabled selected>Chọn địa chỉ</option>
+                                    <option th:each="addr : ${addresses}"
+                                            th:value="${addr.id}"
+                                            th:text="${addr.nameAddress}"
+                                            th:selected="${addr.id == selectedAddressId}">
+                                    </option>
+                                </select>
+                            </div>
                                 <div class="col-md-12 form-group">
                                     <div class="creat_account">
                                         <h3>Chi tiết vận chuyển</h3>
@@ -59,14 +67,16 @@
                                 <table class="d-inline-flex" style="width: 100%;">
                                     <tbody style="width: 100%;">
                                     <tr style="width: 100%;">
-                                        <th style="width: 70%;">Sản phẩm</th>
+                                        <th style="width: 50%;">Sản phẩm</th>
                                         <th style="width: 10%;">Size</th>
-                                        <th style="width: 20%;">Số lượng</th>
+                                        <th style="width: 35%;">Số lượng</th>
+                                        <th style="width: 5%;">Màu</th>
                                     </tr>
                                     <tr style="width: 100%;" th:each="item: ${listItem}">
                                         <td th:text="${item.product.name}"></td>
                                         <td style="justify-content: center;" th:text="${item.size.sizeNumber}"></td>
                                         <td th:text="${quantity}"></td>
+                                        <td th:text="${item.color.name}"></td>
                                     </tr>
                                     </tbody>
                                 </table>

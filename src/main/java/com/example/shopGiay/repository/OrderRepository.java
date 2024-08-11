@@ -18,7 +18,7 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
 
     @Query(value = "select od from Order od where " +
 //            "od.customer.id = :cusId and " +
-            "(:#{#codeCustomer} is null or :#{#codeCustomer}='' or lower(od.customer.code) like lower(concat('%', :#{#codeCustomer}, '%'))) and " +
+            "(:#{#codeCustomer} is null or :#{#codeCustomer}='' or lower(od.code) like lower(concat('%', :#{#codeCustomer}, '%'))) and " +
             "(:#{#status} is null or :#{#status}=od.status) and " +
             "(:#{#phone} is null or :#{#phone}='' or od.phoneReceiver like concat('%', :#{#phone}, '%'))"
     )

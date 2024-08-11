@@ -6,10 +6,10 @@
 </head>
 <body>
 <div class="container">
-    <h1>Order List</h1>
+    <h1>Danh sách hóa đơn</h1>
 <!--    <a class="btn btn-primary" th:href="@{/order/new}">Add New Order</a>-->
     <form th:action="@{/order}" method="get" class="form-inline mt-2">
-        <input class="form-control mr-sm-2" type="search" placeholder="Search by customer code" aria-label="Search" name="codeCustomer" th:value="${codeCustomer != null ? codeCustomer : ''}">
+        <input class="form-control mr-sm-2" type="search" placeholder="Tìm kiếm theo mã hóa đơn" aria-label="Search" name="codeCustomer" th:value="${codeCustomer != null ? codeCustomer : ''}">
         <select class="form-control mr-sm-2" name="status" aria-label="Search">
             <option value="" th:selected="${status != null && status == null}">Tất cả</option>
             <option value="0" th:selected="${status != null && status == 0}">Chờ xác nhận</option>
@@ -18,7 +18,7 @@
             <option value="3" th:selected="${status != null && status == 3}">Giao hàng thành công</option>
             <option value="4" th:selected="${status != null && status == 4}">Hủy</option>
         </select>
-        <input class="form-control mr-sm-2" type="search" placeholder="Search by phone" aria-label="Search" name="phone" th:value="${phone != null ? phone : ''}">
+        <input class="form-control mr-sm-2" type="search" placeholder="Tìm kiếm theo số điện thoại" aria-label="Search" name="phone" th:value="${phone != null ? phone : ''}">
         <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
     </form>
 
@@ -26,16 +26,16 @@
         <thead>
         <tr>
             <th>ID</th>
-            <th>Customer</th>
+            <th>Mã hóa đơn</th>
 <!--            <th>Staff</th>-->
 <!--            <th>Voucher</th>-->
-            <th>Create Date</th>
-            <th>Update Date</th>
-            <th>Status</th>
-            <th>Address Receiver</th>
-            <th>Name Receiver</th>
-            <th>Phone Receiver</th>
-            <th>Total Amount</th>
+            <th>Ngày tạo</th>
+            <th>Ngày sửa</th>
+            <th>Trạng thái</th>
+            <th>Địa chỉ</th>
+            <th>Tên khách hàng</th>
+            <th>Số điện thoại</th>
+            <th>Tổng tiền</th>
             <th>Actions</th>
         </tr>
         </thead>

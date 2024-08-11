@@ -1,6 +1,7 @@
 package com.example.shopGiay.repository;
 
 import com.example.shopGiay.dto.AddCart;
+import com.example.shopGiay.dto.CartRequesst;
 import com.example.shopGiay.model.Cart;
 import com.example.shopGiay.model.CartItem;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CartItemRepository extends JpaRepository<CartItem,Integer> {
@@ -29,7 +31,7 @@ public interface CartItemRepository extends JpaRepository<CartItem,Integer> {
     @Transactional
     @Modifying
     @Query(value = "INSERT INTO `dbshopgiay`.`cart_item` (`quantity`, `cart_id`, `product_detail_id`) VALUES (:#{#addCart.quantity}, :#{#addCart.cartId}, :#{#addCart.proId})", nativeQuery = true)
-    void create(AddCart addCart);
+    void create(CartRequesst addCart);
 
     @Transactional
     @Modifying
@@ -64,4 +66,7 @@ public interface CartItemRepository extends JpaRepository<CartItem,Integer> {
     @Modifying
     @Query(value = "delete from `dbshopgiay`.`cart_item` where `product_detail_id`=:proId", nativeQuery = true)
     void deleteByIdPro(int proId);
+
+    @Query(value = "select ci from CartItem ci where ci.productDetail.product.id=:id and ci.cart.id=:cartId")
+    Optional<CartItem> findByProductIdAndColorIdAndSizeId(int id, int cartId);
 }

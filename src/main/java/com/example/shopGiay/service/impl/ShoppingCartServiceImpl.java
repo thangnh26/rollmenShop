@@ -1,9 +1,11 @@
 package com.example.shopGiay.service.impl;
 
 import com.example.shopGiay.dto.AddCart;
+import com.example.shopGiay.dto.CartRequesst;
 import com.example.shopGiay.dto.OrderRequest;
 import com.example.shopGiay.dto.Result;
 import com.example.shopGiay.model.CartItem;
+import com.example.shopGiay.model.ProductDetail;
 import com.example.shopGiay.repository.CartItemRepository;
 import com.example.shopGiay.repository.ProductDetailRepository;
 import com.example.shopGiay.repository.ProductRepository;
@@ -59,14 +61,27 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
             } else {
                 if(cartItemRepository.getOneByCusId(cusId)==null){
                     cartItemRepository.addCart(cusId);
-                    addCart.setCartId(cartItemRepository.getOneByCusId(cusId));
-                    cartItemRepository.create(addCart);
+                    int cartId = cartItemRepository.getOneByCusId(cusId);
+                    addCart.setCartId(cartId);
+                    int proDetailid = productDetailRepository.getOneProductDetail(addCart.getProId(),addCart.getColorId(),addCart.getSizeId()).getId();
+
+                    CartRequesst cartRequesst = new CartRequesst();
+                    cartRequesst.setCartId(cartId);
+                    cartRequesst.setQuantity(addCart.getQuantity());
+                    cartRequesst.setProId(proDetailid);
+                    cartItemRepository.create(cartRequesst);
                     return new Result(true, "New cart item added successfully");
 //                    return null;
                 }
                 else {
-                    addCart.setCartId(cartItemRepository.getOneByCusId(cusId));
-                    cartItemRepository.create(addCart);
+                    int cartId = cartItemRepository.getOneByCusId(cusId);
+                    int proDetailid = productDetailRepository.getOneProductDetail(addCart.getProId(),addCart.getColorId(),addCart.getSizeId()).getId();
+                    addCart.setCartId(cartId);
+                    CartRequesst cartRequesst = new CartRequesst();
+                    cartRequesst.setCartId(cartId);
+                    cartRequesst.setQuantity(addCart.getQuantity());
+                    cartRequesst.setProId(proDetailid);
+                    cartItemRepository.create(cartRequesst);
                     return new Result(true, "New cart item added successfully");
                 }
             }
@@ -131,5 +146,25 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Override
     public void deletePro(int proId) {
         cartItemRepository.deleteByIdPro(proId);
+    }
+
+    @Override
+    public void updateCartItem(int cartId,int productId, int colorId, int sizeId, int quantity) {
+
+        ProductDetail productDetail = productDetailRepository.getOneProductDetail(productId,colorId,sizeId);
+        // Fetch the cart item from the database based on productId, colorId, and sizeId
+        CartItem cartItem = cartItemRepository.findByProductIdAndColorIdAndSizeId(productId, cartId)
+                .orElseThrow(() -> new IllegalArgumentException("Cart item not found"));
+
+        // Update the quantity
+        cartItem.setQuantity(quantity);
+        if (productDetail != cartItem.getProductDetail()){
+            cartItem.setProductDetail(productDetail);
+            cartItemRepository.save(cartItem);
+        }
+//        cartItem.setProductDetail(productDetail);
+
+        // Save the updated cart item
+        cartItemRepository.save(cartItem);
     }
 }

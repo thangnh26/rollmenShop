@@ -1,14 +1,8 @@
 package com.example.shopGiay.service.impl;
 
 import com.example.shopGiay.dto.SearchOrder;
-import com.example.shopGiay.model.Customer;
-import com.example.shopGiay.model.Order;
-import com.example.shopGiay.model.OrderDetail;
-import com.example.shopGiay.model.User;
-import com.example.shopGiay.repository.CustomerRepository;
-import com.example.shopGiay.repository.OrderDetailRepository;
-import com.example.shopGiay.repository.OrderRepository;
-import com.example.shopGiay.repository.UserRepository;
+import com.example.shopGiay.model.*;
+import com.example.shopGiay.repository.*;
 import com.example.shopGiay.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,6 +23,8 @@ public class OrderServiceImpl implements OrderService {
     CustomerRepository customerRepository;
     @Autowired
     OrderDetailRepository orderDetailRepository;
+    @Autowired
+    ProductDetailRepository productDetailRepository;
 
     @Override
     public List<Order> getAllOrders() {
@@ -68,7 +64,6 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order createOrder(String nameReceiver, String phoneReceiver, String addressReceiver, String note, String price, Integer id) {
         Order order = new Order();
-        User user = userRepository.getById(id);
         Customer customer = customerRepository.getById(id);
         order.setCustomer(customer);
 //        order.setCreatedAt(new Timestamp(System.currentTimeMillis()));
@@ -80,7 +75,7 @@ public class OrderServiceImpl implements OrderService {
         order.setNote(note);
         order.setStatus(0);
         orderRepository.save(order);
-        user.setStatus(true);
+//        customer.setStatus(true);
         return order;
     }
 
@@ -88,16 +83,38 @@ public class OrderServiceImpl implements OrderService {
     public void confirmPayment(Integer id) {
         Order order = orderRepository.findByIdOder(id);
         List<OrderDetail> list = orderDetailRepository.findAllByOrderId(order.getId());
-        for (OrderDetail listOrder : list){
-            if (listOrder.getQuantity() > listOrder.getProductDetail().getQuantity()){
-                throw new NotFoundException("không đủ số lượng cho sản phẩm: " + listOrder.getProductDetail().getProduct().getName());
+
+        // Check if there's enough quantity for all products in the order
+        for (OrderDetail orderDetail : list) {
+            ProductDetail productDetail = orderDetail.getProductDetail();
+            if (orderDetail.getQuantity() > productDetail.getQuantity()) {
+                throw new NotFoundException("Không đủ số lượng cho sản phẩm: " + productDetail.getProduct().getName());
             }
         }
-        orderRepository.confirm(id,1);
+
+        // Deduct quantities if all checks pass
+        for (OrderDetail orderDetail : list) {
+            ProductDetail productDetail = orderDetail.getProductDetail();
+            productDetail.setQuantity(productDetail.getQuantity() - orderDetail.getQuantity());
+            productDetailRepository.save(productDetail);
+        }
+
+        // Confirm the order
+        orderRepository.confirm(id, 1);
     }
+
 
     @Override
     public void cancelled(Integer id) {
+        Order order = orderRepository.findByIdOder(id);
+        List<OrderDetail> list = orderDetailRepository.findAllByOrderId(order.getId());
+
+        // Deduct quantities if all checks pass
+        for (OrderDetail orderDetail : list) {
+            ProductDetail productDetail = orderDetail.getProductDetail();
+            productDetail.setQuantity(productDetail.getQuantity() + orderDetail.getQuantity());
+            productDetailRepository.save(productDetail);
+        }
         orderRepository.confirm(id,4);
     }
 

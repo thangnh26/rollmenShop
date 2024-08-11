@@ -18,5 +18,10 @@ public interface ProductDetailRepository extends JpaRepository<ProductDetail, In
     ProductDetail findByProductIdAndSizeId(int productId, int sizeId);
 
     @Query(nativeQuery = true, value ="SELECT * FROM dbshopgiay1.product_detail WHERE product_id = ?1")
-    List<ProductDetail> findAllByProductId(int productId);
-}
+    List<ProductDetail> findByProductId(int productId);
+
+    @Query(value = "SELECT DISTINCT pd.id, pd.* " +
+            "FROM product_detail pd " +
+            "JOIN product p ON pd.product_id = p.id " +
+            "WHERE p.id IN(:productIds)",nativeQuery = true)
+    List<ProductDetail> findAllByProduct(List<Integer> productIds);}
