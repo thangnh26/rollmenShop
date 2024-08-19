@@ -2,25 +2,25 @@ package com.example.shopGiay.controller;
 
 import com.example.shopGiay.dto.*;
 import com.example.shopGiay.model.*;
-import com.example.shopGiay.repository.AddressRepository;
-import com.example.shopGiay.repository.ProductDetailRepository;
-import com.example.shopGiay.repository.RolesRepository;
-import com.example.shopGiay.repository.UserRepository;
+import com.example.shopGiay.repository.*;
 import com.example.shopGiay.service.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.security.Principal;
 import java.text.DecimalFormat;
@@ -48,9 +48,11 @@ public class HomeController {
     private final CartService cartService;
     private final ProductDetailRepository productDetailRepository;
     private final AddressRepository addressRepository;
+    private final CustomerRepository customerRepository;
 
 
-    public HomeController(BrandService brandService, ProductService productService, CategoryService categoryService, MaterialService materialService, SoleService soleService, CommentService commentService, ShoppingCartService shoppingCartService, ColorService colorService, UserRepository userRepo, RolesRepository rolesRepository, OrderService orderService, OrderDetailService orderDetailService, CartService cartService, ProductDetailRepository productDetailRepository, AddressRepository addressRepository) {
+
+    public HomeController(BrandService brandService, ProductService productService, CategoryService categoryService, MaterialService materialService, SoleService soleService, CommentService commentService, ShoppingCartService shoppingCartService, ColorService colorService, UserRepository userRepo, RolesRepository rolesRepository, OrderService orderService, OrderDetailService orderDetailService, CartService cartService, ProductDetailRepository productDetailRepository, AddressRepository addressRepository, CustomerRepository customerRepository) {
         this.brandService = brandService;
         this.productService = productService;
         this.categoryService = categoryService;
@@ -66,6 +68,7 @@ public class HomeController {
         this.cartService = cartService;
         this.productDetailRepository = productDetailRepository;
         this.addressRepository = addressRepository;
+        this.customerRepository = customerRepository;
     }
 
 
@@ -78,25 +81,66 @@ public class HomeController {
         model.addAttribute("listBrandsReputation", brandsReputation);
 
         //Lấy 3 sản phẩm mới nhất
-        List<ProductDto> newProductsBanner = productService.getListNewProducts(3);
+        List<Product> newProductsBanner = productService.getListNewProducts(3);
         model.addAttribute("newProducts", newProductsBanner);
 
         //Lấy 8 sản phẩm mới nhất
-        List<ProductDto> newProducts = productService.getListNewProducts(3);
+        List<Product> newProducts = productService.getListNewProducts(3);
         model.addAttribute("listNewProduct", newProducts);
 //        List<ProductDto> newProducts = productService.getListNewProducts(8);
 //        model.addAttribute("listNewProduct", newProducts);
 
         //sp bán chạy
-        List<ProductDto> productHot = productService.getProductHot();
+        List<Product> productHot = productService.getProductHot();
         model.addAttribute("hot", productHot);
+
+
+        List<BigDecimal> price = productDetailRepository.findListPricreByProductId(newProducts.stream().map(Product::getId).collect(Collectors.toList()));
+
         //Lấy 8 sản phẩm ngẫu nhiên
-        List<ProductDto> randomProducts = productService.getListNewProducts(3);
+        List<Product> randomProducts = productService.getListNewProducts(3);
+        List<BigDecimal> priceRandomProducts = productDetailRepository.findListPricreByProductId(randomProducts.stream().map(Product::getId).collect(Collectors.toList()));
+
         model.addAttribute("listRandomProduct", randomProducts);
-//        List<ProductDto> randomProducts = productService.getRandomListProduct(8);
-//        model.addAttribute("listRandomProduct",randomProducts);8
+        model.addAttribute("price", price);
+        model.addAttribute("priceRandomProducts", priceRandomProducts);
 
         return "index";
+    }
+    @GetMapping("/add-address")
+    public String showAddForm(Address address) {
+        return "addAddress";
+    }
+    @PostMapping("/add-address")
+    public String addAddress(@Valid Address address, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            return "addAddress";
+        }
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email = null;
+        if (principal instanceof UserDetails) {
+            email = ((UserDetails) principal).getUsername();
+        } else if (principal instanceof String) {
+            email = (String) principal;
+        }
+
+        // Lấy User từ email
+        Customer user = userRepo.findByEmail(email);
+        address.setCustomer(user);
+        addressRepository.save(address);
+        return "redirect:/user/profile";
+    }
+    @GetMapping("/order-detail-customer")
+    public String getOderDetail(@RequestParam("id")Integer id,Model model){
+        List<OrderDetail> orderDetail = orderDetailService.getById(id);
+        Order oder = orderDetailService.getOrderById(id);
+        if (orderDetail == null || orderDetail.isEmpty()) {
+            // Handle case when no order details are found
+            return "error/404";
+        }
+        model.addAttribute("orderDetail",orderDetail);
+        model.addAttribute("oder",oder);
+        return "orderDetail";
     }
 
     @GetMapping("/{id}")
@@ -107,31 +151,33 @@ public class HomeController {
         model.addAttribute("listBrandsReputation", brandsReputation);
 
         //Lấy thông tin sản phẩm
-        ProductDto productDto;
-        try {
-            productDto = productService.getDetailProductById(id);
-        } catch (Exception ex) {
-            return "error/404";
-        }
+        Product product;
+//        try {
+            product = productService.getDetailProductById(id);
+//        } catch (Exception ex) {
+//            return "error/404";
+//        }
 
         //Phân trang comment
         int currentPage = page.orElse(1);
         int sizePage = size.orElse(4);
         Pageable pageable = PageRequest.of(currentPage - 1, sizePage);
         Page<Comment> listComment = commentService.findAllByProductId(id, pageable);
+        ProductDetail productDetail = productDetailRepository.findPricreByProductId(product.getId());
 
         // Định dạng số với 2 chữ số sau dấu phẩy và dấu phẩy ngăn cách mỗi 3 chữ số
         DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.US);
         symbols.setGroupingSeparator(',');
         DecimalFormat df = new DecimalFormat("#,##0.00", symbols);
-        String formatPrice = df.format(productDto.getPrice());
+        String formatPrice = df.format(productDetail.getPrice());
 
         // Loại bỏ dấu phẩy trước khi chuyển đổi lại thành BigDecimal
         String plainStringPrice = formatPrice.replace(",", "");
         BigDecimal formatBig = new BigDecimal(plainStringPrice);
-        productDto.setPrice(formatBig);
+        productDetail.setPrice(formatBig);
 
-        model.addAttribute("product", productDto);
+        model.addAttribute("product", product);
+        model.addAttribute("productDetail", productDetail);
         model.addAttribute("listCommnet", listComment);
 
         int totalPage = listComment.getTotalPages();
@@ -181,6 +227,19 @@ public class HomeController {
 
         return "single-product";
     }
+    @GetMapping("/product-detail/quantity")
+    @ResponseBody
+    public Map<String, Integer> getProductDetailQuantity(@RequestParam("sizeId") Integer sizeId,
+                                                         @RequestParam("colorId") Integer colorId,
+                                                         @RequestParam("productId") Integer productId) {
+        ProductDetail productDetail = productDetailRepository.findBySizeIdAndColorIdAndProductId(sizeId, colorId, productId);
+
+        Map<String, Integer> response = new HashMap<>();
+        response.put("quantity", productDetail != null ? productDetail.getQuantity() : 0);
+
+        return response;
+    }
+
 
 
     @GetMapping("/product")
@@ -189,7 +248,8 @@ public class HomeController {
                                   @RequestParam("size") Optional<Integer> size,
                                   @RequestParam("category") Optional<Integer> category,
                                   @RequestParam("material") Optional<Integer> material,
-                                  @RequestParam("sole") Optional<Integer> sole, HttpServletRequest request) {
+                                  @RequestParam("sole") Optional<Integer> sole, HttpServletRequest request,
+                                  @PageableDefault(size = 8) Pageable pageable) {
         String currentUrl = request.getRequestURI();
         model.addAttribute("currentUrl", currentUrl);
         List<Category> categoryReputation = categoryService.getAllCategory();
@@ -210,13 +270,15 @@ public class HomeController {
         int currentPage = page.orElse(1);//Trang hiển thị
         int sizePage = size.orElse(8);//Kích thước sản phẩm trong 1 trang
 
-        Pageable pageable = PageRequest.of(currentPage - 1, sizePage);
+//        Pageable pageable = PageRequest.of(currentPage - 1, sizePage);
 
-        Page<ProductDto> listProduct = productService.searchProduct(keyword, pageable);//Lấy các
-        model.addAttribute("listProduct", listProduct);
+        Page<Product> pageProduct = productService.searchProduct(keyword, pageable);//Lấy các
+        List<BigDecimal> price = productDetailRepository.findListPricreByProductId(pageProduct.getContent().stream().map(Product::getId).collect(Collectors.toList()));
+        model.addAttribute("listProduct", pageProduct);
+        model.addAttribute("price", price);
         model.addAttribute("keyword", keyword);
 
-        int totalPage = listProduct.getTotalPages();
+        int totalPage = pageProduct.getTotalPages();
         if (totalPage > 0) {
             int start = Math.max(1, currentPage - 2);
             int end = Math.min(currentPage + 2, totalPage);
@@ -429,7 +491,7 @@ public class HomeController {
             Collection<CartItem> cartItemMap = shoppingCartService.getAllItemsByCartId(cart.getId());
             for (var item : cartItemMap
             ) {
-                ProductDto productDto = productService.getDetailProductById(item.getProductDetail().getProduct().getId());
+                Product productDto = productService.getDetailProductById(item.getProductDetail().getProduct().getId());
                 Product product = new ModelMapper().map(productDto, Product.class);
                 orderDetailService.createOrderDetail(product.getId(), order.getId(), item.getQuantity(), item.getProductDetail().getSize().getId(), item.getProductDetail().getColor().getId());
             }
@@ -475,16 +537,19 @@ public class HomeController {
         }
 
         // Tạo người dùng mới
-        User newUser = new User();
+        Customer newUser = new Customer();
+        Random random = new Random();
+        int randomDigits = 100 + random.nextInt(900);
+        newUser.setCode("KH"+randomDigits);
         newUser.setEmail(email);
         newUser.setPassword(password); // Không mã hóa mật khẩu
         newUser.setFirstName(firstName);
         newUser.setLastName(lastName);
-        newUser.setAddress(address);
+//        newUser.setAddress(address);
         newUser.setPhoneNumber(phoneNumber);
-        newUser.setStatus(true); // Hoặc set tùy thuộc vào logic của bạn
+//        newUser.setStatus(true); // Hoặc set tùy thuộc vào logic của bạn
 
-        userRepo.save(newUser);
+        customerRepository.save(newUser);
 
         // Đăng ký thành công, chuyển hướng về trang đăng nhập
         return "redirect:/login";

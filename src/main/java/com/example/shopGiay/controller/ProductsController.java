@@ -1,9 +1,7 @@
 package com.example.shopGiay.controller;
 
 
-import com.example.shopGiay.dto.ProductDetailForm;
-import com.example.shopGiay.dto.ProductDetailRequest;
-import com.example.shopGiay.dto.ProductDto;
+import com.example.shopGiay.dto.*;
 import com.example.shopGiay.model.*;
 import com.example.shopGiay.repository.*;
 import com.example.shopGiay.service.*;
@@ -224,63 +222,6 @@ public class ProductsController {
     }
 
 
-
-//    public String adminCreateProduct(@RequestParam("name") String name,
-//                                     @RequestParam("categoryId") Integer categoryId,
-//                                     @RequestParam("brandId") Integer brandId,
-//                                     @RequestParam("materialId") Integer materialId,
-//                                     @RequestParam("soleId") Integer soleId,
-//                                     @RequestParam("sizeId") int idSize,
-//                                     @RequestParam("colorId") int idColor,
-//                                     @RequestParam("quantity") int quantity,
-//                                     @RequestParam("price") BigDecimal price,
-//                                     @RequestParam("description") String description,
-//                                     @RequestParam("thumbnailUrl") MultipartFile multipartFile) throws IOException {
-//        Product product = new Product();
-//        String filename = StringUtils.cleanPath(multipartFile.getOriginalFilename());
-//        product.setName(name);
-//        product.setDescription(description);
-//        Category category = categoryRepository.getById(categoryId);
-//        product.setCategory(category);
-//        Brand brand = brandRepository.getById(brandId);
-//        product.setBrand(brand);
-//        Material material = materialRepository.getById(materialId);
-//        product.setMaterial(material);
-//        Sole sole = soleRepository.getById(soleId);
-//        product.setSole(sole);
-//        product.setThumbnail("~/img/product/"+filename);
-//        ProductDetail productdetail = new ProductDetail();
-//        product.setStatus(1);
-//        productdetail.setProduct(product);
-//        Size size = sizeRepository.getById(idSize);
-//        productdetail.setSize(size);
-//        Color color = colorRepository.getById(idColor);
-//        productdetail.setColor(color);
-//        productdetail.setQuantity(quantity);
-//        productdetail.setPrice(price);
-//        productdetail.setStatus(1);
-//        productRepository.save(product);
-//        categoryRepository.save(category);
-//        brandRepository.save(brand);
-//        materialRepository.save(material);
-//        soleRepository.save(sole);
-//        productDetailRepository.save(productdetail);
-//
-//        String uploadDir = "./src/main/resources/static/img/product/";
-//        Path uploadPath = Paths.get(uploadDir);
-//        if(!Files.exists(uploadPath)){
-//            Files.createDirectories(uploadPath);
-//        }
-//        try{
-//            InputStream inputStream = multipartFile.getInputStream();
-//            Path filePath = uploadPath.resolve(filename);
-//            Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
-//        }catch (IOException e){
-//            throw new IOException("Không thể tải file: "+filename);
-//        }
-//        return "redirect:/admin/products";
-//    }
-
     @GetMapping("/products")
     public String showListProduct(Model model, @RequestParam( name = "name", required = false) String keyword,
                                   @RequestParam("page") Optional<Integer> page,
@@ -315,7 +256,7 @@ public class ProductsController {
 
         Pageable pageable = PageRequest.of(currentPage - 1,sizePage);
 
-        Page<ProductDto> listProduct = productService.searchProduct(keyword,pageable);//Lấy các
+        Page<Product> listProduct = productService.searchProduct(keyword,pageable);//Lấy các
         model.addAttribute("listProduct", listProduct);
         model.addAttribute("keyword",keyword);
 
@@ -342,14 +283,31 @@ public class ProductsController {
 
     @GetMapping("/admin/product/{id}")
     public String productDetail(Model model,@PathVariable("id") Integer id){
-        ProductDto product = productService.getDetailProductById(id);
-        List<ProductDetail> listSize = productDetailRepository.findByProductId(id);
+        List<ProductDetail> product = productService.getListDetailProductById(id);
         model.addAttribute("product",product);
-        model.addAttribute("listSize",listSize);
         return "admin/product/productDetail";
     }
 
-//    @PostMapping("/admin/product/{id}/update")
+    @PostMapping("/updateProduct")
+    public String updateProduct(@RequestParam("id") Integer id,
+                                @RequestParam("price") BigDecimal price,
+                                @RequestParam("quantity") Integer quantity,
+                                Model model) {
+
+        try {
+            // Call the service layer to update the product
+            productService.updateProductDetails(id, price, quantity);
+            model.addAttribute("message", "Product updated successfully!");
+        } catch (Exception e) {
+            model.addAttribute("error", "Failed to update product. Please try again.");
+            return "error/500";
+        }
+        // Redirect to the products page or any other relevant page
+        return "redirect:/admin/products";
+    }
+
+
+    //    @PostMapping("/admin/product/{id}/update")
 //    public String updateSize(@PathVariable("id") int id, @RequestParam("productId") int productId, @RequestParam("qty") int quantity, @RequestParam("price") double price){
 //        ProductDetail product_size = productDetailRepository.findByProductIdAndSizeId(productId,id);
 //        int a = product_size.getQuantity();
@@ -363,7 +321,7 @@ public class ProductsController {
 //    }
 @GetMapping("/admin/product/update/{id}")
 public String updateProduct(Model model,@PathVariable("id") Integer id){
-    ProductDto product = productService.getDetailProductById(id);
+    Product product = productService.getDetailProductById(id);
     model.addAttribute("product",product);
     model.addAttribute("listCategory",categoryRepository.findAll());
     model.addAttribute("listBrand",brandRepository.findAll());

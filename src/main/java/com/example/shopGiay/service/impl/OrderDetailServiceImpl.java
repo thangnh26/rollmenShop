@@ -7,10 +7,12 @@ import com.example.shopGiay.model.Product;
 import com.example.shopGiay.model.ProductDetail;
 import com.example.shopGiay.repository.*;
 import com.example.shopGiay.service.OrderDetailService;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 public class OrderDetailServiceImpl implements OrderDetailService {
@@ -56,5 +58,18 @@ public class OrderDetailServiceImpl implements OrderDetailService {
         String text = "Dear: "+order.getCustomer().getFirstName() +" "+order.getCustomer().getLastName()+" chúng tôi sẽ gửi đơn hàng đêns địa chỉ "+order.getAddressReceiver();
         emailService.sendEmail(to,subject,text);
         return orderDetail;
+    }
+
+    @Override
+    public List<OrderDetail> getById(Integer id) {
+        Order order = orderRepository.findByIdOder(id);
+        System.out.println(order);
+        return orderDetailRepository.findAllByOrderId(id);
+    }
+
+    @Override
+    public Order getOrderById(Integer id) {
+        Order order = orderRepository.findByIdOder(id);
+        return order;
     }
 }

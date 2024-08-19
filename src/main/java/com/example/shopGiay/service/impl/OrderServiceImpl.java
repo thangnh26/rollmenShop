@@ -11,7 +11,10 @@ import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -67,7 +70,10 @@ public class OrderServiceImpl implements OrderService {
         Customer customer = customerRepository.getById(id);
         order.setCustomer(customer);
 //        order.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-        order.setCode("HD00"+order.getId());
+        Random random = new Random();
+        int randomDigits = 100 + random.nextInt(900);
+        order.setCode("HD"+randomDigits);
+        order.setCreateDate(LocalDate.now());
         order.setNameReceiver(nameReceiver);
         order.setPhoneReceiver(phoneReceiver);
         order.setAddressReceiver(addressReceiver);

@@ -12,4 +12,7 @@ import java.util.List;
 public interface OrderDetailRepository extends JpaRepository<OrderDetail,Integer> {
     @Query(nativeQuery = true,value = "SELECT * FROM dbshopgiay.order_detail WHERE order_id = ?1")
     List<OrderDetail> findAllByOrderId(int orderId);
+//
+//    @Query(value = "select od from OrderDetail od join Order o on o.id=od.order.id where o.id = :id")
+//    List<OrderDetail> findAllByOrderId(Integer id);
 }

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .order-detail-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .order-detail-table th, .order-detail-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .order-detail-table th {
+            background-color: #f8f8f8;
+            color: #555;
+        }
+
+        .order-detail-table tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .order-detail-table td {
+            color: #333;
+        }
+
+        .btn-back {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .btn-back:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Order Details</h1>
+    <table class="order-detail-table">
+        <thead>
+        <tr>
+            <th>Product Name</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Total</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="detail : ${orderDetail}">
+            <td th:text="${detail.productDetail.product.name}">Product Name</td>
+            <td th:text="${detail.quantity}">Quantity</td>
+            <td th:text="${#numbers.formatDecimal(detail.price, 0, 'COMMA', 0, 'POINT') + ' vnđ'}">Price</td>
+            <td th:text="${#numbers.formatDecimal(detail.quantity * detail.price, 0, 'COMMA', 0, 'POINT') + ' vnđ'}">
+                Total
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <br>
+    <p><strong>Tên đặt hàng:</strong> <span th:text="${oder.nameReceiver}"></span></p>
+    <p><strong>Địa chỉ:</strong> <span th:text="${oder.addressReceiver}"></span></p>
+    <p><strong>Số điện thoại:</strong> <span th:text="${oder.phoneReceiver}"></span></p>
+
+    <br>
+    <a href="/order/history" class="btn-back">Back to Orders</a>
+</div>
+
+</body>
+</html>

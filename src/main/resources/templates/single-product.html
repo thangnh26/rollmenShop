@@ -29,27 +29,36 @@
 
         <div class="s_product_text">
             <h3 th:text="${product.name}"></h3>
-            <h2 th:text="${product.price}"> VNĐ</h2>
+            <h2 th:text="${productDetail.price}"> VNĐ</h2>
             Mô tả: <p th:utext="${product.description}"></p>
             <div style="display: flex">
                 <span>Số lượng còn:</span>
-                <p style="position: relative; bottom: 40px; left: 10px" th:utext="${product.quantity}"></p>
+                <p id="quantityDisplay" style="position: relative; bottom: 40px; left: 10px" th:utext="${productDetail.quantity}"></p>
             </div>
             <form id="productForm" method="post" class="col-lg-5">
                 <label>Size: </label>
                 <div class="default-select" id="default-select">
-                    <select id="size" name="sizeId">
-                        <div th:each="item:${listSize}">
-                            <option th:value="${item.id}" th:text="${item.sizeNumber}"></option>
-                        </div>
+                    <select id="size" name="sizeId" onchange="updateQuantity()">
+<!--                        <div th:each="item:${listSize}">-->
+                            <option th:each="item : ${listSize}"
+                                    th:value="${item.id}"
+                                    th:text="${item.sizeNumber}"
+                                    th:selected="${item.id == productDetail.size.id}">
+                            </option>
+<!--                        </div>-->
                     </select>
                 </div>
                 <br>
                 <label>Color: </label>
-                <div class="default-select" id="default-select">
-                    <select id="color" name="colorId">
+                <div class="default-select" id="default-select" >
+                    <select id="color" name="colorId" onchange="updateQuantity()">
                         <div th:each="item:${listColor}">
-                            <option th:value="${item.id}" th:text="${item.nameColor}"></option>
+<!--                            <option th:value="${item.id}" th:text="${item.nameColor}"></option>-->
+                            <option
+                                    th:value="${item.id}"
+                                    th:text="${item.nameColor}"
+                                    th:selected="${item.id == productDetail.color.id}">
+                            </option>
                         </div>
                     </select>
                 </div>
@@ -120,29 +129,29 @@
                     <hr>
                 </div>
                 <!-- Pagination -->
-                <span class="flex col-span-4 mt-2 sm:mt-auto sm:justify-center" th:if="${listCommnet.totalPages > 1}">
-                  <nav aria-label="Table navigation">
-                    <ul class="inline-flex items-center">
-                        <a th:href="@{/{id}(id = ${product.id}, page = ${1}, size = ${listCommnet.size})}"
-                           th:class="${ 1 == listCommnet.number + 1 } ? 'px-3 py-1 text-white transition-colors duration-150 bg-purple-600 border border-r-0 border-orange-600 rounded-md focus:outline-none focus:shadow-outline-orange':'px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-orange'"
-                        >
-                          Đầu
-                        </a>
-                        <a th:href="@{/{id}(id = ${product.id}, page = ${pagenumber}, size = ${listCommnet.size})}"
-                           th:class="${ pagenumber == listCommnet.number + 1 } ? 'px-3 py-1 text-white transition-colors duration-150 bg-purple-600 border border-r-0 border-purple-600 rounded-md focus:outline-none focus:shadow-outline-purple':'px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple'"
-                           th:if="${listCommnet.totalPages > 1}"
-                           th:each="pagenumber : ${pageNumber}"
-                           th:text="${pagenumber}"
-                        >
-                        </a>
-                        <a th:href="@{/{id}(id = ${product.id}, page = ${listCommnet.totalPages}, size = ${listCommnet.size})}"
-                           th:class="${ listCommnet.totalPages == listCommnet.number + 1 } ? 'px-3 py-1 text-white transition-colors duration-150 bg-purple-600 border border-r-0 border-purple-600 rounded-md focus:outline-none focus:shadow-outline-purple':'px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple'"
-                        >
-							Cuối
-                        </a>
-                    </ul>
-                  </nav>
-                </span>
+<!--                <span class="flex col-span-4 mt-2 sm:mt-auto sm:justify-center" th:if="${listCommnet.totalPages > 1}">-->
+<!--                  <nav aria-label="Table navigation">-->
+<!--                    <ul class="inline-flex items-center">-->
+<!--                        <a th:href="@{/{id}(id = ${product.id}, page = ${1}, size = ${listCommnet.size})}"-->
+<!--                           th:class="${ 1 == listCommnet.number + 1 } ? 'px-3 py-1 text-white transition-colors duration-150 bg-purple-600 border border-r-0 border-orange-600 rounded-md focus:outline-none focus:shadow-outline-orange':'px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-orange'"-->
+<!--                        >-->
+<!--                          Đầu-->
+<!--                        </a>-->
+<!--                        <a th:href="@{/{id}(id = ${product.id}, page = ${pagenumber}, size = ${listCommnet.size})}"-->
+<!--                           th:class="${ pagenumber == listCommnet.number + 1 } ? 'px-3 py-1 text-white transition-colors duration-150 bg-purple-600 border border-r-0 border-purple-600 rounded-md focus:outline-none focus:shadow-outline-purple':'px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple'"-->
+<!--                           th:if="${listCommnet.totalPages > 1}"-->
+<!--                           th:each="pagenumber : ${pageNumber}"-->
+<!--                           th:text="${pagenumber}"-->
+<!--                        >-->
+<!--                        </a>-->
+<!--                        <a th:href="@{/{id}(id = ${product.id}, page = ${listCommnet.totalPages}, size = ${listCommnet.size})}"-->
+<!--                           th:class="${ listCommnet.totalPages == listCommnet.number + 1 } ? 'px-3 py-1 text-white transition-colors duration-150 bg-purple-600 border border-r-0 border-purple-600 rounded-md focus:outline-none focus:shadow-outline-purple':'px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple'"-->
+<!--                        >-->
+<!--							Cuối-->
+<!--                        </a>-->
+<!--                    </ul>-->
+<!--                  </nav>-->
+<!--                </span>-->
             </div>
             <div class="col-lg-6">
                 <div class="review_box" th:if="${#request.userPrincipal == null  }">
@@ -195,8 +204,34 @@
         }
     </script>
     <script>
+        function getProductIdFromUrl() {
+            const pathParts = window.location.pathname.split('/');
+            return pathParts[pathParts.length - 1];
+        }
+        function updateQuantity() {
+            var sizeId = document.getElementById("size").value;
+            var colorId = document.getElementById("color").value;
+            var productId = getProductIdFromUrl(); // Extract productId from URL
+
+            if (sizeId && colorId && productId) {
+                fetch(`/product-detail/quantity?sizeId=${sizeId}&colorId=${colorId}&productId=${productId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Reset quantity input to 1 and update the displayed quantity
+                        document.getElementById("quantity").value = 1;
+                        var quantityDisplayElement = document.getElementById("quantityDisplay");
+                        if (quantityDisplayElement) {
+                            quantityDisplayElement.innerHTML = data.quantity;
+                        } else {
+                            console.error("Quantity display element not found.");
+                        }
+                    })
+                    .catch(error => console.error('Error fetching quantity:', error));
+            }
+        }
+
         function validateQuantity() {
-            var maxQuantity = [[${product.quantity}]];
+            var maxQuantity = [[${productDetail.quantity}]];
             var inputQuantity = document.getElementById('quantity').value;
 
             var errorElement = document.getElementById('quantityError');
