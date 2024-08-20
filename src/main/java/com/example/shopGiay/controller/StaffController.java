@@ -42,22 +42,23 @@ public class StaffController {
         model.addAttribute("totalPages", staff.getTotalPages());
         model.addAttribute("keyword", keyword); // Pass keyword back to the view
 
-        return "staff/list";
+        return "admin/staff/list";
     }
     @GetMapping("/new")
     public String createStaffForm(Model model) {
         Staff staff = new Staff();
         model.addAttribute("staff", staff);
-        return "staff/new";
+        return "admin/staff/new";
     }
 
     @PostMapping
     public String saveStaff(@Valid @ModelAttribute("staff") Staff staff,
                                BindingResult result) {
         if (result.hasErrors()) {
-            return "staff/new";
+            return "admin/staff/new";
         }
         staff.setCreateDate(LocalDate.now());
+        staff.setStatus(1);
         staffService.saveStaff(staff);
         return "redirect:/staff";
     }
@@ -65,7 +66,7 @@ public class StaffController {
     public String editStaffForm(@PathVariable Integer id, Model model) {
         Staff staff = staffService.getStaffById(id);
         model.addAttribute("staff", staff);
-        return "staff/edit";
+        return "admin/staff/edit";
     }
     @PostMapping("/{id}")
     public String updateStaff(@PathVariable Integer id,
@@ -73,7 +74,7 @@ public class StaffController {
                                  BindingResult result,
                                  Model model) {
         if (result.hasErrors()) {
-            return "staff/edit";
+            return "admin/staff/edit";
         }
         Staff existingStaff = staffService.getStaffById(id);
         existingStaff.setCode(staff.getCode());
