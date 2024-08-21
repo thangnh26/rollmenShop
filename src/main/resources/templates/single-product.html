@@ -30,7 +30,7 @@
         <div class="s_product_text">
             <h3 th:text="${product.name}"></h3>
             <h2 th:text="${productDetail.price}"> VNĐ</h2>
-            Mô tả: <p th:utext="${product.description}"></p>
+
             <div style="display: flex">
                 <span>Số lượng còn:</span>
                 <p id="quantityDisplay" style="position: relative; bottom: 40px; left: 10px" th:utext="${productDetail.quantity}"></p>
@@ -69,6 +69,7 @@
                            th:value="1" title="Quantity:" class="input-text qty">
                     <span id="quantityError" style="color: red; display: none;"></span>
                 </div>
+                Mô tả: <p th:utext="${product.description}"></p>
 
                 <!--                    <h6>Số lượng còn: <h6 th:text="${product.quantity}"></h6></h6>-->
 

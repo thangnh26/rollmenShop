@@ -14,10 +14,10 @@ public class Size {
     @Column(name = "size_number", nullable = false)
     private Integer sizeNumber;
 
-    @Column(name = "create_date", nullable = false)
+    @Column(name = "create_date")
     private LocalDate createDate;
 
-    @Column(name = "update_date", nullable = false)
+    @Column(name = "update_date")
     private LocalDate updateDate;
 
     @Column(name = "status", nullable = false)

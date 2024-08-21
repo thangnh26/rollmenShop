@@ -410,51 +410,40 @@
 
         <!--================Order Details Area =================-->
         <section>
-            <!--            <h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200" style="padding: 20px;">Thông tin-->
-            <!--                sản phẩm</h2>-->
-            <form th:action="@{/updateProduct}" method="post">
+            <form style="max-width: 1200px; margin: auto; overflow: auto" class="form-container" th:action="@{/updateProduct}" method="post">
+                <!-- Header Row -->
+                <div style="display: flex; width: 100%;background-color: #f4f4f4;color: #555;font-weight: bold;border-bottom: 2px solid #ccc;border-radius: 4px 4px 0 0;box-shadow: 0 1px 3px rgba(0,0,0,0.1);" class="header-row">
+                    <div style="flex: 1;padding: 8px;box-sizing: border-box;text-align: left;font-size: 12px;font-weight: bold;text-transform: uppercase;color: #555;border-bottom: 1px solid #ccc;" class="cell">ID</div>
+                    <div style="flex: 1;padding: 8px;box-sizing: border-box;text-align: left;font-size: 12px;font-weight: bold;text-transform: uppercase;color: #555;border-bottom: 1px solid #ccc;" class="cell">Tên sản phẩm</div>
+                    <div style="flex: 1;padding: 8px;box-sizing: border-box;text-align: left;font-size: 12px;font-weight: bold;text-transform: uppercase;color: #555;border-bottom: 1px solid #ccc;" class="cell">Mô tả</div>
+                    <div style="flex: 1;padding: 8px;box-sizing: border-box;text-align: left;font-size: 12px;font-weight: bold;text-transform: uppercase;color: #555;border-bottom: 1px solid #ccc;" class="cell">Giá</div>
+                    <div style="flex: 1;padding: 8px;box-sizing: border-box;text-align: left;font-size: 12px;font-weight: bold;text-transform: uppercase;color: #555;border-bottom: 1px solid #ccc;" class="cell">Số lượng</div>
+                    <div style="flex: 1;padding: 8px;box-sizing: border-box;text-align: left;font-size: 12px;font-weight: bold;text-transform: uppercase;color: #555;border-bottom: 1px solid #ccc;" class="cell">Màu sắc</div>
+                    <div style="flex: 1;padding: 8px;box-sizing: border-box;text-align: left;font-size: 12px;font-weight: bold;text-transform: uppercase;color: #555;border-bottom: 1px solid #ccc;" class="cell">Size</div>
+                    <div style="flex: 1;padding: 8px;box-sizing: border-box;text-align: left;font-size: 12px;font-weight: bold;text-transform: uppercase;color: #555;border-bottom: 1px solid #ccc;" class="cell">Action</div>
+                </div>
 
-            <div class="w-full overflow-x-auto">
-                <table class="w-full whitespace-no-wrap">
-                    <thead>
-                    <tr
-                            class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
-                    >
-                        <th class="px-4 py-3">ID</th>
-                        <th class="px-4 py-3">Tên sản phẩm</th>
-                        <th class="px-4 py-3">Mô tả</th>
-                        <th class="px-4 py-3">Giá</th>
-                        <th class="px-4 py-3">Số lượng</th>
-                        <th class="px-4 py-3">Màu sắc</th>
-                        <th class="px-4 py-3">Size</th>
-                        <th class="px-4 py-3">Action</th>
-                    </tr>
-                    </thead>
-                    <tbody
-                            class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800"
-
-                    >
-                    <tr class="text-gray-700 dark:text-gray-400" th:each="product: ${product}">
-                        <td class="px-4 py-3" type="hidden" name="id" th:text="${product.id}"></td>
-                        <td class="px-4 py-3 text-sm" th:text="${product.product.name}"></td>
-                        <td class="px-4 py-3 text-sm" th:text="${product.product.description}"></td>
-                        <td class="px-4 py-3 text-sm">
-                            <input type="text" name="price" th:value="${product.price}"/>
-                        </td>
-                        <td class="px-4 py-3 text-sm">
-                            <input type="number" name="quantity" th:value="${product.quantity}"/>
-                        </td>
-                        <td class="px-4 py-3 text-sm" th:text="${product.color.name}"></td>
-                        <td class="px-4 py-3 text-sm" th:text="${product.size.sizeNumber}"></td>
-                        <td class="px-4 py-3 text-sm">
-                                <button class="btn btn-primary" type="submit">Cập nhật</button>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
+                <!-- Product Rows -->
+                <div style="display: flex; width: 100%;background-color: #fff;color: #333;border-bottom: 1px solid #cc" class="data-row" th:each="product : ${product}">
+                    <div style="flex: 1;padding: 5px;box-sizing: border-box;text-align: left;" class="cell">
+                        <input type="hidden" name="id" th:value="${product.id}">
+                        <span th:text="${product.id}"></span>
+                    </div>
+                    <div style="flex: 1;padding: 5px;box-sizing: border-box;text-align: left;" class="cell" th:text="${product.product.name}"></div>
+                    <div style="flex: 1;padding: 8px;box-sizing: border-box;text-align: left;" class="cell" th:text="${product.product.description}"></div>
+                    <div style="flex: 1;padding: 8px;box-sizing: border-box;text-align: left;" class="cell">
+                        <input style="width: 100px" type="text" name="price" th:value="${product.price}"/>
+                    </div>
+                    <div style="flex: 1;padding: 8px;box-sizing: border-box;text-align: left;" class="cell">
+                        <input style="width: 40px" type="number" name="quantity" th:value="${product.quantity}"/>
+                    </div>
+                    <div style="flex: 1;padding: 8px;box-sizing: border-box;text-align: left;" class="cell" th:text="${product.color.name}"></div>
+                    <div style="flex: 1;padding: 8px;box-sizing: border-box;text-align: left;" class="cell" th:text="${product.size.sizeNumber}"></div>
+                    <div style="flex: 1;padding: 8px;box-sizing: border-box;text-align: left;" class="cell">
+                        <button style="padding: 8px 16px;color: #fff;background-color: #007bff;border: none;border-radius: 4px;cursor: pointer;text-align: center;text-decoration: none;" class="btn-primary" type="submit">Cập nhật</button>
+                    </div>
+                </div>
             </form>
-
         </section>
     </div>
 </body>
