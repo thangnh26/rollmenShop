@@ -13,10 +13,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class StaffUserDetailsService implements UserDetailsService {
+public class AdminUserDetailService implements UserDetailsService {
     private final StaffRepository staffRepository;
 
-    public StaffUserDetailsService(StaffRepository staffRepository) {
+    public AdminUserDetailService(StaffRepository staffRepository) {
         this.staffRepository = staffRepository;
     }
 
@@ -27,17 +27,12 @@ public class StaffUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("User not found");
         }
         Collection<SimpleGrantedAuthority> authorities = staff.getRoles().stream()
-                .map(role -> {
-                    String authority = "ROLE_" + role.getAuthority(); // Prefix with ROLE_
-                    System.out.println("Authority: " + authority); // Debug log
-                    return new SimpleGrantedAuthority(authority);
-                })
+                .map(role -> new SimpleGrantedAuthority(role.getAuthority())) // Convert role to SimpleGrantedAuthority
                 .collect(Collectors.toList());
         return new org.springframework.security.core.userdetails.User(
                 staff.getEmail(),
                 staff.getPassword(),
                 authorities
-
         );
     }
 }

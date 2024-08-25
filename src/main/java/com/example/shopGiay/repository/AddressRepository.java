@@ -15,4 +15,7 @@ public interface AddressRepository extends JpaRepository<Address, Integer> {
 
     @Query(value = "select a from Address a where a.customer.id=:id")
     List<Address> findByCusId(Integer id);
+
+    @Query(value = "select a.id from Address a where a.nameAddress=:address")
+    Integer findByName(String address);
 }

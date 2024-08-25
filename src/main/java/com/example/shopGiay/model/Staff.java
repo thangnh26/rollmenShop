@@ -5,6 +5,7 @@ import javax.validation.constraints.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "Staff")
@@ -54,8 +55,24 @@ public class Staff {
     @Column(name = "status", nullable = false)
     private Integer status;
 
-    @Column(name = "role", nullable = false)
-    private Integer role;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "staff_roles",
+            joinColumns = @JoinColumn(name = "staff_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Roles> roles;
+
+    // Getters and setters
+
+    public Set<Roles> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Roles> roles) {
+        this.roles = roles;
+    }
+
     @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL)
     private List<Order> orders;
 
@@ -173,11 +190,4 @@ public class Staff {
         this.status = status;
     }
 
-    public Integer getRole() {
-        return role;
-    }
-
-    public void setRole(Integer role) {
-        this.role = role;
-    }
 }

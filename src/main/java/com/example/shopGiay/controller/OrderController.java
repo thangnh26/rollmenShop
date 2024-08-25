@@ -20,6 +20,7 @@ import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/order")
@@ -43,6 +44,11 @@ public class OrderController {
     @Autowired
     UserRepository userRepository;
 
+    private final OrderDetailService orderDetailService;
+
+    public OrderController(OrderDetailService orderDetailService) {
+        this.orderDetailService = orderDetailService;
+    }
 
     @GetMapping
     public String listOrders(Model model,
@@ -68,6 +74,10 @@ public class OrderController {
         Page<Order> orders;
 //        if (keyword != null && !keyword.isEmpty()) {
             orders = orderService.searchOrder(codeCustomer,phone,status, pageable);
+        List<Integer> orderIds = orders.getContent().stream()
+                .map(Order::getId) // Assuming Order class has getId() method
+                .collect(Collectors.toList());
+        List<OrderDetail> orderDetail = orderDetailService.getByIds(orderIds);
 //        } else {
 //            orders = orderService.getOrderByStatusNot2(pageable);
 //        }
@@ -75,6 +85,7 @@ public class OrderController {
         // Add pagination information to the model
 
         model.addAttribute("orders", orders.getContent());
+        model.addAttribute("size", orderDetail.stream());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", orders.getTotalPages());
         model.addAttribute("codeCustomer", codeCustomer); // Pass keyword back to the view
@@ -105,6 +116,9 @@ public class OrderController {
 
         // Lấy User từ email
         Customer user = userRepository.findByEmail(email);
+        if (user == null) {
+            return "redirect:/login";
+        }
         Page<Order> orders;
 //        if (keyword != null && !keyword.isEmpty()) {
         orders = orderService.searchOrderByCustomerCode(codeCustomer,phone,status, pageable,user.getId());
@@ -134,6 +148,11 @@ public class OrderController {
     public String cancelled(@PathVariable Integer id){
         orderService.cancelled(id);
         return "redirect:/order";
+    }
+    @GetMapping("/cancelled-customer/{id}")
+    public String cancelledCustomer(@PathVariable Integer id){
+        orderService.cancelled(id);
+        return "redirect:/order/history";
     }
 
     @GetMapping("/shipping/{id}")

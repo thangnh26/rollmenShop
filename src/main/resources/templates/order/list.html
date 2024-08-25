@@ -27,8 +27,6 @@
         <tr>
             <th>ID</th>
             <th>Mã hóa đơn</th>
-<!--            <th>Staff</th>-->
-<!--            <th>Voucher</th>-->
             <th>Ngày tạo</th>
             <th>Ngày sửa</th>
             <th>Trạng thái</th>
@@ -42,9 +40,7 @@
         <tbody>
         <tr th:each="order : ${orders}">
             <td th:text="${order.id}">1</td>
-            <td th:text="${order.customer.code}">Customer</td>
-<!--            <td th:text="${order.staff.lastName}">Staff</td>-->
-<!--            <td th:text="${order.voucher.nameVoucher}">Voucher</td>-->
+            <td th:text="${order.code}">Customer</td>
             <td th:text="${order.createDate}">2022-01-01</td>
             <td th:text="${order.updateDate}">2022-01-01</td>
             <td th:text="${order.status == 0 ? 'Chờ xác nhận' :
@@ -64,11 +60,9 @@
                 <a class="btn btn-success" th:if="${order.status == 2}" th:href="@{/order/ok/{id}(id=${order.id})}">Giao hàng thành công</a>
                 <a class="btn btn-success" th:if="${order.status == 3}" >Đã thành công</a>
                 <a class="btn btn-danger" th:if="${order.status == 4}">Đã hủy</a>
+                <a class="btn btn-success" th:href="@{/order-detail-customer(id=${order.id})}">Xem chi tiết</a>
+
             </td>
-<!--            <td>-->
-<!--                <a class="btn btn-info" th:href="@{/order/edit/{id}(id=${order.id})}">Edit</a>-->
-<!--                <a class="btn btn-danger" th:href="@{/order/delete/{id}(id=${order.id})}">Delete</a>-->
-<!--            </td>-->
         </tr>
         </tbody>
     </table>

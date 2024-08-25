@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html :class="{ 'theme-dark': dark }" x-data="data()" lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:x-transition="">
+<head th:replace="fragment/fragmentAdmin::head_admin"/>
+
+<body>
+<!--<div th:replace="fragment/sidebarAdmin::sidebar" />-->
+<main class="h-full overflow-y-auto grid gap-6 mb-8 md:grid-cols-2">
+
+    <div class="column">
+        <div class="container px-6 mx-auto grid">
+
+<section class="checkout_area section_gap">
+    <div class="container">
+        <div class="row" style="margin-left: 15px; margin-right: 15px;">
+            <h1>User Profile</h1>
+            <div th:if="${user}">
+                <p><strong>ID:</strong> <span th:text="${user.id}"></span></p>
+                <p><strong>First Name:</strong> <span th:text="${user.firstName}"></span></p>
+                <p><strong>Last Name:</strong> <span th:text="${user.lastName}"></span></p>
+                <p><strong>Email:</strong> <span th:text="${user.email}"></span></p>
+                <p><strong>Phone Number:</strong> <span th:text="${user.phoneNumber}"></span></p>
+            </div>
+            <div th:if="${error}">
+                <p class="error" th:text="${error}"></p>
+            </div>
+        </div>
+        <a href="/logout" class="btn btn-outline-warning">Logout</a>
+    </div>
+</section>
+        </div>
+    </div>
+</main>
+<!--================End Checkout Area =================-->
+<!--<footer th:replace="fragment/footer :: footer"></footer>-->
+
+<script src="js/vendor/jquery-2.2.4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
+        crossorigin="anonymous"></script>
+<script src="js/vendor/bootstrap.min.js"></script>
+<script src="js/jquery.ajaxchimp.min.js"></script>
+<script src="js/jquery.nice-select.min.js"></script>
+<script src="js/jquery.sticky.js"></script>
+<script src="js/nouislider.min.js"></script>
+<script src="js/jquery.magnific-popup.min.js"></script>
+<script src="js/owl.carousel.min.js"></script>
+<!--gmaps Js-->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCjCGmQ0Uq4exrzdcL6rvxywDDOvfAu6eE"></script>
+<script src="js/gmaps.min.js"></script>
+<script src="js/main.js"></script>
+<script type="text/javascript" src="https://www.paypal.com/sdk/js?client-id=Aa59KmHTIuSPTEkR8i2bAZLBnoWECkS2TomhETkd9uu2emswucAFoPFIIW75LrOwmp2sebotG_-5Wavp"></script>
+</body>
+
+</html>

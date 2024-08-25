@@ -229,7 +229,7 @@
                 <li class="relative px-6 py-3">
                     <a
                             class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
-                            th:href="@{/admin/orders}"
+                            th:href="@{/order}"
                     >
                         <svg
                                 class="w-5 h-5"
@@ -384,7 +384,7 @@
                                 <li class="flex">
                                     <a
                                             class="inline-flex items-center justify-between w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
-                                            th:href="@{/admin/orders}"
+                                            th:href="@{/order}"
                                     >
                                         <span>Đơn hàng chờ xác nhận</span>
                                         <span
@@ -407,8 +407,7 @@
         >
             CHI TIẾT SẢN PHẨM
         </h2>
-
-        <!--================Order Details Area =================-->
+        <a th:href="@{/admin/product/add-product-detail(productId=${id})}">Thêm mới</a>
         <section>
             <form style="max-width: 1200px; margin: auto; overflow: auto" class="form-container" th:action="@{/updateProduct}" method="post">
                 <!-- Header Row -->

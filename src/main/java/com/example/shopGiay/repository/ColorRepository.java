@@ -16,4 +16,7 @@ public interface ColorRepository extends JpaRepository<Color, Integer> {
 
     @Query("SELECT s FROM Color s WHERE s.id = ?1")
     Color getById(int id);
+
+    @Query(value = "SELECT * FROM color WHERE id NOT IN (SELECT color_id FROM product_detail WHERE product_id=:productId)",nativeQuery = true)
+    Color findColorNotInProductDetail(Integer productId);
 }

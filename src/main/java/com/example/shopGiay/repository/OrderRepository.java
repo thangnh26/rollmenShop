@@ -26,9 +26,9 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
 
     @Query(value = "select od from Order od where " +
             "od.customer.id = :cusId and " +
-            "(:#{#codeCustomer} is null or :#{#codeCustomer}='' or lower(od.customer.code) like lower(concat('%', :#{#codeCustomer}, '%'))) and " +
+            "(:#{#codeCustomer} is null or :#{#codeCustomer}='' or lower(od.code) like lower(concat('%', :#{#codeCustomer}, '%'))) and " +
             "(:#{#status} is null or :#{#status}=od.status) and " +
-            "(:#{#phone} is null or :#{#phone}='' or od.phoneReceiver like concat('%', :#{#phone}, '%'))"
+            "(:#{#phone} is null or :#{#phone}='' or od.phoneReceiver like concat('%', :#{#phone}, '%')) order by od.createDate desc "
     )
     Page<Order> findByCustomer(String codeCustomer, String phone, Integer status, Pageable pageable,int cusId);
 
@@ -50,8 +50,9 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
     @Query(value = "select distinct count(o.customer.id) from Order o")
     Integer countUser();
 
-    @Query(value = "select o.totalAmount from Order o")
+    @Query(value = "SELECT IFNULL(sum(total_amount), 0.0) FROM `order`", nativeQuery = true)
     Double total();
+
 
     @Query(value = "select * from `dbshopgiay`.`order` where id=:id",nativeQuery = true)
     Order findByIdOder(Integer id);

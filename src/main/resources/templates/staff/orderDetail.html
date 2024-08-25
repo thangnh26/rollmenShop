@@ -108,6 +108,7 @@
         <span th:if="${oder.status == 3}">Đã giao hàng</span>
         <span th:if="${oder.status == 4}">Đã hủy</span>
     </span>
+        <a class="btn btn-success" th:href="@{/order-detail-staff(id=${order.id})}">Xem chi tiết</a>
     </p>
 
 

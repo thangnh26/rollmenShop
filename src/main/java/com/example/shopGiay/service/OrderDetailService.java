@@ -13,4 +13,6 @@ public interface OrderDetailService {
 
     List<OrderDetail> getById(Integer id);
     Order getOrderById(Integer id);
+
+    List<OrderDetail> getByIds(List<Integer> orderIds);
 }

@@ -17,6 +17,10 @@ public interface ProductDetailRepository extends JpaRepository<ProductDetail, In
 
     @Query(value = "select pd from ProductDetail pd where pd.product.id = :proId and pd.color.id = :colorId and pd.size.id = :sizeId")
     ProductDetail getOneProductDetail(int proId, int colorId, int sizeId);
+
+    @Query(value = "select pd from ProductDetail pd where pd.product.id = :proId and pd.color.id = :colorId and pd.size.id = :sizeId and pd.status=1")
+    ProductDetail getOne(int proId, int colorId, int sizeId);
+
     @Query(nativeQuery = true, value = "SELECT * FROM dbshopgiay1.product_detail WHERE product_id = ?1 AND size_id = ?2")
     ProductDetail findByProductIdAndSizeId(int productId, int sizeId);
 

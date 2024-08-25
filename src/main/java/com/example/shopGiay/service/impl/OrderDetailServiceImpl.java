@@ -72,4 +72,9 @@ public class OrderDetailServiceImpl implements OrderDetailService {
         Order order = orderRepository.findByIdOder(id);
         return order;
     }
+
+    @Override
+    public List<OrderDetail> getByIds(List<Integer> orderIds) {
+        return orderDetailRepository.findByOrderIdIn(orderIds);
+    }
 }

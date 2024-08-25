@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
@@ -285,9 +286,40 @@ public class ProductsController {
     public String productDetail(Model model,@PathVariable("id") Integer id){
         List<ProductDetail> product = productService.getListDetailProductById(id);
         model.addAttribute("product",product);
+        model.addAttribute("id",id);
         return "admin/product/productDetail";
     }
-
+    @GetMapping("/admin/product/add-product-detail")
+    public String addProductDetail(Model model,@RequestParam("productId") Integer productId){
+        List<Size> size = sizeRepository.findAll();
+        List<Color> color = colorRepository.findAll();
+        model.addAttribute("size",size);
+        model.addAttribute("color",color);
+        model.addAttribute("productId", productId);
+        return "admin/product/addProductDetail";
+    }
+    @PostMapping("/add-product-detail")
+    public String addProductDetail(@RequestParam("productId") Integer productId,
+                                   @RequestParam("price") BigDecimal price,
+                                   @RequestParam("quantity") Integer quantity,
+                                   @RequestParam("sizeId") Integer sizeId,
+                                   @RequestParam("colorId") Integer colorId){
+        ProductDetail productDetail = new ProductDetail();
+        Size size= sizeRepository.findById(sizeId).get();
+        Color color = colorRepository.findById(colorId).get();
+        Product product = productRepository.findById(productId).get();
+        productDetail.setProduct(product);
+        productDetail.setPrice(price);
+        productDetail.setQuantity(quantity);
+        productDetail.setSize(size);
+        productDetail.setColor(color);
+        productDetail.setStatus(1);
+        if(productDetailRepository.getOne(productId,colorId,sizeId)!=null){
+            return "error/existed";
+        }
+        productDetailRepository.save(productDetail);
+        return "redirect:/admin/product/"+productId;
+    }
     @PostMapping("/updateProduct")
     public String updateProduct(@RequestParam("id") Integer id,
                                 @RequestParam("price") BigDecimal price,

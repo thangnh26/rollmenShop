@@ -222,7 +222,7 @@
                 <li class="relative px-6 py-3">
                     <a
                             class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
-                            th:href="@{/admin/orders}"
+                            th:href="@{/order}"
                     >
                         <svg
                                 class="w-5 h-5"
@@ -375,14 +375,13 @@
                                 <li class="flex">
                                     <a
                                             class="inline-flex items-center justify-between w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
-                                            th:href="@{/admin/orders}"
+                                            th:href="@{/order}"
                                     >
                                         <span>Đơn hàng chờ xác nhận</span>
                                         <span
                                                 class="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-600 bg-red-100 rounded-full dark:text-red-100 dark:bg-red-600"
                                                 th:text="${countOrderWait}"
                                         >
-
                         </span>
                                     </a>
                                 </li>
@@ -394,145 +393,6 @@
         </header>
         <main class="h-full overflow-y-auto">
             <div class="container px-6 mx-auto grid">
-<!--                <form th:action="@{/admin/createProduct}" method="post" enctype="multipart/form-data">-->
-
-<!--                    <h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">Quản Lý Sản phẩm</h2>-->
-
-<!--                    &lt;!&ndash; Product Details &ndash;&gt;-->
-<!--                    <div class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">-->
-
-<!--                        &lt;!&ndash; Product Name &ndash;&gt;-->
-<!--                        <label class="block text-sm">-->
-<!--                            <span class="text-gray-700 dark:text-gray-400">Tên sản phẩm</span>-->
-<!--                            <input class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"-->
-<!--                                   name="name" placeholder="Nhập tên sản phẩm"/>-->
-<!--                        </label>-->
-
-<!--                        &lt;!&ndash; Category &ndash;&gt;-->
-<!--                        <fieldset class="block mt-4 text-sm">-->
-<!--                            <legend class="text-gray-700 dark:text-gray-400">Chọn thể loại</legend>-->
-<!--                            <div class="mt-2">-->
-<!--                                <label th:each="category : ${listCategory}">-->
-<!--                                    <input type="checkbox" th:value="${category.id}" th:name="'categoryId'" th:id="'category_' + ${category.id}"/>-->
-<!--                                    <span th:text="${category.nameCategory}"></span>-->
-<!--                                </label>-->
-<!--                            </div>-->
-<!--                        </fieldset>-->
-
-<!--                        &lt;!&ndash; Brand &ndash;&gt;-->
-<!--                        <fieldset class="block mt-4 text-sm">-->
-<!--                            <legend class="text-gray-700 dark:text-gray-400">Chọn thương hiệu</legend>-->
-<!--                            <div class="mt-2">-->
-<!--                                <label th:each="brand : ${listBrand}">-->
-<!--                                    <input type="checkbox" th:value="${brand.id}" th:name="'brandId'" th:id="'brand_' + ${brand.id}"/>-->
-<!--                                    <span th:text="${brand.nameBrand}"></span>-->
-<!--                                </label>-->
-<!--                            </div>-->
-<!--                        </fieldset>-->
-
-<!--                        &lt;!&ndash; Material &ndash;&gt;-->
-<!--                        <fieldset class="block mt-4 text-sm">-->
-<!--                            <legend class="text-gray-700 dark:text-gray-400">Chọn chất liệu</legend>-->
-<!--                            <div class="mt-2">-->
-<!--                                <label th:each="material : ${listMaterial}">-->
-<!--                                    <input type="checkbox" th:value="${material.id}" th:name="'materialId'" th:id="'material_' + ${material.id}"/>-->
-<!--                                    <span th:text="${material.name}"></span>-->
-<!--                                </label>-->
-<!--                            </div>-->
-<!--                        </fieldset>-->
-
-<!--                        &lt;!&ndash; Sole &ndash;&gt;-->
-<!--                        <fieldset class="block mt-4 text-sm">-->
-<!--                            <legend class="text-gray-700 dark:text-gray-400">Chọn sole</legend>-->
-<!--                            <div class="mt-2">-->
-<!--                                <label th:each="sole : ${listSole}">-->
-<!--                                    <input type="checkbox" th:value="${sole.id}" th:name="'soleId'" th:id="'sole_' + ${sole.id}"/>-->
-<!--                                    <span th:text="${sole.name}"></span>-->
-<!--                                </label>-->
-<!--                            </div>-->
-<!--                        </fieldset>-->
-
-<!--                        &lt;!&ndash; Size &ndash;&gt;-->
-<!--                        <fieldset class="block mt-4 text-sm">-->
-<!--                            <legend class="text-gray-700 dark:text-gray-400">Kích thước</legend>-->
-<!--                            <div class="mt-2">-->
-<!--                                <label th:each="size : ${listSize}">-->
-<!--                                    <input type="checkbox" th:value="${size.id}" th:name="'sizeId'" th:id="'size_' + ${size.id}"/>-->
-<!--                                    <span th:text="${size.sizeNumber}"></span>-->
-<!--                                </label>-->
-<!--                            </div>-->
-<!--                        </fieldset>-->
-
-<!--                        &lt;!&ndash; Color &ndash;&gt;-->
-<!--                        <fieldset class="block mt-4 text-sm">-->
-<!--                            <legend class="text-gray-700 dark:text-gray-400">Màu sắc</legend>-->
-<!--                            <div class="mt-2">-->
-<!--                                <label th:each="color : ${listColor}">-->
-<!--                                    <input type="checkbox" th:value="${color.id}" th:name="'colorId'" th:id="'color_' + ${color.id}"/>-->
-<!--                                    <span th:text="${color.name}"></span>-->
-<!--                                </label>-->
-<!--                            </div>-->
-<!--                        </fieldset>-->
-
-<!--                        &lt;!&ndash; Quantity &ndash;&gt;-->
-<!--                        <label class="block mt-4 text-sm">-->
-<!--                            <span class="text-gray-700 dark:text-gray-400">Số lượng</span>-->
-<!--                            <input name="quantity" class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"-->
-<!--                                   placeholder="Số lượng"/>-->
-<!--                        </label>-->
-
-<!--                        &lt;!&ndash; Price &ndash;&gt;-->
-<!--                        <label class="block mt-4 text-sm">-->
-<!--                            <span class="text-gray-700 dark:text-gray-400">Đơn giá</span>-->
-<!--                            <input name="price" class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"-->
-<!--                                   placeholder="Đơn giá"/>-->
-<!--                        </label>-->
-
-<!--                        &lt;!&ndash; Description &ndash;&gt;-->
-<!--                        <label class="block mt-4 text-sm">-->
-<!--                            <span class="text-gray-700 dark:text-gray-400">Mô tả</span>-->
-<!--                            <textarea name="description" class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-textarea focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"-->
-<!--                                      rows="3" placeholder="Nhập mô tả sản phẩm..."></textarea>-->
-<!--                        </label>-->
-
-<!--                        &lt;!&ndash; Thumbnail &ndash;&gt;-->
-<!--                        <label class="block mt-4 text-sm">-->
-<!--                            <span class="text-gray-700 dark:text-gray-400">Chọn ảnh</span>-->
-<!--                            <input type="file" name="thumbnailUrl" id="thumbnailUrl" accept="image/png, image/jpeg"/>-->
-<!--                        </label>-->
-
-<!--                        &lt;!&ndash; Thumbnail Preview &ndash;&gt;-->
-<!--                        <label class="block mt-4 text-sm">-->
-<!--                            <img id="thumbnail" alt="Logo Preview"/>-->
-<!--                        </label>-->
-
-<!--                    </div>-->
-
-<!--                    &lt;!&ndash; Form Actions &ndash;&gt;-->
-<!--                    <div style="display: inline-flex;">-->
-<!--                        <div aria-label="Table navigation" style="width: 120px;">-->
-<!--                            <ul class="inline-flex items-center">-->
-<!--                                <li>-->
-<!--                                    <a class="flex items-center justify-between p-4 mb-8 text-sm font-semibold text-purple-100 bg-purple-600 rounded-lg shadow-md focus:outline-none focus:shadow-outline-purple"-->
-<!--                                       th:href="@{/admin/products}">-->
-<!--                                        <div class="flex items-center">-->
-<!--                                            <span>&LeftArrow; Hủy</span>-->
-<!--                                        </div>-->
-<!--                                    </a>-->
-<!--                                </li>-->
-<!--                            </ul>-->
-<!--                        </div>-->
-<!--                        <div aria-label="Table navigation" style="width: 150px; display: flex; flex-direction: column; justify-content: center;">-->
-<!--                            <ul class="inline-flex items-center">-->
-<!--                                <li>-->
-<!--                                    <button type="submit" class="flex items-center justify-between p-4 mb-8 text-sm font-semibold text-purple-100 bg-purple-600 rounded-lg shadow-md focus:outline-none focus:shadow-outline-purple">-->
-<!--                                        Thêm mới &RightArrow;-->
-<!--                                    </button>-->
-<!--                                </li>-->
-<!--                            </ul>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </form>-->
                 <form th:action="@{/admin/createProduct}" method="post" enctype="multipart/form-data">
 
                     <h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">Quản Lý Sản phẩm</h2>
@@ -659,11 +519,7 @@
                             </ul>
                         </div>
                     </div>
-
                 </form>
-
-
-
             </div>
         </main>
     </div>

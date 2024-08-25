@@ -12,6 +12,7 @@ import com.example.shopGiay.repository.ProductRepository;
 import com.example.shopGiay.repository.SizeRepository;
 import com.example.shopGiay.service.ShoppingCartService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.SessionScope;
 import org.webjars.NotFoundException;
@@ -121,7 +122,6 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         cartItemRepository.clearCartItem(id);
 //        cartItemRepository.clear(id);
     }
-
     @Override
     public List<CartItem> getAllItems(int cusId) {
         return cartItemRepository.finAllByUser(cusId);

@@ -29,7 +29,8 @@
 
         <div class="s_product_text">
             <h3 th:text="${product.name}"></h3>
-            <h2 th:text="${productDetail.price}"> VNĐ</h2>
+            <h2 th:text="${#numbers.formatDecimal(productDetail.price, 0, 'COMMA', 0, 'POINT')} + ' vnđ'"></h2>
+<!--            <h2 th:text="${}"> VNĐ</h2>-->
 
             <div style="display: flex">
                 <span>Số lượng còn:</span>

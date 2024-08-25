@@ -5,6 +5,7 @@ import com.example.shopGiay.model.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface OrderService {
@@ -25,4 +26,6 @@ public interface OrderService {
     void shipping(Integer id);
 
     void ok(Integer id);
+
+    BigDecimal total();
 }

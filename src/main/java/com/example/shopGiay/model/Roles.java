@@ -1,29 +1,23 @@
 package com.example.shopGiay.model;
 
 
+import lombok.Data;
+import org.springframework.security.core.GrantedAuthority;
+
 import javax.persistence.*;
 import java.util.Set;
 
 @Entity
 @Table(name = "roles")
-public class Roles {
+@Data
+public class Roles implements GrantedAuthority {
     @Id
-    @Column(name = "roles_id")
+    @Column(name = "role_id")
     @GeneratedValue( strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private String name;
 
-    @ManyToMany( mappedBy = "roles")
-    private Set<User> users;
-
-    public Set<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(Set<User> users) {
-        this.users = users;
-    }
 
     public Integer getId(){
         return id;
@@ -39,6 +33,11 @@ public class Roles {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public String getAuthority() {
+        return name;
     }
 }
 

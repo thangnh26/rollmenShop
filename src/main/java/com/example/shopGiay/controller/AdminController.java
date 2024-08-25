@@ -1,13 +1,23 @@
 package com.example.shopGiay.controller;
 
+import com.example.shopGiay.model.Customer;
+import com.example.shopGiay.model.Staff;
 import com.example.shopGiay.repository.OrderRepository;
+import com.example.shopGiay.service.OrderService;
+import com.example.shopGiay.service.StaffService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -16,13 +26,43 @@ public class AdminController {
     @Autowired
     OrderRepository orderRepository;
 
-    @GetMapping("/admin")
-    public String adminPage(){
-        return "redirect:admin/index";
+    @Autowired
+    OrderService orderService;
+
+    @Autowired
+    StaffService staffService;
+
+//    @PreAuthorize("hasRole('STAFF')")
+//    @GetMapping("/admin")
+//    public String adminPage(){
+//        return "redirect:admin/index";
+//    }
+
+    @GetMapping("/staff/profile")
+    public String showUserProfile(Model model, HttpSession session) {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email;
+        if (principal instanceof UserDetails) {
+            email = ((UserDetails) principal).getUsername();
+        } else {
+            email = principal.toString();
+        }
+        Staff user = staffService.findByEmail(email);
+
+        if (user != null) {
+            session.setAttribute("loggedInUser", user);
+            model.addAttribute("user", user);
+            return "staff/staff_profile";
+        } else {
+            model.addAttribute("error", "User not found");
+            return "redirect:/login";
+        }
     }
+    
+    @PreAuthorize("hasRole('STAFF')")
     @GetMapping("/admin/index")
     public String adminHome(Model model){
-        BigDecimal total =BigDecimal.valueOf(orderRepository.total());
+        BigDecimal total =orderService.total();
         model.addAttribute("total",total);
         model.addAttribute("countUser",orderRepository.countUser());
         model.addAttribute("countOrder", orderRepository.countOrder());
@@ -65,5 +105,12 @@ public class AdminController {
         return "admin/index";
 
     }
-    //tổng thu theo tháng
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/admin/staff")
+    public String getAllStaff(Model model){
+        List<Staff> staff = staffService.getAllStaffByRole();
+        model.addAttribute("staff", staff);
+        return "staff/list";
+    }
 }

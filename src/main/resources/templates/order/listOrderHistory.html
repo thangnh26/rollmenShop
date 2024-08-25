@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="zxx" class="no-js" xmlns:th="http://www.thymeleaf.org">
 <head>
-<!--    <title>Order List</title>-->
+    <!--    <title>Order List</title>-->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
-<!--<head th:replace=" fragment/fragment :: html_head"/>-->
 <body id="orderHistory">
 <header th:replace="fragment/header:: header"/>
 <div class="container">
     <div class="row">
         <form th:action="@{/order/history}" method="get" class="form-inline mt-2">
+            <input class="form-control mr-sm-2" type="search" placeholder="Tìm kiếm theo mã hóa đơn" aria-label="Search" name="codeCustomer" th:value="${codeCustomer != null ? codeCustomer : ''}">
             <select class="form-control mr-sm-2" name="status" aria-label="Search">
                 <option value="" th:selected="${status != null && status == null}">Tất cả</option>
                 <option value="0" th:selected="${status != null && status == 0}">Chờ xác nhận</option>
@@ -20,60 +20,40 @@
             </select>
             <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
         </form>
-    <table class="table table-striped">
-        <thead>
-        <tr>
-<!--            <th>ID</th>-->
-<!--            <th>Tên khách hàng</th>-->
-                        <th>Mã hóa đơn</th>
-            <!--            <th>Voucher</th>-->
-            <th>Ngày mua</th>
-<!--            <th>Update Date</th>-->
-            <!--            <th>Status</th>-->
-            <th>Địa chỉ giao</th>
-            <th>Tên khách hàng</th>
-            <th>Số điện thoại đặt hàng</th>
-            <th>Tổng tiền</th>
-            <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="order : ${orders}">
-<!--            <td th:text="${order.id}">1</td>-->
-<!--            <td th:text="${order.customer.code}">Customer</td>-->
-                        <td th:text="${order.code}"></td>
-            <!--            <td th:text="${order.voucher.nameVoucher}">Voucher</td>-->
-            <td th:text="${order.createDate}">2022-01-01</td>
-<!--            <td th:text="${order.updateDate}">2022-01-01</td>-->
-            <!--            <td th:text="${order.status == 0 ? 'Chờ xác nhận' :-->
-            <!--              order.status == 1 ? 'Xác nhận' :-->
-            <!--              order.status == 2 ? 'Đang giao hàng' :-->
-            <!--              order.status == 3 ? 'Giao hàng thành công' :-->
-            <!--              order.status == 4 ? 'Đã hủy' : 'Unknown'}"></td>-->
-
-            <td th:text="${order.addressReceiver}">Address</td>
-            <td th:text="${order.nameReceiver}">Name</td>
-            <td th:text="${order.phoneReceiver}">Phone</td>
-            <td th:text="${order.totalAmount}">1000</td>
-            <td>
-                <a class="btn btn-success" th:if="${order.status == 0}">Chờ xác nhận</a>
-                <a class="btn btn-danger" th:if="${order.status == 0 || order.status == 1 || order.status == 2}"
-                   th:href="@{/order/cancelled/{id}(id=${order.id})}">Hủy</a>
-                <a class="btn btn-success" th:if="${order.status == 1}">Đã xác nhận</a>
-                <a class="btn btn-success" th:if="${order.status == 2}">Đang giao hàng</a>
-                <a class="btn btn-success" th:if="${order.status == 3}">Đã giao thành công</a>
-<!--                <a class="btn btn-success" th:if="${order.status == 4}">Thành công</a>-->
-                <a class="btn btn-danger" th:if="${order.status == 4}">Đã hủy</a>
-                <a class="btn btn-success" th:href="@{/order-detail-customer(id=${order.id})}">Xem chi tiết</a>
-            </td>
-            <!--            <td>-->
-            <!--                <a class="btn btn-info" th:href="@{/order/edit/{id}(id=${order.id})}">Edit</a>-->
-            <!--                <a class="btn btn-danger" th:href="@{/order/delete/{id}(id=${order.id})}">Delete</a>-->
-            <!--            </td>-->
-        </tr>
-        </tbody>
-    </table>
-</div>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Mã hóa đơn</th>
+                <th>Ngày mua</th>
+                <th>Địa chỉ giao</th>
+                <th>Tên khách hàng</th>
+                <th>Số điện thoại đặt hàng</th>
+                <th>Tổng tiền</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="order : ${orders}">
+                <td th:text="${order.code}"></td>
+                <td th:text="${order.createDate}">2022-01-01</td>
+                <td th:text="${order.addressReceiver}">Address</td>
+                <td th:text="${order.nameReceiver}">Name</td>
+                <td th:text="${order.phoneReceiver}">Phone</td>
+                <td th:text="${order.totalAmount}">1000</td>
+                <td>
+                    <a class="btn btn-success" th:if="${order.status == 0}">Chờ xác nhận</a>
+                    <a class="btn btn-danger" th:if="${order.status == 0 || order.status == 1 || order.status == 2}"
+                       th:href="@{/order/cancelled-customer/{id}(id=${order.id})}">Hủy</a>
+                    <a class="btn btn-success" th:if="${order.status == 1}">Đã xác nhận</a>
+                    <a class="btn btn-success" th:if="${order.status == 2}">Đang giao hàng</a>
+                    <a class="btn btn-success" th:if="${order.status == 3}">Đã giao thành công</a>
+                    <a class="btn btn-danger" th:if="${order.status == 4}">Đã hủy</a>
+                    <a class="btn btn-success" th:href="@{/order-detail-customer(id=${order.id})}">Xem chi tiết</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 <footer th:replace="fragment/footer :: footer"/>
 

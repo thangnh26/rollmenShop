@@ -7,9 +7,11 @@ import com.example.shopGiay.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.Date;
@@ -132,5 +134,11 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void ok(Integer id) {
         orderRepository.confirm(id,3);
+    }
+
+    @Override
+    @PreAuthorize("hasAnyRole('STAFF')")
+    public BigDecimal total() {
+        return BigDecimal.valueOf(orderRepository.total()!=null ? orderRepository.total():0.0);
     }
 }

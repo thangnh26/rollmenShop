@@ -9,4 +9,7 @@ import org.springframework.stereotype.Repository;
 public interface SizeRepository extends JpaRepository<Size, Integer> {
     @Query("SELECT s FROM Size s WHERE s.id = ?1")
     Size getById(int id);
+
+    @Query(value = "SELECT * FROM size WHERE id NOT IN (SELECT size_id FROM product_detail WHERE product_id=:productId)",nativeQuery = true)
+    Size findSizeNotInProductDetail(Integer productId);
 }

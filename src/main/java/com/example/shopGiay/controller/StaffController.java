@@ -85,7 +85,7 @@ public class StaffController {
         existingStaff.setPassword(staff.getPassword());
         existingStaff.setPhoneNumber(staff.getPhoneNumber());
         existingStaff.setStatus(staff.getStatus());
-        existingStaff.setRole(staff.getRole());
+//        existingStaff.setRole(staff.getRole());
         existingStaff.setUpdateDate(LocalDate.now());
         staffService.saveStaff(existingStaff);
         return "redirect:/staff";

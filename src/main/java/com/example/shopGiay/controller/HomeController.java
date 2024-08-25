@@ -143,6 +143,19 @@ public class HomeController {
         return "orderDetail";
     }
 
+    @GetMapping("/order-detail-staff")
+    public String getOderDetailStaff(@RequestParam("id")Integer id,Model model){
+        List<OrderDetail> orderDetail = orderDetailService.getById(id);
+        Order oder = orderDetailService.getOrderById(id);
+        if (orderDetail == null || orderDetail.isEmpty()) {
+            // Handle case when no order details are found
+            return "error/404";
+        }
+        model.addAttribute("orderDetail",orderDetail);
+        model.addAttribute("oder",oder);
+        return "staff/orderDetail";
+    }
+
     @GetMapping("/{id}")
     public String getDetailProduct(Model model, @PathVariable int id, @RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size) {
 
@@ -320,6 +333,9 @@ public class HomeController {
 
         // Lấy User từ email
         Customer user = userRepo.findByEmail(email);
+        if (user==null){
+            return "redirect:/login";
+        }
         List<Brand> brandsReputation = brandService.getAllBrands();
         Result result = null;
        List<CartItem> list= shoppingCartService.getAllItems(user.getId());
@@ -357,6 +373,9 @@ public class HomeController {
 
         // Lấy User từ email
         Customer user = userRepo.findByEmail(email);
+        if (user==null){
+            return "redirect:/login";
+        }
         Result result = shoppingCartService.add(cartItem, user.getId());
         List<Brand> brandsReputation = brandService.getAllBrands();
         model.addAttribute("listBrandsReputation", brandsReputation);
@@ -385,6 +404,9 @@ public class HomeController {
 
             // Lấy User từ email
             Customer user = userRepo.findByEmail(email);
+            if (user==null){
+                return "redirect:/login";
+            }
             Cart cart = cartService.getOneByUserId(user.getId());
             shoppingCartService.updateCartItem(cart.getId(),productId,colorId, sizeId, quantity);
             redirectAttributes.addFlashAttribute("successMessage", "Cart item updated successfully");
@@ -412,8 +434,14 @@ public class HomeController {
 
         // Lấy User từ email
         Customer user = userRepo.findByEmail(email);
+        if (user==null){
+            return "redirect:/login";
+        }
         Address address = addressRepository.findByCustomerId(user.getId());
         List<Address> allAddressByCusId = addressRepository.findByCusId(user.getId());
+        if (allAddressByCusId.size()==0){
+            return "redirect:/add-address";
+        }
         model.addAttribute("user", userRepo.findByEmail(user.getEmail()));
         ProductDetail productDetail = productDetailRepository.getOneProductDetail(orderRequest.getProId(), orderRequest.getColorId(), orderRequest.getSizeId());
         model.addAttribute("listItem", productDetail);
@@ -443,9 +471,14 @@ public class HomeController {
 
         // Lấy User từ email
         Customer user = userRepo.findByEmail(email);
-
+        if (user==null){
+            return "redirect:/login";
+        }
         Address address = addressRepository.findByCustomerId(user.getId());
         List<Address> allAddressByCusId = addressRepository.findByCusId(user.getId());
+        if (allAddressByCusId.size()==0){
+            return "redirect:/add-address";
+        }
         model.addAttribute("user", userRepo.findByEmail(user.getEmail()));
         model.addAttribute("listItem", shoppingCartService.getAllItems(user.getId()));
         model.addAttribute("total", shoppingCartService.getAmount());
@@ -456,6 +489,9 @@ public class HomeController {
 
     @PostMapping("/checkout")
     public String createOrder(@RequestParam("name_receiver") String nameReceiver, @RequestParam("phone_number_receiver") String phoneReceiver, @RequestParam(value = "address_receiver") Integer addressReceiverRequest, @RequestParam("note") String note, @RequestParam("price") String price, @RequestParam("userId") Integer id, @RequestParam(value = "proId",required = false) int proId, @RequestParam(value = "sizeId",required = false) int sizeId, @RequestParam(value = "colorId",required = false) int colorId, @RequestParam(value = "quantity",required = false) int quantity, @RequestParam(value = "check",required = false) int check) {
+        if(id ==null){
+            return "redirect:/login";
+        }
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String email = null;
         if (principal instanceof UserDetails) {
@@ -466,6 +502,9 @@ public class HomeController {
 
         // Lấy User từ email
         Customer user = userRepo.findByEmail(email);
+        if (user==null){
+            return "redirect:/login";
+        }
         Address address = addressRepository.findById(addressReceiverRequest).get();
         Order order = orderService.createOrder(nameReceiver, phoneReceiver, address.getNameAddress(), note, price, id);
             orderDetailService.createOrderDetail(proId, order.getId(), quantity, sizeId, colorId);
@@ -474,6 +513,9 @@ public class HomeController {
     }
     @PostMapping("/checkout-by-cart")
     public String createOrderByCart(@RequestParam("name_receiver") String nameReceiver, @RequestParam("phone_number_receiver") String phoneReceiver, @RequestParam(value = "address_receiver") Integer addressReceiverRequest, @RequestParam("note") String note, @RequestParam("price") String price, @RequestParam("userId") Integer id) {
+        if(id ==null){
+            return "redirect:/login";
+        }
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String email = null;
         if (principal instanceof UserDetails) {
@@ -484,6 +526,9 @@ public class HomeController {
 
         // Lấy User từ email
         Customer user = userRepo.findByEmail(email);
+        if (user==null){
+            return "redirect:/login";
+        }
         Address address = addressRepository.findById(addressReceiverRequest).get();
 
         Order order = orderService.createOrder(nameReceiver, phoneReceiver, address.getNameAddress(), note, price, id);
@@ -517,6 +562,9 @@ public class HomeController {
 
         // Lấy User từ email
         Customer user = userRepo.findByEmail(email);
+        if (user==null){
+            return "redirect:/login";
+        }
         Cart cart = cartService.getOneByUserId(user.getId());
         shoppingCartService.clear(cart.getId());
         return "redirect:/cart";
@@ -545,7 +593,6 @@ public class HomeController {
         newUser.setPassword(password); // Không mã hóa mật khẩu
         newUser.setFirstName(firstName);
         newUser.setLastName(lastName);
-//        newUser.setAddress(address);
         newUser.setPhoneNumber(phoneNumber);
 //        newUser.setStatus(true); // Hoặc set tùy thuộc vào logic của bạn
 
@@ -579,13 +626,14 @@ public class HomeController {
             email = principal.toString();
         }
         Customer user = userRepo.findByEmail(email);
+
         if (user != null) {
             session.setAttribute("loggedInUser", user);
             model.addAttribute("user", user);
             return "user_profile";
         } else {
             model.addAttribute("error", "User not found");
-            return "error";
+            return "redirect:/login";
         }
     }
 

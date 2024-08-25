@@ -47,11 +47,6 @@
 			<!-- Start Filter Bar -->
 			<div class="filter-bar d-flex  align-items-center" style="justify-content: space-between; background-color: saddlebrown; border-radius: 4px;">
 				<div class="sorting">
-					<!--						<select>-->
-					<!--							<option value="1">Default sorting</option>-->
-					<!--							<option value="1">Default sorting</option>-->
-					<!--							<option value="1">Default sorting</option>-->
-					<!--						</select>-->
 				</div>
 				<div class="sorting">
 					<form th:action="@{/product}" class="d-inline-flex" >
@@ -69,21 +64,15 @@
 					<!-- single product -->
 					<div class="col-lg-3 col-md-6" th:each="product: ${listProduct.content}">
 						<div class="single-product" style="height: 90%;">
-							<a th:href="@{/product/{id}(id=${product.id})}">
+							<a th:href="@{/{id}(id=${product.id})}">
 								<img class="img-fluid" th:src="@{${product.thumbnail}}" alt="Product Image">
 								<div class="product-details">
 									<h6 th:text="${product.name}"></h6>
 									<div class="price">
 										<h6 th:text="${#numbers.formatDecimal(price, 0, 'COMMA', 0, 'POINT')} + ' vnđ'"></h6>
 									</div>
-<!--									<div style="padding-left: 10px; color: gray;" th:if="${product.quantity > 0}">-->
-<!--										<p>Tình trạng: Còn hàng</p>-->
-<!--									</div>-->
-<!--									<div style="padding-left: 10px; color: gray;" th:if="${product.quantity <= 0}">-->
-<!--										<p>Tình trạng: Hết hàng</p>-->
-<!--									</div>-->
 									<div class="prd-bottom">
-										<a th:href="@{	/{id}(id=${product.id})}" style="width: 100%;" class="social-info">
+										<a th:href="@{/{id}(id=${product.id})}" style="width: 100%;" class="social-info">
 											<span class="ti-info"></span>
 											<p class="hover-text">Chi tiết</p>
 										</a>
