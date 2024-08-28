@@ -20,7 +20,7 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
 //            "od.customer.id = :cusId and " +
             "(:#{#codeCustomer} is null or :#{#codeCustomer}='' or lower(od.code) like lower(concat('%', :#{#codeCustomer}, '%'))) and " +
             "(:#{#status} is null or :#{#status}=od.status) and " +
-            "(:#{#phone} is null or :#{#phone}='' or od.phoneReceiver like concat('%', :#{#phone}, '%'))"
+            "(:#{#phone} is null or :#{#phone}='' or od.phoneReceiver like concat('%', :#{#phone}, '%')) order by od.id desc "
     )
     Page<Order> findByCustomerCodeContainingIgnoreCaseAndStatusNot(String codeCustomer, String phone, Integer status, Pageable pageable);
 
@@ -28,7 +28,7 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
             "od.customer.id = :cusId and " +
             "(:#{#codeCustomer} is null or :#{#codeCustomer}='' or lower(od.code) like lower(concat('%', :#{#codeCustomer}, '%'))) and " +
             "(:#{#status} is null or :#{#status}=od.status) and " +
-            "(:#{#phone} is null or :#{#phone}='' or od.phoneReceiver like concat('%', :#{#phone}, '%')) order by od.createDate desc "
+            "(:#{#phone} is null or :#{#phone}='' or od.phoneReceiver like concat('%', :#{#phone}, '%')) order by od.id desc "
     )
     Page<Order> findByCustomer(String codeCustomer, String phone, Integer status, Pageable pageable,int cusId);
 

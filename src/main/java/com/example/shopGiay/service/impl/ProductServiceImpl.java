@@ -76,12 +76,6 @@ public class ProductServiceImpl implements ProductService {
         return pageList;
     }
 
-//    @Override
-//    public List<ProductDto> getRandomListProduct(int limit){
-//        Pageable pageable = PageRequest.of(0,limit);
-//        return productRepository.getRandomListProduct(pageable);
-//    }
-
     @Override
     public List<ProductSizeResponse> listSize(int productId) {
         return productRepository.sizeInProductSize(productId);
@@ -93,14 +87,6 @@ public class ProductServiceImpl implements ProductService {
 
         // Assuming there's a method in your repository to fetch product details by their IDs
         List<ProductDetail> productDetails = productDetailRepository.findAllByProduct(productDetailIds);
-
-//        for (ProductDetail productDetail : productDetails) {
-//            ProductSizeResponse response = new ProductSizeResponse();
-//            response.setSizeNumber(productDetail.getSize().getSizeNumber());
-//            response.setId(productDetail.getSize().getId());
-//            sizeResponses.add(response);
-//        }
-
         return sizeResponses;
     }
 

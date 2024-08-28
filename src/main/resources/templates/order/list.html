@@ -60,7 +60,7 @@
                 <a class="btn btn-success" th:if="${order.status == 2}" th:href="@{/order/ok/{id}(id=${order.id})}">Giao hàng thành công</a>
                 <a class="btn btn-success" th:if="${order.status == 3}" >Đã thành công</a>
                 <a class="btn btn-danger" th:if="${order.status == 4}">Đã hủy</a>
-                <a class="btn btn-success" th:href="@{/order-detail-customer(id=${order.id})}">Xem chi tiết</a>
+                <a class="btn btn-success" th:href="@{/order-detail-staff(id=${order.id})}">Xem chi tiết</a>
 
             </td>
         </tr>

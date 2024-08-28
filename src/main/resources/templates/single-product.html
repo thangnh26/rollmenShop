@@ -1,7 +1,90 @@
 <!DOCTYPE html>
 <html lang="zxx" class="no-js" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragment/fragment :: html_head"/>
+<style>
+    .product-thumbnail {
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+    }
 
+    .product-name {
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+
+    .product-price {
+        font-size: 1.25rem;
+        color: #e63946;
+    }
+
+    .quantity-display {
+        display: flex;
+        align-items: center;
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .quantity-display span {
+        font-weight: bold;
+    }
+
+    .product-form {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.5rem;
+        box-sizing: border-box;
+    }
+
+    .error-message {
+        color: red;
+        display: none;
+    }
+
+    .button-container {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .primary-btn {
+        background-color: #f1faee;
+        border: none;
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+        font-size: 1rem;
+    }
+
+    .primary-btn svg {
+        vertical-align: middle;
+    }
+
+    .description-area {
+        background-color: rgba(153, 152, 152, 0.27);
+        padding: 20px;
+        margin-top: 20px;
+    }
+
+    .description-area h2 {
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .description-area p {
+        font-size: 1rem;
+        line-height: 1.5;
+    }
+
+</style>
+</head>
 <body>
 <header th:replace="fragment/header:: header"/>
 
@@ -24,241 +107,157 @@
 
 <!--================Single Product Area =================-->
 <div class="container">
-    <div class="row" style="display: inline-flex; width: 100%;">
-        <img class="col-lg-7" th:src="@{${product.thumbnail}}" alt="thumbnail"/>
+    <div class="row">
+        <!-- Ảnh sản phẩm -->
+        <div class="col-lg-7">
+            <img class="product-thumbnail" th:src="@{${product.thumbnail}}" alt="thumbnail"/>
+        </div>
 
-        <div class="s_product_text">
-            <h3 th:text="${product.name}"></h3>
-            <h2 th:text="${#numbers.formatDecimal(productDetail.price, 0, 'COMMA', 0, 'POINT')} + ' vnđ'"></h2>
-<!--            <h2 th:text="${}"> VNĐ</h2>-->
+        <!-- Thông tin sản phẩm -->
+        <div class="s_product_text col-lg-5">
+            <h6 class="product-name" th:text="${product.name}"></h6>
+            <h2 class="product-price" th:text="${#numbers.formatDecimal(productDetail.price, 0, 'COMMA', 0, 'POINT')} + ' vnđ'"></h2>
 
-            <div style="display: flex">
+            <div class="quantity-display">
                 <span>Số lượng còn:</span>
-                <p id="quantityDisplay" style="position: relative; bottom: 40px; left: 10px" th:utext="${productDetail.quantity}"></p>
+                <p id="quantityDisplay" th:utext="${productDetail.quantity}"></p>
             </div>
-            <form id="productForm" method="post" class="col-lg-5">
-                <label>Size: </label>
-                <div class="default-select" id="default-select">
-                    <select id="size" name="sizeId" onchange="updateQuantity()">
-<!--                        <div th:each="item:${listSize}">-->
-                            <option th:each="item : ${listSize}"
-                                    th:value="${item.id}"
-                                    th:text="${item.sizeNumber}"
-                                    th:selected="${item.id == productDetail.size.id}">
-                            </option>
-<!--                        </div>-->
+
+            <form id="productForm" method="post" class="product-form">
+                <div class="form-group">
+                    <label for="size">Size: </label>
+                    <select id="size" name="sizeId" class="form-control" onchange="updateQuantity()">
+                        <option th:each="item : ${listSize}"
+                                th:value="${item.id}"
+                                th:text="${item.sizeNumber}"
+                                th:selected="${item.id == productDetail.size.id}">
+                        </option>
                     </select>
                 </div>
-                <br>
-                <label>Color: </label>
-                <div class="default-select" id="default-select" >
-                    <select id="color" name="colorId" onchange="updateQuantity()">
-                        <div th:each="item:${listColor}">
-<!--                            <option th:value="${item.id}" th:text="${item.nameColor}"></option>-->
-                            <option
-                                    th:value="${item.id}"
-                                    th:text="${item.nameColor}"
-                                    th:selected="${item.id == productDetail.color.id}">
-                            </option>
-                        </div>
+
+                <div class="form-group">
+                    <label for="color">Color: </label>
+                    <select id="color" name="colorId" class="form-control" onchange="updateQuantity()">
+                        <option th:each="item : ${listColor}"
+                                th:value="${item.id}"
+                                th:text="${item.nameColor}"
+                                th:selected="${item.id == productDetail.color.id}">
+                        </option>
                     </select>
                 </div>
-                <br>
-                <div class="product_count">
-                    <label> Số lượng:</label>
-                    <input type="number" min="1" style="padding: 5px;" name="quantity" id="quantity" maxlength="12"
-                           th:value="1" title="Quantity:" class="input-text qty">
-                    <span id="quantityError" style="color: red; display: none;"></span>
+
+                <div class="form-group">
+                    <label for="quantity">Số lượng:</label>
+                    <input type="number" min="1" name="quantity" id="quantity" class="form-control"
+                           th:value="1" title="Quantity:"/>
+                    <span id="quantityError" class="error-message"></span>
                 </div>
-                Mô tả: <p th:utext="${product.description}"></p>
-
-                <!--                    <h6>Số lượng còn: <h6 th:text="${product.quantity}"></h6></h6>-->
-
                 <input type="hidden" name="proId" th:value="${product.id}">
-                <div class="button-container">
-                    <button type="button" class="primary-btn" onclick="submitForm('/add-cart')">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-cart" width="24"
-                             height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                             stroke-linecap="round" stroke-linejoin="round">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                            <path d="M5 6h15l2 11H7l-2 -11"/>
-                            <path d="M3 6v-2"/>
-                            <path d="M7 6v-2"/>
-                            <path d="M17 6v-2"/>
-                            <path d="M20 6h-2v-2"/>
-                            <path d="M7 19a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/>
-                            <path d="M17 19a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/>
-                        </svg>
 
-                    </button>
-                    <button type="button" class="primary-btn" onclick="submitForm('/buy-now')">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-plus" width="24"
-                             height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                             stroke-linecap="round" stroke-linejoin="round">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                            <path d="M12 5v14m-7-7h14"/>
+                <div class="button-container">
+                    <!-- Nút Thêm vào giỏ hàng -->
+                    <button type="button" class="primary-btn" onclick="submitForm('/add-cart')">
+                        <!-- SVG for cart icon with plus sign -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-cart-plus" viewBox="0 0 16 16">
+                            <path d="M5.5 1a.5.5 0 0 1 .5.5v.5h7a.5.5 0 0 1 .5.5v.5h1.5a.5.5 0 0 1 .493.6l-1.5 6a.5.5 0 0 1-.492.4H4.5a.5.5 0 0 1-.492-.4l-1.5-6A.5.5 0 0 1 2 2H.5A.5.5 0 0 1 0 1.5v-.5A.5.5 0 0 1 .5 1h5zM1 2h.5L2 8h10l.5-6H1.5L1 2zm4.5 10a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0zm7 0a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0z"/>
+                            <path d="M12 5v6m-3-3h6"/>
                         </svg>
+                        Thêm vào giỏ
+                    </button>
+
+                    <!-- Nút Mua ngay -->
+                    <button type="button" class="primary-btn" onclick="submitForm('/buy-now')">
+                        <!-- SVG for buy now icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-cart-check" viewBox="0 0 16 16">
+                            <path d="M8 0a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H7a.5.5 0 0 1-.5-.5V.5A.5.5 0 0 1 7 0h1zM7 6v5a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5V6h4zM13.5 2h-11a.5.5 0 0 0-.5.5v.5a.5.5 0 0 0 .5.5h.66l.665 4.7L4.663 10.6a.5.5 0 0 0-.355.447l-.083.91a.5.5 0 0 0 .358.522l.062.023c.228.088.44.197.637.33.22.156.433.3.648.345.928.037.272.016.527.076.765.095.415.157.662.158.778a.5.5 0 0 0-.263.7l.065.168a.5.5 0 0 0 .7.262l.056-.042c.252-.182.504-.368.74-.564.217-.179.43-.352.646-.529L13.5 3.82a.5.5 0 0 0 .327-.476V2.5a.5.5 0 0 0-.5-.5z"/>
+                        </svg>
+                        Mua ngay
                     </button>
                 </div>
+
+
             </form>
         </div>
-
     </div>
-    <!--================End Single Product Area =================-->
+</div>
+<!--================End Single Product Area =================-->
 
-    <!--================Product Description Area =================-->
-    <div class="container" style="margin: 20px auto; background-color: rgba(153,152,152,0.27);">
-        <ul class="nav nav-tabs" style="padding: 20px;">
-            <li class="nav-item">
-                <a class="nav-link" style="    color: #495057;
-    							background-color: rgba(73,73,73,0.42);
-								border-color: #dee2e6 #dee2e6 #fff;">Bình luận</a>
-            </li>
+<!--================Product Description Area =================-->
+<div class="description-area container">
+    <h2>Mô tả chi tiết sản phẩm</h2>
+    <p th:utext="${product.description}"></p>
+</div>
+<!--================End Product Description Area =================-->
 
-        </ul>
-        <div class="row" style="padding: 20px;">
-            <div class="col-lg-6">
-                <div class="comment_list" th:each="comment: ${listCommnet}">
-                    <div class="review_item reply" style="padding-top: 10px;">
-                        <div class="media">
-                            <div class="media-body">
-                                <h4 th:text="${comment.user.fullName}"></h4>
-                                <h5 th:text="${comment.createdAt}"></h5>
-                            </div>
-                        </div>
-                        <p th:text="${comment.content}"></p>
-                    </div>
-                    <hr>
-                </div>
-                <!-- Pagination -->
-<!--                <span class="flex col-span-4 mt-2 sm:mt-auto sm:justify-center" th:if="${listCommnet.totalPages > 1}">-->
-<!--                  <nav aria-label="Table navigation">-->
-<!--                    <ul class="inline-flex items-center">-->
-<!--                        <a th:href="@{/{id}(id = ${product.id}, page = ${1}, size = ${listCommnet.size})}"-->
-<!--                           th:class="${ 1 == listCommnet.number + 1 } ? 'px-3 py-1 text-white transition-colors duration-150 bg-purple-600 border border-r-0 border-orange-600 rounded-md focus:outline-none focus:shadow-outline-orange':'px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-orange'"-->
-<!--                        >-->
-<!--                          Đầu-->
-<!--                        </a>-->
-<!--                        <a th:href="@{/{id}(id = ${product.id}, page = ${pagenumber}, size = ${listCommnet.size})}"-->
-<!--                           th:class="${ pagenumber == listCommnet.number + 1 } ? 'px-3 py-1 text-white transition-colors duration-150 bg-purple-600 border border-r-0 border-purple-600 rounded-md focus:outline-none focus:shadow-outline-purple':'px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple'"-->
-<!--                           th:if="${listCommnet.totalPages > 1}"-->
-<!--                           th:each="pagenumber : ${pageNumber}"-->
-<!--                           th:text="${pagenumber}"-->
-<!--                        >-->
-<!--                        </a>-->
-<!--                        <a th:href="@{/{id}(id = ${product.id}, page = ${listCommnet.totalPages}, size = ${listCommnet.size})}"-->
-<!--                           th:class="${ listCommnet.totalPages == listCommnet.number + 1 } ? 'px-3 py-1 text-white transition-colors duration-150 bg-purple-600 border border-r-0 border-purple-600 rounded-md focus:outline-none focus:shadow-outline-purple':'px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple'"-->
-<!--                        >-->
-<!--							Cuối-->
-<!--                        </a>-->
-<!--                    </ul>-->
-<!--                  </nav>-->
-<!--                </span>-->
-            </div>
-            <div class="col-lg-6">
-                <div class="review_box" th:if="${#request.userPrincipal == null  }">
-                </div>
-                <div class="review_box" th:unless="${#request.userPrincipal == null}">
-                    <div th:if="${user.status == true}">
-                        <h4>Thêm bình luận</h4>
-                        <form class="row contact_form" th:action="@{/comment}" th:method="post" id="contactForm"
-                              novalidate="novalidate">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <input type="hidden" name="productId" th:value="${product.id}">
-                                    <textarea class="form-control" name="message" id="message" rows="1"
-                                              placeholder="Message"></textarea>
-                                </div>
-                            </div>
-                            <div class="col-md-12 text-right">
-                                <button type="submit" value="submit" class="btn primary-btn">Gửi bình luận</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+<footer th:replace="fragment/footer :: footer" style="width: 100%;"></footer>
 
-
-    <footer th:replace="fragment/footer :: footer"/>
-
-    <script src="js/vendor/jquery-2.2.4.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"
-            integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
-            crossorigin="anonymous"></script>
-    <script src="js/vendor/bootstrap.min.js"></script>
-    <script src="js/jquery.ajaxchimp.min.js"></script>
-    <script src="js/jquery.nice-select.min.js"></script>
-    <script src="js/jquery.sticky.js"></script>
-    <script src="js/nouislider.min.js"></script>
-    <script src="js/jquery.magnific-popup.min.js"></script>
-    <script src="js/owl.carousel.min.js"></script>
-    <!--gmaps Js-->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCjCGmQ0Uq4exrzdcL6rvxywDDOvfAu6eE"></script>
-    <script src="js/gmaps.min.js"></script>
-    <script src="js/main.js"></script>
-    <script>
-        function submitForm(action) {
+<script src="js/vendor/jquery-2.2.4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"
+        integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
+        crossorigin="anonymous"></script>
+<script src="js/vendor/bootstrap.min.js"></script>
+<script src="js/jquery.ajaxchimp.min.js"></script>
+<script src="js/jquery.nice-select.min.js"></script>
+<script src="js/jquery.sticky.js"></script>
+<script src="js/nouislider.min.js"></script>
+<script src="js/jquery.magnific-popup.min.js"></script>
+<script src="js/owl.carousel.min.js"></script>
+<!--gmaps Js-->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCjCGmQ0Uq4exrzdcL6rvxywDDOvfAu6eE"></script>
+<script src="js/gmaps.min.js"></script>
+<script src="js/main.js"></script>
+<script>
+    function submitForm(action) {
+        if (validateQuantity()) {
             var form = document.getElementById('productForm');
             form.action = action;
             form.submit();
         }
-    </script>
-    <script>
-        function getProductIdFromUrl() {
-            const pathParts = window.location.pathname.split('/');
-            return pathParts[pathParts.length - 1];
+    }
+
+    function getProductIdFromUrl() {
+        const pathParts = window.location.pathname.split('/');
+        return pathParts[pathParts.length - 1];
+    }
+
+    function updateQuantity() {
+        var sizeId = document.getElementById("size").value;
+        var colorId = document.getElementById("color").value;
+        var productId = getProductIdFromUrl(); // Extract productId from URL
+
+        if (sizeId && colorId && productId) {
+            fetch(`/product-detail/quantity?sizeId=${sizeId}&colorId=${colorId}&productId=${productId}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Reset quantity input to 1 and update the displayed quantity
+                    document.getElementById("quantity").value = 1;
+                    var quantityDisplayElement = document.getElementById("quantityDisplay");
+                    if (quantityDisplayElement) {
+                        quantityDisplayElement.innerHTML = data.quantity;
+                    } else {
+                        console.error("Quantity display element not found.");
+                    }
+                })
+                .catch(error => console.error('Error fetching quantity:', error));
         }
-        function updateQuantity() {
-            var sizeId = document.getElementById("size").value;
-            var colorId = document.getElementById("color").value;
-            var productId = getProductIdFromUrl(); // Extract productId from URL
+    }
 
-            if (sizeId && colorId && productId) {
-                fetch(`/product-detail/quantity?sizeId=${sizeId}&colorId=${colorId}&productId=${productId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        // Reset quantity input to 1 and update the displayed quantity
-                        document.getElementById("quantity").value = 1;
-                        var quantityDisplayElement = document.getElementById("quantityDisplay");
-                        if (quantityDisplayElement) {
-                            quantityDisplayElement.innerHTML = data.quantity;
-                        } else {
-                            console.error("Quantity display element not found.");
-                        }
-                    })
-                    .catch(error => console.error('Error fetching quantity:', error));
-            }
-        }
+    function validateQuantity() {
+        var maxQuantity = [[${productDetail.quantity}]];
+        var inputQuantity = document.getElementById('quantity').value;
 
-        function validateQuantity() {
-            var maxQuantity = [[${productDetail.quantity}]];
-            var inputQuantity = document.getElementById('quantity').value;
+        var errorElement = document.getElementById('quantityError');
 
-            var errorElement = document.getElementById('quantityError');
-
-            if (parseInt(inputQuantity) > parseInt(maxQuantity)) {
-                errorElement.textContent = "Số lượng vượt quá số lượng sản phẩm có sẵn!";
-                errorElement.style.display = "inline"; // Hiển thị thông báo lỗi
-                return false; // Ngăn không cho form gửi đi
-            } else {
-                errorElement.style.display = "none"; // Ẩn thông báo lỗi nếu nhập đúng
-            }
-
-
-            return true; // Allow form submission
+        if (parseInt(inputQuantity) > parseInt(maxQuantity)) {
+            errorElement.textContent = "Số lượng vượt quá số lượng sản phẩm có sẵn!";
+            errorElement.style.display = "inline"; // Hiển thị thông báo lỗi
+            return false; // Ngăn không cho form gửi đi
+        } else {
+            errorElement.style.display = "none"; // Ẩn thông báo lỗi nếu nhập đúng
         }
 
-        function submitForm(action) {
-            if (validateQuantity()) {
-                var form = document.getElementById('productForm');
-                form.action = action;
-                form.submit();
-            }
-        }
-    </script>
-
-
+        return true; // Allow form submission
+    }
+</script>
 </body>
 </html>

@@ -17,14 +17,6 @@
                         <div class="col-lg-5 col-md-5">
                             <div class="banner-content">
                                 <h1 style="color: #ff9933;" th:text="${product.name}"></h1>
-<!--                                <div class="add-bag d-flex align-items-center" th:if="${product.quantity > 0}">-->
-<!--                                    <a class="add-btn" th:href="@{/{id}(id=${product.id})}"><span class="lnr lnr-cross"></span></a>-->
-<!--                                    <span class="add-text text-uppercase" style="color: white;">Xem chi tiết</span>-->
-<!--                                </div>-->
-<!--                                <div class="add-bag d-flex align-items-center" th:if="${product.quantity <= 0}">-->
-<!--                                    <a class="add-btn" ><span class="lnr lnr-cross"></span></a>-->
-<!--                                    <span class="add-text text-uppercase" style="color: white;">Hết hàng</span>-->
-<!--                                </div>-->
                             </div>
                         </div>
                         <div class="col-lg-7">
@@ -116,17 +108,6 @@
                                 <div class="price">
                                     <h6 th:text="${#numbers.formatDecimal(priceRandomProducts, 0, 'COMMA', 0, 'POINT')} + ' vnđ'"></h6>
                                 </div>
-<!--                                <div class="price" th:each="quantity: ${quantityRandomProducts}">-->
-<!--                                    <h5 style="padding-left: 8px;">Số lượng còn: </h5>-->
-<!--&lt;!&ndash;                                    <h5 style="padding-left: 10px;" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT') +' vnđ'}"></h5>&ndash;&gt;-->
-<!--                                    <h5 style="padding-left: 10px;" th:text="${quantity}"></h5>-->
-<!--                                </div>-->
-<!--                                <div style="padding-left: 10px; color: gray;" th:if="${quantity > 0}">-->
-<!--                                    <p>Tình trạng: Còn hàng</p>-->
-<!--                                </div>-->
-<!--                                <div style="padding-left: 10px; color: gray;" th:if="${quantity <= 0}">-->
-<!--                                    <p>Tình trạng: Hết hàng</p>-->
-<!--                                </div>-->
                                 <div class="prd-bottom">
                                     <a th:href="@{/{id}(id = ${product.id})}" style="width: 100%;" class="social-info">
                                         <span class="ti-info"></span>
@@ -202,18 +183,6 @@
                         <img class="img-fluid" th:src="@{${product.thumbnail}}" alt="">
                         <div class="product-details" >
                             <h6 th:text="${product.name}"></h6>
-<!--                            <div class="price">-->
-<!--                                <h5 style="padding-left: 8px;">Số lượng còn: </h5>-->
-
-<!--                                &lt;!&ndash;                                    <h5 style="padding-left: 10px;" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT') +' vnđ'}"></h5>&ndash;&gt;-->
-<!--                                <h5 style="padding-left: 10px;" th:text="${product.getProductDetail().quantity}"></h5>-->
-<!--                            </div>-->
-<!--                            <div style="padding-left: 10px; color: gray;" th:if="${product.quantity > 0}">-->
-<!--                                <p>Tình trạng: Còn hàng</p>-->
-<!--                            </div>-->
-<!--                            <div style="padding-left: 10px; color: gray;" th:if="${product.quantity <= 0}">-->
-<!--                                <p>Tình trạng: Hết hàng</p>-->
-<!--                            </div>-->
                             <div class="prd-bottom">
                                 <a th:href="@{/{id}(id = ${product.id})}" style="width: 100%;" class="social-info">
                                     <span class="ti-info"></span>

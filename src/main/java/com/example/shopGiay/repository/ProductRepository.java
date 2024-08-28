@@ -59,7 +59,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     @Query(value = "SELECT * " +
             "FROM product p " +
             "JOIN product_detail pd ON p.id = pd.product_id " +
-            "JOIN order_detail od ON pd.id = od.product_detail_id where od.status=3 " +
+            "JOIN order_detail od ON pd.id = od.product_detail_id join dbshopgiay.order o on o.id=od.order_id where o.status=3 " +
             "GROUP BY p.id, p.name " +
             "ORDER BY SUM(od.quantity) DESC " +
             "LIMIT 4 ",nativeQuery = true)

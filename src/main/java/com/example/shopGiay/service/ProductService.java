@@ -19,7 +19,7 @@ import java.util.List;
 public interface ProductService {
 
 
-    //Lấy sản 3 phẩm mới nhất
+    //Lấy sản 10 phẩm mới nhất
     List<Product> getListNewProducts(int limit);
 
     //Lấy danh sách các sản phẩm nổi bật

@@ -152,7 +152,7 @@ public class OrderController {
     @GetMapping("/cancelled-customer/{id}")
     public String cancelledCustomer(@PathVariable Integer id){
         orderService.cancelled(id);
-        return "redirect:/order/history";
+        return "redirect:/user/profile";
     }
 
     @GetMapping("/shipping/{id}")

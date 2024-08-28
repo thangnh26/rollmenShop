@@ -55,7 +55,13 @@ public class OrderDetailServiceImpl implements OrderDetailService {
         orderDetailRepository.save(orderDetail);
         String to = order.getCustomer().getEmail();
         String subject = "Đơn hàng "+ order.getCode();
-        String text = "Dear: "+order.getCustomer().getFirstName() +" "+order.getCustomer().getLastName()+" chúng tôi sẽ gửi đơn hàng đêns địa chỉ "+order.getAddressReceiver();
+        String text = "Dear: " + order.getCustomer().getFirstName() + " " + order.getCustomer().getLastName() + ",\n" +
+                "Cảm ơn quý khách đã đặt hàng tại RollMen Shop. Chúng tôi xin xác nhận rằng đơn hàng của quý khách đã được xử lý thành công với các thông tin sau:\n\n" +
+                "Tên Khách Hàng: " + order.getCustomer().getFirstName() + " " + order.getCustomer().getLastName() + "\n" +
+                "Số Điện Thoại: " + order.getPhoneReceiver() + "\n" +
+                "Địa Chỉ Giao Hàng: " + order.getAddressReceiver() + "\n" +
+                "Mã Hóa Đơn: " + order.getCode() + "\n" +
+                "Sản Phẩm Đã Đặt: " + orderDetail.getProductDetail().getProduct().getName();
         emailService.sendEmail(to,subject,text);
         return orderDetail;
     }
@@ -76,5 +82,11 @@ public class OrderDetailServiceImpl implements OrderDetailService {
     @Override
     public List<OrderDetail> getByIds(List<Integer> orderIds) {
         return orderDetailRepository.findByOrderIdIn(orderIds);
+    }
+
+
+    @Override
+    public List<OrderDetail> getOrderDetailsByOrderId(Integer orderId) {
+        return orderDetailRepository.findByOrderId(orderId);
     }
 }

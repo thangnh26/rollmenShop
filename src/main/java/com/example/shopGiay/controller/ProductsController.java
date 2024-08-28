@@ -258,7 +258,10 @@ public class ProductsController {
         Pageable pageable = PageRequest.of(currentPage - 1,sizePage);
 
         Page<Product> listProduct = productService.searchProduct(keyword,pageable);//Lấy các
+        List<BigDecimal> price = productDetailRepository.findListPricreByProductId(listProduct.getContent().stream().map(Product::getId).collect(Collectors.toList()));
+
         model.addAttribute("listProduct", listProduct);
+        model.addAttribute("price", price);
         model.addAttribute("keyword",keyword);
 
         int totalPage = listProduct.getTotalPages();
@@ -338,19 +341,6 @@ public class ProductsController {
         return "redirect:/admin/products";
     }
 
-
-    //    @PostMapping("/admin/product/{id}/update")
-//    public String updateSize(@PathVariable("id") int id, @RequestParam("productId") int productId, @RequestParam("qty") int quantity, @RequestParam("price") double price){
-//        ProductDetail product_size = productDetailRepository.findByProductIdAndSizeId(productId,id);
-//        int a = product_size.getQuantity();
-//        double b = product_size.getPrice();
-//        product_size.setQuantity(quantity);
-//        product_size.setPrice(price);
-//        Product product = productRepository.getById(productId);
-//        productRepository.save(product);
-//        productDetailRepository.save(product_size);
-//        return "redirect:/admin/product/"+productId;
-//    }
 @GetMapping("/admin/product/update/{id}")
 public String updateProduct(Model model,@PathVariable("id") Integer id){
     Product product = productService.getDetailProductById(id);
@@ -362,28 +352,4 @@ public String updateProduct(Model model,@PathVariable("id") Integer id){
 
     return "admin/product/updateProduct";
 }
-//    @PostMapping("/admin/product/update")
-//    public String adminCreateProduct(@RequestParam("id") Integer id,
-//                                     @RequestParam("name") String name,
-//                                     @RequestParam("categoryId") Integer categoryId,
-//                                     @RequestParam("brandId") Integer brandId,
-//                                     @RequestParam("materialId") Integer materialId,
-//                                     @RequestParam("soleId") Integer soleId
-//    ) throws IOException {
-//        ProductDto product = productService.getDetailProductById(id);
-//        product.setName(name);
-//        Category category = categoryRepository.getById(categoryId);
-//        Brand brand = brandRepository.getById(brandId);
-//        Material material = materialRepository.getById(materialId);
-//        Sole sole = soleRepository.getById(soleId);
-//
-//        product.setCategory(category);
-//        product.setBrand(brand);
-//        product.setMaterial(material);
-//        product.setSole(sole);
-//        productRepository.save(product);
-//        String uploadDir = "./src/main/resources/static/img/product/";
-//        Path uploadPath = Paths.get(uploadDir);
-//        return "redirect:/admin/products";
-//    }
 }
