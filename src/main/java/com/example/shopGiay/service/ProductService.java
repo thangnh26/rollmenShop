@@ -46,4 +46,6 @@ public interface ProductService {
     List<Product> getProductHot();
 
     void updateProductDetails(Integer id, BigDecimal price, Integer quantity);
+
+    void saveOrUpdateProduct(Product product);
 }

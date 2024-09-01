@@ -11,6 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductDetailForm {
+    private Integer Id;
     private Integer categoryId;
     private Integer brandId;
     private Integer materialId;

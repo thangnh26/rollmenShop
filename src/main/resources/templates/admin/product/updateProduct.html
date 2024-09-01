@@ -401,10 +401,7 @@
 
         <main class="h-full overflow-y-auto">
             <div class="container px-6 mx-auto grid">
-                <form th:action="@{/admin/product/update}"
-                      method="post"
-                      enctype="multipart/form-data" th:object="${product}"
-                >
+                <form th:action="@{/admin/product/update}" method="post" enctype="multipart/form-data" th:object="${product}">
                     <input type="hidden" name="id" th:value="*{id}">
                     <h2
                             class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"
@@ -550,7 +547,9 @@
                             <ul class="inline-flex items-center">
                                 <li>
                                     <!-- CTA -->
-                                    <button type="submit"  class="flex items-center justify-between p-4 mb-8 text-sm font-semibold text-purple-100 bg-purple-600 rounded-lg shadow-md focus:outline-none focus:shadow-outline-purple">Cập nhật &RightArrow;</button>
+                                    <button type="submit" class="flex items-center justify-between p-4 mb-8 text-sm font-semibold text-purple-100 bg-purple-600 rounded-lg shadow-md focus:outline-none focus:shadow-outline-purple">
+                                        Cập nhật &RightArrow;
+                                    </button>
                                 </li>
                             </ul>
                         </div>

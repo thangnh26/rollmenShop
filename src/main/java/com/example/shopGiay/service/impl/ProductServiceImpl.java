@@ -126,6 +126,8 @@ public class ProductServiceImpl implements ProductService {
         productDetail.setQuantity(quantity);
         productDetailRepository.save(productDetail);
     }
-
-
+    @Override
+    public void saveOrUpdateProduct(Product product) {
+        productRepository.save(product);
+    }
 }

@@ -1,7 +1,8 @@
 package com.example.shopGiay.controller;
 
-
-import com.example.shopGiay.dto.*;
+import com.example.shopGiay.dto.ProductDetailForm;
+import com.example.shopGiay.dto.ProductDetailFormWrapper;
+import com.example.shopGiay.dto.ProductDetailRequest;
 import com.example.shopGiay.model.*;
 import com.example.shopGiay.repository.*;
 import com.example.shopGiay.service.*;
@@ -14,7 +15,6 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
@@ -24,97 +24,93 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Controller
+@RequestMapping("/admin")
 public class ProductsController {
 
     @Autowired
-    CategoryService categoryService;
+    private CategoryService categoryService;
 
     @Autowired
-    BrandService brandService;
+    private BrandService brandService;
 
     @Autowired
-    MaterialService materialService;
+    private MaterialService materialService;
 
     @Autowired
-    SoleService soleService;
+    private SoleService soleService;
 
     @Autowired
-    ProductService productService;
+    private ProductService productService;
 
     @Autowired
-    CategoryRepository categoryRepository;
+    private CategoryRepository categoryRepository;
 
     @Autowired
-    BrandRepository brandRepository;
+    private BrandRepository brandRepository;
 
     @Autowired
-    MaterialRepository materialRepository;
+    private MaterialRepository materialRepository;
 
     @Autowired
-    SoleRepository soleRepository;
+    private SoleRepository soleRepository;
 
     @Autowired
-    ProductRepository productRepository;
+    private ProductRepository productRepository;
 
     @Autowired
-    ProductDetailRepository productDetailRepository;
+    private ProductDetailRepository productDetailRepository;
 
     @Autowired
-    SizeRepository sizeRepository;
+    private SizeRepository sizeRepository;
 
     @Autowired
-    ColorRepository colorRepository;
+    private ColorRepository colorRepository;
 
-
-
-    @GetMapping("/admin/products")
-    public String adminProducts(Model model, @RequestParam("page")Optional<Integer> page, @RequestParam("size") Optional<Integer> size){
-
+    @GetMapping("/products")
+    public String adminProducts(Model model, @RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size) {
         int currentPage = page.orElse(1);
         int sizePage = size.orElse(10);
 
         Pageable pageable = PageRequest.of(currentPage - 1, sizePage);
         Page<Product> listProduct = productService.findAllOrderById(pageable);
         model.addAttribute("listProduct", listProduct);
+
         int totalPage = listProduct.getTotalPages();
-        if (totalPage > 0 ){
-            int start = Math.max(1,currentPage-2);
+        if (totalPage > 0) {
+            int start = Math.max(1, currentPage - 2);
             int end = Math.min(currentPage + 2, totalPage);
-            if( totalPage > 5 ){
-                if( end == totalPage){
+            if (totalPage > 5) {
+                if (end == totalPage) {
                     start = end - 5;
-                }else if(start == 1){
+                } else if (start == 1) {
                     end = start + 5;
                 }
             }
-            List<Integer> pagenummber = IntStream.rangeClosed(start,end)
-                    .boxed()
-                    .collect(Collectors.toList());
-            model.addAttribute("pageNumber", pagenummber);
+            List<Integer> pageNumber = IntStream.rangeClosed(start, end).boxed().collect(Collectors.toList());
+            model.addAttribute("pageNumber", pageNumber);
         }
         return "admin/product/products";
     }
-    @GetMapping("/admin/createProduct")
-    public String adminCreateProduct(Model model){
 
-        model.addAttribute("newProduct",new Product());
-        model.addAttribute("listCategory",categoryRepository.findAll());
-        model.addAttribute("listBrand",brandRepository.findAll());
-        model.addAttribute("listMaterial",materialRepository.findAll());
-        model.addAttribute("listSole",soleRepository.findAll());
-        model.addAttribute("listSize",sizeRepository.findAll());
-        model.addAttribute("listColor",colorRepository.findAll());
+    @GetMapping("/createProduct")
+    public String adminCreateProduct(Model model) {
+        model.addAttribute("newProduct", new Product());
+        model.addAttribute("listCategory", categoryRepository.findAll());
+        model.addAttribute("listBrand", brandRepository.findAll());
+        model.addAttribute("listMaterial", materialRepository.findAll());
+        model.addAttribute("listSole", soleRepository.findAll());
+        model.addAttribute("listSize", sizeRepository.findAll());
+        model.addAttribute("listColor", colorRepository.findAll());
         return "admin/product/createProduct";
     }
 
-    @PostMapping("/admin/createProduct")
+    @PostMapping("/createProduct")
     public String adminCreateProducts(@ModelAttribute ProductDetailForm productDTO,
                                       @RequestParam("sizeIds") List<Integer> sizeIds,
                                       @RequestParam("colorIds") List<Integer> colorIds,
@@ -129,15 +125,115 @@ public class ProductsController {
         return "redirect:/admin/products";
     }
 
+    @GetMapping("/product/update/{id}")
+    public String updateProductForm(Model model, @PathVariable("id") Integer id) {
+        Product product = productService.getDetailProductById(id);
+        if (product == null) {
+            return "error/404";  // Redirect to a 404 page if the product is not found
+        }
+        model.addAttribute("product", product);
+        model.addAttribute("listCategory", categoryRepository.findAll());
+        model.addAttribute("listBrand", brandRepository.findAll());
+        model.addAttribute("listMaterial", materialRepository.findAll());
+        model.addAttribute("listSole", soleRepository.findAll());
+        return "admin/product/updateProduct";
+    }
+
+    @PostMapping("/product/update")
+    public String updateProduct(@ModelAttribute("product") Product product,
+                                @RequestParam("categoryId") Integer categoryId,
+                                @RequestParam("brandId") Integer brandId,
+                                @RequestParam("materialId") Integer materialId,
+                                @RequestParam("soleId") Integer soleId,
+                                RedirectAttributes redirectAttributes) {
+        try {
+            product.setCategory(categoryRepository.findById(categoryId)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid category ID")));
+            product.setBrand(brandRepository.findById(brandId)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid brand ID")));
+            product.setMaterial(materialRepository.findById(materialId)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid material ID")));
+            product.setSole(soleRepository.findById(soleId)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid sole ID")));
+
+            if (product.getStatus() == null) {
+                product.setStatus(1);  // Set a default status if not provided
+            }
+
+            productService.saveOrUpdateProduct(product);
+            redirectAttributes.addFlashAttribute("successMessage", "Product updated successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to update product. Please try again.");
+            return "redirect:/admin/product/update/" + product.getId();
+        }
+        return "redirect:/admin/products";
+    }
+
+    @GetMapping("/product/{id}")
+    public String productDetail(Model model, @PathVariable("id") Integer id) {
+        List<ProductDetail> productDetails = productService.getListDetailProductById(id);
+        if (productDetails == null || productDetails.isEmpty()) {
+            return "error/404";  // Redirect to a 404 page if the product details are not found
+        }
+        model.addAttribute("product", productDetails);
+        model.addAttribute("id", id);
+        return "admin/product/productDetail";
+    }
+
+    @GetMapping("/product/add-product-detail")
+    public String addProductDetailForm(Model model, @RequestParam("productId") Integer productId) {
+        List<Size> sizeList = sizeRepository.findAll();
+        List<Color> colorList = colorRepository.findAll();
+        model.addAttribute("size", sizeList);
+        model.addAttribute("color", colorList);
+        model.addAttribute("productId", productId);
+        return "admin/product/addProductDetail";
+    }
+
+    @PostMapping("/product/add-product-detail")
+    public String addProductDetail(@RequestParam("productId") Integer productId,
+                                   @RequestParam("price") BigDecimal price,
+                                   @RequestParam("quantity") Integer quantity,
+                                   @RequestParam("sizeId") Integer sizeId,
+                                   @RequestParam("colorId") Integer colorId,
+                                   RedirectAttributes redirectAttributes) {
+        try {
+            ProductDetail existingDetail = productDetailRepository.getOne(productId, colorId, sizeId);
+            if (existingDetail != null) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Product detail already exists.");
+                return "redirect:/admin/product/" + productId;
+            }
+
+            Product product = productRepository.findById(productId)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid product ID"));
+            Size size = sizeRepository.findById(sizeId)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid size ID"));
+            Color color = colorRepository.findById(colorId)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid color ID"));
+
+            ProductDetail productDetail = new ProductDetail();
+            productDetail.setProduct(product);
+            productDetail.setSize(size);
+            productDetail.setColor(color);
+            productDetail.setPrice(price);
+            productDetail.setQuantity(quantity);
+            productDetail.setStatus(1);
+
+            productDetailRepository.save(productDetail);
+            redirectAttributes.addFlashAttribute("successMessage", "Product detail added successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to add product detail. Please try again.");
+        }
+        return "redirect:/admin/product/" + productId;
+    }
+
+    // Helper methods for product creation
     private void createProductAndDetails(ProductDetailForm productDTO, List<Integer> sizeIds, List<Integer> colorIds) throws IOException {
         Product product = createProduct(productDTO);
-
-        // Validate size and color lists
         if (sizeIds == null || colorIds == null || sizeIds.isEmpty() || colorIds.isEmpty()) {
             throw new IllegalArgumentException("Size IDs and Color IDs cannot be null or empty");
         }
 
-        // Generate ProductDetailRequest for each combination of size and color
         for (Integer sizeId : sizeIds) {
             for (Integer colorId : colorIds) {
                 ProductDetailRequest detailRequest = new ProductDetailRequest();
@@ -173,16 +269,14 @@ public class ProductsController {
 
         productDetailRepository.save(productDetail);
     }
+
     private Product createProduct(ProductDetailForm productDTO) throws IOException {
-        // Create a new Product instance
         Product product = new Product();
         String filename = StringUtils.cleanPath(productDTO.getThumbnailUrl().getOriginalFilename());
 
-        // Set product attributes
         product.setName(productDTO.getName());
         product.setDescription(productDTO.getDescription());
 
-        // Fetch and set product category, brand, material, and sole
         Category category = categoryRepository.findById(productDTO.getCategoryId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid category ID"));
         product.setCategory(category);
@@ -199,14 +293,11 @@ public class ProductsController {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid sole ID"));
         product.setSole(sole);
 
-        // Set thumbnail URL and status
         product.setThumbnail("~/img/product/" + filename);
         product.setStatus(1);
 
-        // Save product to the repository
         productRepository.save(product);
 
-        // Save the thumbnail image
         String uploadDir = "./src/main/resources/static/img/product/";
         Path uploadPath = Paths.get(uploadDir);
         if (!Files.exists(uploadPath)) {
@@ -221,135 +312,20 @@ public class ProductsController {
 
         return product;
     }
-
-
-    @GetMapping("/products")
-    public String showListProduct(Model model, @RequestParam( name = "name", required = false) String keyword,
-                                  @RequestParam("page") Optional<Integer> page,
-                                  @RequestParam("size") Optional<Integer> size,
-                                  @RequestParam("category") Optional<Integer> category,
-                                  @RequestParam("material") Optional<Integer> material,
-                                  @RequestParam("sole") Optional<Integer> sole
-                                  ){
-
-
-        List<Category> categoryReputation = categoryService.getAllCategory();
-        model.addAttribute("listCategoryReputation",categoryReputation);
-
-        List<Brand> brandsReputation = brandService.getAllBrands();
-        model.addAttribute("listBrandsReputation",brandsReputation);
-
-        List<Material> materialReputation = materialService.getAllMaterial();
-        model.addAttribute("listMaterialsReputation",materialReputation);
-
-        List<Sole> solesReputation = soleService.getAllSoles();
-        model.addAttribute("listSolesReputation",solesReputation);
-
-
-        List<Size> sizesReputation = sizeRepository.findAll();
-        model.addAttribute("listSizesReputation",sizesReputation);
-
-
-        //Tìm kiếm sản phẩm
-
-        int currentPage = page.orElse(1);//Trang hiển thị
-        int sizePage = size.orElse(8);//Kích thước sản phẩm trong 1 trang
-
-        Pageable pageable = PageRequest.of(currentPage - 1,sizePage);
-
-        Page<Product> listProduct = productService.searchProduct(keyword,pageable);//Lấy các
-        List<BigDecimal> price = productDetailRepository.findListPricreByProductId(listProduct.getContent().stream().map(Product::getId).collect(Collectors.toList()));
-
-        model.addAttribute("listProduct", listProduct);
-        model.addAttribute("price", price);
-        model.addAttribute("keyword",keyword);
-
-        int totalPage = listProduct.getTotalPages();
-        if( totalPage > 0 ){
-            int start = Math.max(1,currentPage - 2);
-            int end = Math.min(currentPage + 2,totalPage);
-            if( totalPage > 5){
-                if( end == totalPage ){
-                    start = end - 5;
-                }else if (start == 1){
-                    end = start + 5;
-                }
-            }
-            List<Integer> pageNumber = IntStream.rangeClosed(start,end)
-                    .boxed()
-                    .collect(Collectors.toList());
-            model.addAttribute("pageNumber", pageNumber);
-        }
-
-        return "category";
-
-    }
-
-    @GetMapping("/admin/product/{id}")
-    public String productDetail(Model model,@PathVariable("id") Integer id){
-        List<ProductDetail> product = productService.getListDetailProductById(id);
-        model.addAttribute("product",product);
-        model.addAttribute("id",id);
-        return "admin/product/productDetail";
-    }
-    @GetMapping("/admin/product/add-product-detail")
-    public String addProductDetail(Model model,@RequestParam("productId") Integer productId){
-        List<Size> size = sizeRepository.findAll();
-        List<Color> color = colorRepository.findAll();
-        model.addAttribute("size",size);
-        model.addAttribute("color",color);
-        model.addAttribute("productId", productId);
-        return "admin/product/addProductDetail";
-    }
-    @PostMapping("/add-product-detail")
-    public String addProductDetail(@RequestParam("productId") Integer productId,
-                                   @RequestParam("price") BigDecimal price,
-                                   @RequestParam("quantity") Integer quantity,
-                                   @RequestParam("sizeId") Integer sizeId,
-                                   @RequestParam("colorId") Integer colorId){
-        ProductDetail productDetail = new ProductDetail();
-        Size size= sizeRepository.findById(sizeId).get();
-        Color color = colorRepository.findById(colorId).get();
-        Product product = productRepository.findById(productId).get();
-        productDetail.setProduct(product);
-        productDetail.setPrice(price);
-        productDetail.setQuantity(quantity);
-        productDetail.setSize(size);
-        productDetail.setColor(color);
-        productDetail.setStatus(1);
-        if(productDetailRepository.getOne(productId,colorId,sizeId)!=null){
-            return "error/existed";
-        }
-        productDetailRepository.save(productDetail);
-        return "redirect:/admin/product/"+productId;
-    }
     @PostMapping("/updateProduct")
-    public String updateProduct(@RequestParam("id") Integer id,
-                                @RequestParam("price") BigDecimal price,
-                                @RequestParam("quantity") Integer quantity,
-                                Model model) {
-
+    public String updateProducts(@RequestParam("productIds") List<Integer> productIds,
+                                 @RequestParam("prices") List<BigDecimal> prices,
+                                 @RequestParam("quantities") List<Integer> quantities,
+                                 RedirectAttributes redirectAttributes) {
         try {
-            // Call the service layer to update the product
-            productService.updateProductDetails(id, price, quantity);
-            model.addAttribute("message", "Product updated successfully!");
+            for (int i = 0; i < productIds.size(); i++) {
+                productService.updateProductDetails(productIds.get(i), prices.get(i), quantities.get(i));
+            }
+            redirectAttributes.addFlashAttribute("successMessage", "Products updated successfully!");
         } catch (Exception e) {
-            model.addAttribute("error", "Failed to update product. Please try again.");
-            return "error/500";
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to update products. Please try again.");
         }
-        // Redirect to the products page or any other relevant page
         return "redirect:/admin/products";
     }
 
-@GetMapping("/admin/product/update/{id}")
-public String updateProduct(Model model,@PathVariable("id") Integer id){
-    Product product = productService.getDetailProductById(id);
-    model.addAttribute("product",product);
-    model.addAttribute("listCategory",categoryRepository.findAll());
-    model.addAttribute("listBrand",brandRepository.findAll());
-    model.addAttribute("listMaterial",materialRepository.findAll());
-    model.addAttribute("listSole",soleRepository.findAll());
-
-    return "admin/product/updateProduct";
-}
 }

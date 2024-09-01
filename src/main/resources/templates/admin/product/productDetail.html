@@ -409,7 +409,7 @@
         </h2>
         <a th:href="@{/admin/product/add-product-detail(productId=${id})}">Thêm mới</a>
         <section>
-            <form style="max-width: 1200px; margin: auto; overflow: auto" class="form-container" th:action="@{/updateProduct}" method="post">
+            <form style="max-width: 1200px; margin: auto; overflow: auto" class="form-container" th:action="@{/admin/updateProduct}" method="post">
                 <!-- Header Row -->
                 <div style="display: flex; width: 100%;background-color: #f4f4f4;color: #555;font-weight: bold;border-bottom: 2px solid #ccc;border-radius: 4px 4px 0 0;box-shadow: 0 1px 3px rgba(0,0,0,0.1);" class="header-row">
                     <div style="flex: 1;padding: 8px;box-sizing: border-box;text-align: left;font-size: 12px;font-weight: bold;text-transform: uppercase;color: #555;border-bottom: 1px solid #ccc;" class="cell">ID</div>
@@ -423,18 +423,18 @@
                 </div>
 
                 <!-- Product Rows -->
-                <div style="display: flex; width: 100%;background-color: #fff;color: #333;border-bottom: 1px solid #cc" class="data-row" th:each="product : ${product}">
+                <div style="display: flex; width: 100%;background-color: #fff;color: #333;border-bottom: 1px solid #ccc" class="data-row" th:each="product : ${product}">
                     <div style="flex: 1;padding: 5px;box-sizing: border-box;text-align: left;" class="cell">
-                        <input type="hidden" name="id" th:value="${product.id}">
+                        <input type="hidden" name="productIds" th:value="${product.id}"/>
                         <span th:text="${product.id}"></span>
                     </div>
                     <div style="flex: 1;padding: 5px;box-sizing: border-box;text-align: left;" class="cell" th:text="${product.product.name}"></div>
                     <div style="flex: 1;padding: 8px;box-sizing: border-box;text-align: left;" class="cell" th:text="${product.product.description}"></div>
                     <div style="flex: 1;padding: 8px;box-sizing: border-box;text-align: left;" class="cell">
-                        <input style="width: 100px" type="text" name="price" th:value="${product.price}"/>
+                        <input type="text" name="prices" th:value="${product.price}"/>
                     </div>
                     <div style="flex: 1;padding: 8px;box-sizing: border-box;text-align: left;" class="cell">
-                        <input style="width: 40px" type="number" name="quantity" th:value="${product.quantity}"/>
+                        <input type="number" name="quantities" th:value="${product.quantity}"/>
                     </div>
                     <div style="flex: 1;padding: 8px;box-sizing: border-box;text-align: left;" class="cell" th:text="${product.color.name}"></div>
                     <div style="flex: 1;padding: 8px;box-sizing: border-box;text-align: left;" class="cell" th:text="${product.size.sizeNumber}"></div>
@@ -444,6 +444,8 @@
                 </div>
             </form>
         </section>
+
     </div>
+</div>
 </body>
 </html>
