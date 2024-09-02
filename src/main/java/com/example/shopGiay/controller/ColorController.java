@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
@@ -49,13 +50,20 @@ public class ColorController {
     }
 
     @PostMapping("/add")
-    public String saveColor(@Valid @ModelAttribute("color") Color color, BindingResult result) {
+    public String saveColor(@Valid @ModelAttribute("color") Color color, BindingResult result, RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
+            return "admin/colors/new";
+        }
+        // Kiểm tra xem tên danh mục đã tồn tại chưa
+        if (colorService.existsByName(color.getName())) {
+            // Nếu đã tồn tại, thêm thông báo lỗi và trả về lại form
+            result.rejectValue("name", "error.name", "Màu sắc đã tồn tại!");
             return "admin/colors/new";
         }
         color.setStatus(1);
         color.setCreateDate(LocalDate.now());
         colorService.saveColor(color);
+        redirectAttributes.addFlashAttribute("successMessage", "Thêm mới thành công!");
         return "redirect:/colors";
     }
 
@@ -67,16 +75,20 @@ public class ColorController {
     }
 
     @PostMapping("/edit/{id}")
-    public String updateColor(@PathVariable Integer id, @Valid @ModelAttribute("color") Color color, BindingResult result) {
+    public String updateColor(@PathVariable Integer id, @Valid @ModelAttribute("color") Color color, BindingResult result, RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
+            return "admin/colors/edit";
+        }
+        if (colorService.existsByNameAndIdNot(color.getName(), color.getId())) {
+            result.rejectValue("name", "error.name", "Màu sắc đã tồn tại!");
             return "admin/colors/edit";
         }
         Color existingColor = colorService.getColorById(id);
         existingColor.setName(color.getName());
-        existingColor.setCode(color.getCode());
         existingColor.setStatus(color.getStatus());
         existingColor.setUpdateDate(LocalDate.now());
         colorService.saveColor(existingColor);
+        redirectAttributes.addFlashAttribute("successMessage", "Sửa thành công!");
         return "redirect:/colors";
     }
 

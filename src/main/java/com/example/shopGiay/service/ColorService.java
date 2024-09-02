@@ -13,4 +13,6 @@ public interface ColorService {
     void deleteColorById(Integer id);
     Page<Color> getColorByStatusNot2(Pageable pageable);
     Page<Color> searchColorsByName(String name, Pageable pageable);
+    boolean existsByName(String name);
+    boolean existsByNameAndIdNot(String name, Integer id);
 }

@@ -11,6 +11,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 
 import javax.validation.Valid;
 import java.time.LocalDate;
@@ -56,14 +58,21 @@ public class CategoryController {
     }
 
     @PostMapping("/add")
-    public String addCategory(@Valid @ModelAttribute("category") Category category, BindingResult result) {
+    public String addCategory(@Valid @ModelAttribute("category") Category category, BindingResult result, RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             return "admin/category/new"; // Trả về lại form nếu có lỗi validation
+        }
+        // Kiểm tra xem tên danh mục đã tồn tại chưa
+        if (categoryService.existsByNameCategory(category.getNameCategory())) {
+            // Nếu đã tồn tại, thêm thông báo lỗi và trả về lại form
+            result.rejectValue("nameCategory", "error.category", "Tên thể loại đã tồn tại!");
+            return "admin/category/new";
         }
         category.setStatus(1);
         category.setCreateDate(LocalDate.now());
         // Lưu category vào cơ sở dữ liệu nếu hợp lệ
         categoryService.saveCategory(category);
+        redirectAttributes.addFlashAttribute("successMessage", "Thêm mới thành công!");
 
         return "redirect:/category";
     }
@@ -80,13 +89,16 @@ public class CategoryController {
     @PostMapping("/edit/{id}")
     public String updateCategory(@PathVariable Integer id,
                                  @Valid @ModelAttribute("category") Category category,
-                                 BindingResult result) {
+                                 BindingResult result, RedirectAttributes redirectAttributes) {
         // Kiểm tra xem có lỗi validation không
         if (result.hasErrors()) {
             // Nếu có lỗi, trả về lại form chỉnh sửa với các thông tin lỗi
             return "admin/category/edit";
         }
-
+        if (categoryService.existsByNameCategoryAndIdNot(category.getNameCategory(), category.getId())) {
+            result.rejectValue("nameCategory", "error.category", "Tên thể loại đã tồn tại!");
+            return "admin/category/edit";
+        }
         // Lấy danh mục hiện tại từ cơ sở dữ liệu
         Category existingCategory = categoryService.getCategoryById(id);
         existingCategory.setNameCategory(category.getNameCategory());
@@ -95,6 +107,7 @@ public class CategoryController {
 
         // Lưu lại danh mục đã chỉnh sửa vào cơ sở dữ liệu
         categoryService.saveCategory(existingCategory);
+        redirectAttributes.addFlashAttribute("successMessage", "Sửa thành công!");
 
         return "redirect:/category";
     }

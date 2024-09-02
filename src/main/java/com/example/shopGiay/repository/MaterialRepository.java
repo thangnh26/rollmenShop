@@ -13,4 +13,6 @@ public interface MaterialRepository extends JpaRepository<Material, Integer> {
     Page<Material> findByNameContainingIgnoreCaseAndStatusNot(String name, Integer status, Pageable pageable);
     @Query(nativeQuery = true, value = "SELECT * FROM material WHERE id = ?1")
     Material getById(Integer id);
+    boolean existsByName(String name);
+    boolean existsByNameAndIdNot(String name, Integer id);
 }

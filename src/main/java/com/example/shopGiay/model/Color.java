@@ -2,6 +2,7 @@ package com.example.shopGiay.model;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Entity
 @Table(name = "Color")
@@ -15,7 +16,6 @@ public class Color {
     private String name;
 
     @Column(name = "code", nullable = false)
-    @NotBlank(message = "Code không được để trống")
     private String code;
 
     @Column(name = "create_date")
@@ -26,6 +26,13 @@ public class Color {
 
     @Column(name = "status", nullable = false)
     private Integer status;
+    @PrePersist
+    public void prePersist() {
+        if (this.code == null || this.code.isEmpty()) {
+            this.code = UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        }
+        this.createDate = LocalDate.now();
+    }
 
     // Constructors
     public Color() {}

@@ -19,5 +19,7 @@ public interface CategoryService {
     Page<Category> getAllCategoryPaginated(Pageable pageable);
     public Page<Category> getCategoriesByStatusNot2(Pageable pageable);
     public Page<Category> searchCategoriesByName(String keyword, Pageable pageable);
+    boolean existsByNameCategory(String nameCategory);
+    boolean existsByNameCategoryAndIdNot(String nameCategory, Integer id);
 
 }

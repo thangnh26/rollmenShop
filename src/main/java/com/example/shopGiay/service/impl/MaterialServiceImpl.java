@@ -42,5 +42,15 @@ public class MaterialServiceImpl implements MaterialService {
         return materialRepository.findByNameContainingIgnoreCaseAndStatusNot(keyword, 2, pageable);
     }
 
+    @Override
+    public boolean existsByName(String name) {
+        return materialRepository.existsByName(name);
+    }
+
+    @Override
+    public boolean existsByNameAndIdNot(String name, Integer id) {
+        return materialRepository.existsByNameAndIdNot(name, id);
+    }
+
 }
 

@@ -15,4 +15,6 @@ public interface MaterialService {
     Material saveMaterial(Material material);
     Page<Material> getMaterialByStatusNot2(Pageable pageable);
     Page<Material> searchMaterialByName(String keyword, Pageable pageable);
+    boolean existsByName(String name);
+    boolean existsByNameAndIdNot(String name, Integer id);
 }

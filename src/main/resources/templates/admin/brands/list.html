@@ -2,6 +2,19 @@
 <html :class="{ 'theme-dark': dark }" x-data="data()" lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:x-transition="">
 <head th:replace="fragment/fragmentAdmin::head_admin"/>
+<style>
+    .alert {
+        padding: 15px;
+        margin-bottom: 20px;
+        border: 1px solid transparent;
+        border-radius: 4px;
+    }
+    .alert-success {
+        color: #3c763d;
+        background-color: #dff0d8;
+        border-color: #d6e9c6;
+    }
+</style>
 <body>
 <div
         class="flex h-screen bg-gray-50 dark:bg-gray-900"
@@ -417,6 +430,9 @@
                     </div>
                     <span>Thêm mới &RightArrow;</span>
                 </a>
+                <div>
+                    <div id="successMessage" class="alert alert-success" th:if="${successMessage}" th:text="${successMessage}"></div>
+                </div>
                     <table class="w-full whitespace-no-wrap">
                         <thead>
                         <tr
@@ -481,6 +497,16 @@
             </div>
         </main>
     </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var successMessageElement = document.getElementById('successMessage');
+            if (successMessageElement) {
+                setTimeout(function() {
+                    successMessageElement.style.display = 'none';
+                }, 2000);
+            }
+        });
+    </script>
 </div>
 </body>
 </html>
