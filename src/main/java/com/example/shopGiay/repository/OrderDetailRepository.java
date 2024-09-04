@@ -14,6 +14,8 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail,Integer
     List<OrderDetail> findAllByOrderId(int orderId);
 
     List<OrderDetail> findByOrderIdIn(List<Integer> orderIds);
+
+    List<OrderDetail> findByOrderId(Integer orderId);
 //
 //    @Query(value = "select od from OrderDetail od join Order o on o.id=od.order.id where o.id = :id")
 //    List<OrderDetail> findAllByOrderId(Integer id);

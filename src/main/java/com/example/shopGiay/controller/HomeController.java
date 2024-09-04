@@ -80,15 +80,14 @@ public class HomeController {
         List<Brand> brandsReputation = brandService.getAllBrands();
         model.addAttribute("listBrandsReputation", brandsReputation);
 
-        //Lấy 3 sản phẩm mới nhất
-        List<Product> newProductsBanner = productService.getListNewProducts(3);
+        //Lấy 10 sản phẩm mới nhất
+        List<Product> newProductsBanner = productService.getListNewProducts(10);
         model.addAttribute("newProducts", newProductsBanner);
 
-        //Lấy 8 sản phẩm mới nhất
-        List<Product> newProducts = productService.getListNewProducts(3);
+        //Lấy 10 sản phẩm mới nhất
+        List<Product> newProducts = productService.getListNewProducts(10);
         model.addAttribute("listNewProduct", newProducts);
-//        List<ProductDto> newProducts = productService.getListNewProducts(8);
-//        model.addAttribute("listNewProduct", newProducts);
+
 
         //sp bán chạy
         List<Product> productHot = productService.getProductHot();
@@ -97,8 +96,8 @@ public class HomeController {
 
         List<BigDecimal> price = productDetailRepository.findListPricreByProductId(newProducts.stream().map(Product::getId).collect(Collectors.toList()));
 
-        //Lấy 8 sản phẩm ngẫu nhiên
-        List<Product> randomProducts = productService.getListNewProducts(3);
+        //Lấy 10 sản phẩm ngẫu nhiên
+        List<Product> randomProducts = productService.getListNewProducts(10);
         List<BigDecimal> priceRandomProducts = productDetailRepository.findListPricreByProductId(randomProducts.stream().map(Product::getId).collect(Collectors.toList()));
 
         model.addAttribute("listRandomProduct", randomProducts);
@@ -134,11 +133,24 @@ public class HomeController {
     public String getOderDetail(@RequestParam("id")Integer id,Model model){
         List<OrderDetail> orderDetail = orderDetailService.getById(id);
         Order oder = orderDetailService.getOrderById(id);
+
+        Order order = orderService.getOrderById(id);
+        List<OrderDetail> orderDetails = orderDetailService.getOrderDetailsByOrderId(id);
+
+        BigDecimal totalOrderAmount = orderDetails.stream()
+                .map(detail -> {
+                    BigDecimal quantity = new BigDecimal(detail.getQuantity());
+                    BigDecimal price = detail.getProductDetail().getPrice();
+                    return quantity.multiply(price);
+                })
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
         if (orderDetail == null || orderDetail.isEmpty()) {
             // Handle case when no order details are found
             return "error/404";
         }
         model.addAttribute("orderDetail",orderDetail);
+        model.addAttribute("totalOrderAmount", totalOrderAmount);
         model.addAttribute("oder",oder);
         return "orderDetail";
     }
@@ -147,11 +159,22 @@ public class HomeController {
     public String getOderDetailStaff(@RequestParam("id")Integer id,Model model){
         List<OrderDetail> orderDetail = orderDetailService.getById(id);
         Order oder = orderDetailService.getOrderById(id);
+        Order order = orderService.getOrderById(id);
+        List<OrderDetail> orderDetails = orderDetailService.getOrderDetailsByOrderId(id);
+        BigDecimal totalOrderAmount = orderDetails.stream()
+                .map(detail -> {
+                    BigDecimal quantity = new BigDecimal(detail.getQuantity());
+                    BigDecimal price = detail.getProductDetail().getPrice();
+                    return quantity.multiply(price);
+                })
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
         if (orderDetail == null || orderDetail.isEmpty()) {
             // Handle case when no order details are found
             return "error/404";
         }
         model.addAttribute("orderDetail",orderDetail);
+        model.addAttribute("totalOrderAmount", totalOrderAmount);
         model.addAttribute("oder",oder);
         return "staff/orderDetail";
     }
@@ -212,14 +235,6 @@ public class HomeController {
         }
 //        //Lấy size có sẵn
         List<ProductSizeResponse> listSizeByProduct = productService.listSize(id);
-//        List<Product_size> listSize = new ArrayList<>();
-//        for (var item : listSizeByProduct
-//        ) {
-//            if(item.getQuantity() > 0){
-//                listSize.add(item);
-//            }
-//
-//        }
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth.getPrincipal() != "anonymousUser") {
             Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -617,7 +632,12 @@ public class HomeController {
     }
 
     @GetMapping("/user/profile")
-    public String showUserProfile(Model model, HttpSession session) {
+    public String showUserProfile(Model model,
+                                  @RequestParam(defaultValue = "0") int page,
+                                  @RequestParam(required = false) String codeCustomer,
+                                  @RequestParam(required = false) String phone,
+                                  @RequestParam(required = false) Integer status,
+                                  HttpSession session, HttpServletRequest request) {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String email;
         if (principal instanceof UserDetails) {
@@ -628,6 +648,19 @@ public class HomeController {
         Customer user = userRepo.findByEmail(email);
 
         if (user != null) {
+            int pageSize = 5; // Số mục trên mỗi trang
+            Pageable pageable = PageRequest.of(page, pageSize);
+            String currentUrl = request.getRequestURI();
+            model.addAttribute("currentUrl", currentUrl);
+
+            Page<Order> orders = orderService.searchOrderByCustomerCode(codeCustomer, phone, status, pageable, user.getId());
+
+            model.addAttribute("orders", orders.getContent());
+            model.addAttribute("currentPage", page);
+            model.addAttribute("totalPages", orders.getTotalPages());
+            model.addAttribute("codeCustomer", codeCustomer); // Pass keyword back to the view
+            model.addAttribute("phone", phone); // Pass keyword back to the view
+            model.addAttribute("status", status);
             session.setAttribute("loggedInUser", user);
             model.addAttribute("user", user);
             return "user_profile";
@@ -636,6 +669,7 @@ public class HomeController {
             return "redirect:/login";
         }
     }
+
 
 
     @GetMapping("/logout")
@@ -647,5 +681,13 @@ public class HomeController {
         }
         return "redirect:/login";
     }
+
+    @GetMapping("/contact")
+    public String contact(Model model) {
+        model.addAttribute("currentUrl", "/contact");
+        return "contact"; // Tên file HTML
+    }
+
+
 
 }

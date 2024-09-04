@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zxx" class="no-js" xmlns:th="http://www.thymeleaf.org" >
+<head th:replace=" fragment/fragment :: html_head" />
+<body>
+
+<header th:replace="fragment/header:: header" />
+
+<!-- Start Banner Area -->
+<section class="banner-area organic-breadcrumb">
+	<div class="container">
+		<div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
+			<div class="col-first">
+				<h1 style="font-weight: 600;color: #ff9933;">Liên hệ với chúng tôi</h1>
+				<nav class="d-flex align-items-center">
+					<a >Trang chủ<span class="lnr lnr-arrow-right"></span> Liên hệ</a>
+				</nav>
+			</div>
+		</div>
+	</div>
+</section>
+<!-- End Banner Area -->
+
+<!--================Contact Area =================-->
+<section class="contact_area section_gap_bottom">
+	<div class="container">
+		<div style="text-align: center">
+			<div style="padding-top: 100px">
+				<div style="padding-bottom: 100px">
+					<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.1250520425488!2d106.71230301483668!3d10.801733161679683!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x317528a459cb43ab%3A0x6c3d29d370b52a7e!2zVHLGsOG7nW5nIMSQ4bqhaSBo4buNYyBDw7RuZyBuZ2jhu4cgVFAuSENNIC0gSFVURUNI!5e0!3m2!1svi!2s!4v1650373648265!5m2!1svi!2s" width="800" height="650" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-wrap">
+				<div class="col " style="width: 30%">
+					<div class="info_item">
+						<i class="lnr lnr-home"></i>
+						<h6> Số 8 ngách 21 ngõ 230 Mễ Trì Thượng</h6>
+					</div>
+				</div>
+				<div class="col" style="width: 30%">
+					<div class="info_item">
+						<i class="lnr lnr-phone-handset"></i>
+						<h6><a href="#">(84) 326 524 562</a></h6>
+						<p>Thứ Hai đến Thứ Bảy - từ 7h đến 23h</p>
+					</div>
+				</div>
+				<div class="col">
+					<div class="info_item" style="width: 70%">
+						<i class="lnr lnr-envelope"></i>
+						<h6><a href="#">tranducdo2811@gmail.com</a></h6>
+						<p>Gửi cho chúng tôi câu hỏi của bạn bất cứ lúc nào!</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<!--================Contact Area =================-->
+
+<footer th:replace="fragment/footer :: footer"/>
+
+<!--================Contact Success and Error message Area =================-->
+<div id="success" class="modal modal-message fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<i class="fa fa-close"></i>
+				</button>
+				<h2>Thank you</h2>
+				<p>Your message is successfully sent...</p>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Modals error -->
+
+<div id="error" class="modal modal-message fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<i class="fa fa-close"></i>
+				</button>
+				<h2>Sorry !</h2>
+				<p> Something went wrong </p>
+			</div>
+		</div>
+	</div>
+</div><!--================End Contact Success and Error message Area =================-->
+
+
+<script src="js/vendor/jquery-2.2.4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
+		crossorigin="anonymous"></script>
+<script src="js/vendor/bootstrap.min.js"></script>
+<script src="js/jquery.ajaxchimp.min.js"></script>
+<script src="js/jquery.nice-select.min.js"></script>
+<script src="js/jquery.sticky.js"></script>
+<script src="js/nouislider.min.js"></script>
+<script src="js/jquery.magnific-popup.min.js"></script>
+<script src="js/owl.carousel.min.js"></script>
+<!--gmaps Js-->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCjCGmQ0Uq4exrzdcL6rvxywDDOvfAu6eE"></script>
+<script src="js/gmaps.min.js"></script>
+<script src="js/main.js"></script>
+
+</body>
+
+</html>
