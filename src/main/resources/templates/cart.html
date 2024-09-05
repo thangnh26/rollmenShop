@@ -61,28 +61,16 @@
                                             <h5 th:text="${#numbers.formatDecimal(item.productDetail.price, 0, 'COMMA', 0, 'POINT') +' đ'}"></h5>
                                         </td>
                                         <td>
-                                            <div class="default-select" id="default-select-color">
-                                                <select name="color" id="colorSelect" onchange="this.form.submit()">
-                                                    <option value="" disabled>Select a Color</option>
-                                                    <option th:each="color : ${colors}"
-                                                            th:value="${color.id}"
-                                                            th:text="${color.name}"
-                                                            th:selected="${color.id == item.productDetail.color.id}">
-                                                    </option>
-                                                </select>
-                                            </div>
+                                            <!-- Hiển thị màu sắc dưới dạng văn bản -->
+                                            <p th:text="${item.productDetail.color.name}"></p>
+                                            <!-- Trường ẩn để lưu giá trị của color -->
+                                            <input type="hidden" name="color" th:value="${item.productDetail.color.id}" />
                                         </td>
                                         <td>
-                                            <div class="default-select" id="default-select-size">
-                                                <select name="size" id="sizeSelect" onchange="this.form.submit()">
-                                                    <option value="" disabled>Select a Size</option>
-                                                    <option th:each="size : ${sizes}"
-                                                            th:value="${size.id}"
-                                                            th:text="${size.sizeNumber}"
-                                                            th:selected="${size.id == item.productDetail.size.id}">
-                                                    </option>
-                                                </select>
-                                            </div>
+                                            <!-- Hiển thị kích thước dưới dạng văn bản -->
+                                            <p th:text="${item.productDetail.size.sizeNumber}"></p>
+                                            <!-- Trường ẩn để lưu giá trị của size -->
+                                            <input type="hidden" name="size" th:value="${item.productDetail.size.id}" />
                                         </td>
 
                                         <td>
