@@ -18,12 +18,12 @@ public class Voucher {
 
     private LocalDate updateDate;
 
-    @NotNull(message = "Value không được để trống")
-    @PositiveOrZero(message = "Value phải là số dương hoặc bằng không")
+    @NotNull(message = "Giá trị không được để trống")
+    @PositiveOrZero(message = "Giá trị phải là số dương hoặc bằng không")
     private Double value;
 
-    @NotNull(message = "Quantity không được để trống")
-    @PositiveOrZero(message = "Quantity phải là số dương hoặc bằng không")
+    @NotNull(message = "Số Lượng không được để trống")
+    @PositiveOrZero(message = "Số Lượng phải là số dương hoặc bằng không")
     private Integer quantity;
 
     @NotBlank(message = "Tên không được để trống")
@@ -31,19 +31,16 @@ public class Voucher {
 
     @NotNull(message = "Ngày bắt đầu không được để trống")
     @Future(message = "Ngày bắt đầu phải là ngày trong tương lai")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate startDate;
 
     @NotNull(message = "Ngày kết thúc không được để trống")
     @Future(message = "Ngày kết thúc phải là ngày trong tương lai")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate endDate;
 
-    @NotNull(message = "Trạng thái không được để trống")
-    @PositiveOrZero(message = "Trạng thái phải là số dương hoặc bằng không")
     @Column(name = "status")
     private Integer status;
-//    @Column(name = "condition", nullable = false)
-//    private String condition;
-
 
     public Voucher() {
     }

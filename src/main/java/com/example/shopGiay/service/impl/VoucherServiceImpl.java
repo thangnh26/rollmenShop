@@ -18,6 +18,7 @@ public class VoucherServiceImpl implements VoucherService {
     @Autowired
     VoucherRepository voucherRepository;
 
+
     @Override
     public List<Voucher> getAllVoucher() {
         return voucherRepository.findAll();
@@ -30,6 +31,14 @@ public class VoucherServiceImpl implements VoucherService {
 
     @Override
     public Voucher saveVoucher(Voucher voucher) {
+        if (voucherRepository.existsByNameVoucher(voucher.getNameVoucher())) {
+            throw new IllegalArgumentException("Tên voucher đã tồn tại.");
+        }
+        return voucherRepository.save(voucher);
+    }
+
+    @Override
+    public Voucher updateVoucher(Voucher voucher) {
         return voucherRepository.save(voucher);
     }
 
@@ -41,5 +50,9 @@ public class VoucherServiceImpl implements VoucherService {
     @Override
     public Page<Voucher> searchVoucherByName(String keyword, Pageable pageable) {
         return voucherRepository.findByNameVoucherContainingIgnoreCaseAndStatusNot(keyword, 2, pageable);
+    }
+    @Override
+    public boolean existsByNameVoucherAndNotId(String nameVoucher, Integer id) {
+        return voucherRepository.existsByNameVoucherAndIdNot(nameVoucher, id);
     }
 }

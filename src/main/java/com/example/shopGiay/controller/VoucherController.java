@@ -56,15 +56,26 @@ public class VoucherController {
 
     @PostMapping("/add")
     public String addVoucher(@Valid @ModelAttribute("voucher") Voucher voucher, BindingResult result) {
+        // Kiểm tra lỗi xác thực (như tên trống)
         if (result.hasErrors()) {
             return "admin/voucher/new"; // Trả về lại form nếu có lỗi validation
         }
-        voucher.setStatus(1);
-        voucher.setCreateDate(LocalDate.now());
-        // Lưu category vào cơ sở dữ liệu nếu hợp lệ
-        voucherService.saveVoucher(voucher);
+
+        // Kiểm tra lỗi trùng lặp tên voucher
+        try {
+            voucher.setStatus(1);
+            voucher.setCreateDate(LocalDate.now());
+            voucherService.saveVoucher(voucher);
+        } catch (IllegalArgumentException e) {
+            // Thêm lỗi vào BindingResult để hiển thị trong form
+            result.rejectValue("nameVoucher", "error.voucher", e.getMessage());
+            return "admin/voucher/new"; // Trả về lại form nếu tên voucher đã tồn tại
+        }
+
+        // Nếu không có lỗi, chuyển hướng đến danh sách voucher
         return "redirect:/voucher";
     }
+
 
     @GetMapping("/edit/{id}")
     public String editVoucherForm(@PathVariable Integer id, Model model) {
@@ -74,17 +85,28 @@ public class VoucherController {
     }
 
     @PostMapping("/edit/{id}")
-    public String updateCategory(@PathVariable Integer id,
-                                 @Valid @ModelAttribute("voucher") Voucher voucher,
-                                 BindingResult result) {
-        // Kiểm tra xem có lỗi validation không
+    public String updateVoucher(@PathVariable Integer id,
+                                @Valid @ModelAttribute("voucher") Voucher voucher,
+                                BindingResult result) {
+        // Kiểm tra lỗi xác thực
         if (result.hasErrors()) {
-            // Nếu có lỗi, trả về lại form chỉnh sửa với các thông tin lỗi
-            return "admin/voucher/edit";
+            return "admin/voucher/edit"; // Trả về lại form nếu có lỗi validation
         }
 
+        // Lấy voucher hiện tại từ cơ sở dữ liệu
         Voucher existingVoucher = voucherService.getVoucherById(id);
-        existingVoucher.setId(id);
+        if (existingVoucher == null) {
+            result.rejectValue("nameVoucher", "error.voucher", "Voucher không tồn tại");
+            return "admin/voucher/edit"; // Trả về lại form nếu không tìm thấy voucher
+        }
+
+        // Kiểm tra lỗi trùng lặp tên voucher
+        if (voucherService.existsByNameVoucherAndNotId(voucher.getNameVoucher(), id)) {
+            result.rejectValue("nameVoucher", "error.voucher", "Tên voucher đã tồn tại");
+            return "admin/voucher/edit"; // Trả về lại form nếu tên voucher đã tồn tại
+        }
+
+        // Cập nhật các thông tin voucher
         existingVoucher.setValue(voucher.getValue());
         existingVoucher.setQuantity(voucher.getQuantity());
         existingVoucher.setNameVoucher(voucher.getNameVoucher());
@@ -92,11 +114,15 @@ public class VoucherController {
         existingVoucher.setEndDate(voucher.getEndDate());
         existingVoucher.setStatus(voucher.getStatus());
         existingVoucher.setUpdateDate(LocalDate.now());
-        voucherService.saveVoucher(existingVoucher);
-        // Lưu lại danh mục đã chỉnh sửa vào cơ sở dữ liệu
-        voucherService.saveVoucher(existingVoucher);
+
+        // Lưu voucher đã cập nhật vào cơ sở dữ liệu
+        voucherService.updateVoucher(existingVoucher);
+
+        // Chuyển hướng đến danh sách voucher
         return "redirect:/voucher";
     }
+
+
 
     @GetMapping("/{id}")
     public String deleteVoucher(@PathVariable Integer id) {
