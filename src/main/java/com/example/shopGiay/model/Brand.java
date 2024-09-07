@@ -11,8 +11,7 @@ public class Brand {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
-    @Column(name = "name_brand", nullable = false)
+    @NotBlank(message = "Tên không được để trống")
     private String nameBrand;
 
     public String getThumbnail() {
