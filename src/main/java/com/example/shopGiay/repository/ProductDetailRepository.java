@@ -33,7 +33,7 @@ public interface ProductDetailRepository extends JpaRepository<ProductDetail, In
             "WHERE p.id IN(:productIds)",nativeQuery = true)
     List<ProductDetail> findAllByProduct(List<Integer> productIds);
 
-    @Query(value = "select p.price from ProductDetail p where p.product.id in :ids group by p.product.id, p.price")
+    @Query(value = "select min(p.price) from ProductDetail p where p.product.id in :ids group by p.product.id, p.price")
     List<BigDecimal> findListPricreByProductId(List<Integer> ids);
 
     @Query(value = "select * from product_detail where product_id=:id and status=1 limit 1",nativeQuery = true)

@@ -15,9 +15,5 @@ public class ProductDto {
     private Integer id;
     private String thumbnail;
     private String name;
-    private String description;
-    private Integer status;
-    private Integer quantity;
     private BigDecimal price;
-    private LocalDate createDate;
 }

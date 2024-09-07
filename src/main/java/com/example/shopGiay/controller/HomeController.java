@@ -81,11 +81,11 @@ public class HomeController {
         model.addAttribute("listBrandsReputation", brandsReputation);
 
         //Lấy 10 sản phẩm mới nhất
-        List<Product> newProductsBanner = productService.getListNewProducts(10);
+        List<ProductDto> newProductsBanner = productService.getListNewProducts(10);
         model.addAttribute("newProducts", newProductsBanner);
 
         //Lấy 10 sản phẩm mới nhất
-        List<Product> newProducts = productService.getListNewProducts(10);
+        List<ProductDto> newProducts = productService.getListNewProducts(10);
         model.addAttribute("listNewProduct", newProducts);
 
 
@@ -93,17 +93,8 @@ public class HomeController {
         List<Product> productHot = productService.getProductHot();
         model.addAttribute("hot", productHot);
 
-
-        List<BigDecimal> price = productDetailRepository.findListPricreByProductId(newProducts.stream().map(Product::getId).collect(Collectors.toList()));
-
-        //Lấy 10 sản phẩm ngẫu nhiên
-        List<Product> randomProducts = productService.getListNewProducts(10);
-        List<BigDecimal> priceRandomProducts = productDetailRepository.findListPricreByProductId(randomProducts.stream().map(Product::getId).collect(Collectors.toList()));
-
+        List<ProductDto> randomProducts = productService.getListNewProducts(10);
         model.addAttribute("listRandomProduct", randomProducts);
-        model.addAttribute("price", price);
-        model.addAttribute("priceRandomProducts", priceRandomProducts);
-
         return "index";
     }
     @GetMapping("/add-address")
@@ -300,10 +291,8 @@ public class HomeController {
 
 //        Pageable pageable = PageRequest.of(currentPage - 1, sizePage);
 
-        Page<Product> pageProduct = productService.searchProduct(keyword, pageable);//Lấy các
-        List<BigDecimal> price = productDetailRepository.findListPricreByProductId(pageProduct.getContent().stream().map(Product::getId).collect(Collectors.toList()));
+        Page<ProductDto> pageProduct = productService.searchProduct(keyword, pageable);//Lấy các
         model.addAttribute("listProduct", pageProduct);
-        model.addAttribute("price", price);
         model.addAttribute("keyword", keyword);
 
         int totalPage = pageProduct.getTotalPages();

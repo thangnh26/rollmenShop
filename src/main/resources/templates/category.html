@@ -33,7 +33,7 @@
 						<a style="color: black;" href="/product">Tất cả sản phẩm</a>
 						<form  th:each="brand : ${listBrandsReputation}">
 							<hr>
-							<a style="color: black;" th:href="@{/products(name=${brand.nameBrand})}" ><img style="zoom: 0.45;" th:src="@{${brand.thumbnail}}"> [[${brand.nameBrand}]]</a>
+							<a style="color: black;" th:href="@{/product(name=${brand.nameBrand})}" ><img style="zoom: 0.45;" th:src="@{${brand.thumbnail}}"> [[${brand.nameBrand}]]</a>
 						</form>
 						<hr>
 					</div>
@@ -70,7 +70,7 @@
 								<div class="product-details">
 									<h6 th:text="${product.name}"></h6>
 									<div class="price">
-										<h6 th:text="${#numbers.formatDecimal(price, 0, 'COMMA', 0, 'POINT')} + ' vnđ'"></h6>
+										<h6 th:text="${#numbers.formatDecimal(product.price ?: 0, 0, 'COMMA', 0, 'POINT')} + ' vnđ'"></h6>
 									</div>
 									<div class="prd-bottom">
 										<a th:href="@{/{id}(id=${product.id})}" style="width: 100%;" class="social-info">

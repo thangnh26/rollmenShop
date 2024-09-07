@@ -20,7 +20,7 @@ public interface ProductService {
 
 
     //Lấy sản 10 phẩm mới nhất
-    List<Product> getListNewProducts(int limit);
+    List<ProductDto> getListNewProducts(int limit);
 
     //Lấy danh sách các sản phẩm nổi bật
     List<Product> findAll();
@@ -30,7 +30,7 @@ public interface ProductService {
     List<ProductDetail> getListDetailProductById(int id);
 
     //Lấy danh sách các sản phẩm và tìm kiếm
-    Page<Product> searchProduct(String keyword, Pageable pageable);
+    Page<ProductDto> searchProduct(String keyword, Pageable pageable);
 
     Page<Product> findAllOrderById(Pageable pageable);
 

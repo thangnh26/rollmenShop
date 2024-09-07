@@ -43,9 +43,9 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> getListNewProducts(int limit) {
+    public List<ProductDto> getListNewProducts(int limit) {
         Pageable pageable = PageRequest.of(0, limit);
-        List<Product> products = productRepository.getListNewProducts(pageable);
+        List<ProductDto> products = productRepository.getListNewProducts(pageable);
         return products;
     }
 
@@ -61,11 +61,11 @@ public class ProductServiceImpl implements ProductService {
 
     //Tìm kiếm sản phẩm
     @Override
-    public Page<Product> searchProduct(String keyword, Pageable pageable) {
+    public Page<ProductDto> searchProduct(String keyword, Pageable pageable) {
         if (keyword != null) {
             return productRepository.searchProduct(keyword, pageable);
         } else {
-            return productRepository.getAll(pageable);
+            return productRepository.getAllDto(pageable);
         }
     }
 

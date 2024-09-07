@@ -23,28 +23,27 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     @Query(value = "SELECT distinct p FROM Product p where p.status=1 and p.id = :id")
     Optional<Product> getOne(int id);
 
-    @Query(value = "SELECT distinct p FROM Product p where p.status=1 ORDER BY p.createDate DESC")
-    List<Product> getListNewProducts(Pageable pageable);
-
-    @Query(value = "SELECT distinct p FROM Product p where p.status=1")
-    Page<Product> getAll(Pageable pageable);
+    @Query(value = "SELECT distinct new com.example.shopGiay.dto.ProductDto(p.id, p.thumbnail, p.name, (SELECT CAST(MIN(pd.price) AS java.math.BigDecimal) FROM ProductDetail pd WHERE pd.product.id = p.id)) FROM Product p  where p.status=1 ORDER BY p.createDate DESC")
+    List<ProductDto> getListNewProducts(Pageable pageable);
 
     //Tìm kiếm sản phẩm
-    @Query("SELECT distinct p FROM Product p where p.status=1 and p.name LIKE lower(concat('%', :keyword, '%')) or p.brand.nameBrand LIKE lower(concat('%', :keyword, '%')) ")
-    Page<Product> searchProduct(String keyword, Pageable pageable);
+    @Query(value = "SELECT distinct new com.example.shopGiay.dto.ProductDto(p.id, p.thumbnail, p.name, " +
+            "(SELECT CAST(MIN(pd.price) AS java.math.BigDecimal) FROM ProductDetail pd WHERE pd.product.id = p.id)) " +
+            "FROM Product p " +
+            "WHERE p.status=1 AND (lower(p.name) LIKE lower(concat('%', :keyword, '%')) OR lower(p.brand.nameBrand) LIKE lower(concat('%', :keyword, '%'))) ",
+            countQuery = "SELECT COUNT(p) FROM Product p " +
+                    "WHERE p.status=1 AND (lower(p.name) LIKE lower(concat('%', :keyword, '%')) OR lower(p.brand.nameBrand) LIKE lower(concat('%', :keyword, '%')))")
+    Page<ProductDto> searchProduct(String keyword, Pageable pageable);
 
-    Page<Product> findAll(Pageable pageable);
-
-    //lấy  sản phẩm
-    @Query(nativeQuery = true, value = "SELECT COUNT( p.id)  FROM product p ")
-    int countProduct();
+    @Query(value = "SELECT distinct new com.example.shopGiay.dto.ProductDto(p.id, p.thumbnail, p.name, " +
+            "(SELECT CAST(MIN(pd.price) AS java.math.BigDecimal) FROM ProductDetail pd WHERE pd.product.id = p.id)) " +
+            "FROM Product p WHERE p.status=1 ORDER BY p.createDate DESC",
+            countQuery = "SELECT COUNT(p) FROM Product p WHERE p.status=1")
+    Page<ProductDto> getAllDto(Pageable pageable);
 
     @Query(nativeQuery = true, value = "SELECT * FROM product ORDER BY Id DESC")
     Page<Product> findAllOrderById(Pageable pageable);
 
-
-//    @Query(value = "SELECT new com.example.shopGiay.dto.ProductDto(p.id,p.thumbnail,p.name,p.description,p.status,pd.quantity,pd.price) FROM product ORDER BY RAND()")
-//    List<ProductDto> getRandomListProduct(Pageable pageable);
 
     @Query(value = "select new com.example.shopGiay.dto.ProductSizeResponse(s.id,s.sizeNumber) from Size s " +
             "where s.id in (select pd.size.id from ProductDetail pd where pd.product.id=:productId)")
