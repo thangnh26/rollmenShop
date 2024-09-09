@@ -70,6 +70,7 @@ public class StaffController {
             model.addAttribute("allRoles", allRoles);
             return "staff/new";
         }
+        staff.setStatus(1);
         staff.setCreateDate(LocalDate.now());
         staffService.saveStaff(staff);
         return "redirect:/staff";
