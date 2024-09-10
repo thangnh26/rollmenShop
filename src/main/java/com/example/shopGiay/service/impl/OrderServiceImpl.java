@@ -137,7 +137,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @PreAuthorize("hasAnyRole('STAFF')")
+    @PreAuthorize("hasAnyRole('STAFF') or hasRole('ADMIN')")
     public BigDecimal total() {
         return BigDecimal.valueOf(orderRepository.total()!=null ? orderRepository.total():0.0);
     }

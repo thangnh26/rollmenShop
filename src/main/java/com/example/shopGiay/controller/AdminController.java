@@ -59,7 +59,7 @@ public class AdminController {
         }
     }
     
-    @PreAuthorize("hasRole('STAFF')")
+    @PreAuthorize("hasRole('STAFF') or hasRole('ADMIN')")
     @GetMapping("/admin/index")
     public String adminHome(Model model){
         BigDecimal total =orderService.total();
@@ -114,3 +114,4 @@ public class AdminController {
         return "staff/list";
     }
 }
+
