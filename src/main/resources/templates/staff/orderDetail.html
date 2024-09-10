@@ -387,12 +387,19 @@
                             </ul>
                         </template>
                     </li>
+                    <li>
+                        <a href="/staff/profile">
+                            <svg class="h-6 w-6 text-red-500"  fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
+                        </a>
+                    </li>
                 </ul>
             </div>
         </header>
         <main class="h-full overflow-y-auto">
             <div class="container px-6 mx-auto grid">
-                <h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
+                <h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200 text-center">
                     Hóa Đơn Chi Tiết
                 </h2>
                 <table class="w-full text-left border-collapse">
@@ -419,6 +426,11 @@
                     </tr>
                     </tbody>
                 </table>
+                <!-- Display total amount -->
+                <div class="order-summary flex justify-end items-center space-x-3 p-3 border border-gray-200 rounded-lg shadow-sm">
+                    <span class="text-lg font-semibold">Tổng tiền đơn hàng:</span>
+                    <span class="text-xl font-bold text-gray-800" th:text="${#numbers.formatDecimal(totalOrderAmount, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}"></span>
+                </div>
                 <br>
                 <p class="mb-2"><strong>Tên đặt hàng:</strong> <span th:text="${oder.nameReceiver}"></span></p>
                 <p class="mb-2"><strong>Địa chỉ:</strong> <span th:text="${oder.addressReceiver}"></span></p>
