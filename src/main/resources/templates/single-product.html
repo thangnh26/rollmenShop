@@ -116,11 +116,11 @@
         <!-- Thông tin sản phẩm -->
         <div class="s_product_text col-lg-5">
             <h6 class="product-name" th:text="${product.name}"></h6>
-            <h2 class="product-price" th:text="${#numbers.formatDecimal(productDetail.price, 0, 'COMMA', 0, 'POINT')} + ' vnđ'"></h2>
+            <h2 class="product-price" th:text="${#numbers.formatDecimal(productDetail.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></h2>
 
             <div class="quantity-display">
-                <span>Số lượng còn:</span>
-                <p id="quantityDisplay" th:utext="${productDetail.quantity}"></p>
+                <span>Số lượng:</span>
+                <span id="quantityDisplay" th:utext="${productDetail.quantity}"></span>
             </div>
 
             <form id="productForm" method="post" class="product-form">
@@ -162,7 +162,7 @@
                             <path d="M5.5 1a.5.5 0 0 1 .5.5v.5h7a.5.5 0 0 1 .5.5v.5h1.5a.5.5 0 0 1 .493.6l-1.5 6a.5.5 0 0 1-.492.4H4.5a.5.5 0 0 1-.492-.4l-1.5-6A.5.5 0 0 1 2 2H.5A.5.5 0 0 1 0 1.5v-.5A.5.5 0 0 1 .5 1h5zM1 2h.5L2 8h10l.5-6H1.5L1 2zm4.5 10a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0zm7 0a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0z"/>
                             <path d="M12 5v6m-3-3h6"/>
                         </svg>
-                        Thêm vào giỏ
+                        Thêm
                     </button>
 
                     <!-- Nút Mua ngay -->
@@ -171,7 +171,7 @@
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-cart-check" viewBox="0 0 16 16">
                             <path d="M8 0a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H7a.5.5 0 0 1-.5-.5V.5A.5.5 0 0 1 7 0h1zM7 6v5a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5V6h4zM13.5 2h-11a.5.5 0 0 0-.5.5v.5a.5.5 0 0 0 .5.5h.66l.665 4.7L4.663 10.6a.5.5 0 0 0-.355.447l-.083.91a.5.5 0 0 0 .358.522l.062.023c.228.088.44.197.637.33.22.156.433.3.648.345.928.037.272.016.527.076.765.095.415.157.662.158.778a.5.5 0 0 0-.263.7l.065.168a.5.5 0 0 0 .7.262l.056-.042c.252-.182.504-.368.74-.564.217-.179.43-.352.646-.529L13.5 3.82a.5.5 0 0 0 .327-.476V2.5a.5.5 0 0 0-.5-.5z"/>
                         </svg>
-                        Mua ngay
+                        Mua
                     </button>
                 </div>
 
@@ -254,6 +254,21 @@
             return false; // Ngăn không cho form gửi đi
         } else {
             errorElement.style.display = "none"; // Ẩn thông báo lỗi nếu nhập đúng
+        }
+        if(parseInt(inputQuantity) <= 0){
+            errorElement.textContent = "Số lượng phải lớn hơn 0";
+            errorElement.style.display = "inline"; // Hiển thị thông báo lỗi
+            return false; // Ngăn không cho form gửi đi
+        }else{
+            errorElement.style.display = "none"; // Ẩn thông báo lỗi nếu nhập đúng
+        }
+        if (!inputQuantity || inputQuantity.trim() === "") {
+            errorElement.textContent = "Số lượng không được để trống";
+            errorElement.style.display = "inline";
+            return false;
+        } else {
+            errorElement.style.display = "none";
+            return true;
         }
 
         return true; // Allow form submission

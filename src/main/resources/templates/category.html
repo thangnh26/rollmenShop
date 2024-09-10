@@ -24,12 +24,13 @@
 	<div class="row">
 		<div class="col-xl-3 col-lg-4 col-md-5">
 			<div class="sidebar-categories">
-				<div class="head" style="background-color: saddlebrown; border-radius: 4px;">Bộ lọc sản phẩm</div>
+				<div class="head" style="background-color: saddlebrown; border-radius: 4px;">
+					<a style="color: black;" href="/product">Tất cả sản phẩm</a>
+				</div>
 
 				<div class="common-filter">
-					<div style="padding: 20px 0px 10px 20px; color: black; font-weight: bold;">Thương hiệu</div>
 					<div style="padding-left: 20px;">
-						<a style="color: black;" href="/product">Tất cả sản phẩm</a>
+<!--						<a style="color: black;" href="/product">Tất cả sản phẩm</a>-->
 						<form  th:each="brand : ${listBrandsReputation}">
 							<hr>
 							<a style="color: black;" th:href="@{/product(name=${brand.nameBrand})}" ><img style="zoom: 0.45;" th:src="@{${brand.thumbnail}}"> [[${brand.nameBrand}]]</a>
