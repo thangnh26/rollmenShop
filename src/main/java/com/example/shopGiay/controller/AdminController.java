@@ -58,8 +58,8 @@ public class AdminController {
             return "redirect:/login";
         }
     }
-    
-    @PreAuthorize("hasRole('STAFF')")
+
+    @PreAuthorize("hasRole('STAFF') or hasRole('ADMIN')")
     @GetMapping("/admin/index")
     public String adminHome(Model model){
         BigDecimal total =orderService.total();

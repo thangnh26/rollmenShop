@@ -53,7 +53,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/", "/product/*", "/process_register", "/register","/css/**", "/buy-now","/order").permitAll()
                 .antMatchers("/admin/staff").hasRole("ADMIN")
-                .antMatchers("/admin/index").hasRole("STAFF")
+                .antMatchers("/admin/index").hasAnyRole("ADMIN","STAFF")
+                .antMatchers("/error").permitAll()  // Cho phép truy cập không cần xác thực
+//                .anyRequest().authenticated()
                 .anyRequest().permitAll()
                 .and()
                 .formLogin()

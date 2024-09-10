@@ -13,12 +13,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
+
 
 import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
 
 @Controller
+@PreAuthorize("hasRole('ADMIN')")
 @RequestMapping("/staff")
 public class StaffController {
     @Autowired
