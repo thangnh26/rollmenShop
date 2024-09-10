@@ -537,37 +537,7 @@
                             </tbody>
                         </table>
                     </div>
-                    <span class="flex col-span-4 mt-2 sm:mt-auto sm:justify-end" style="padding: 20px;" th:if="${listProduct.totalPages >  1}">
-                        <nav aria-label="Table navigation">
-                          <ul class="inline-flex items-center">
-                            <li>
-                                <a		th:href="@{/admin/products ( page = ${1}, size = ${listProduct.size})}"
-                                          th:class="${ 1 == listProduct.number + 1 } ? 'px-3 py-1 text-white transition-colors duration-150 bg-purple-600 border border-r-0 border-orange-600 rounded-md focus:outline-none focus:shadow-outline-orange':'px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-orange'"
-                                >
-                                        Đầu
-                                    </a>
-                            </li>
-                              &ensp;
-                            <li>
-                                 <a		th:href="@{/admin/products ( page = ${pagenumber}, size = ${listProduct.size})}"
-                                           th:class="${ pagenumber == listProduct.number + 1 } ? 'px-3 py-1 text-white transition-colors duration-150 bg-purple-600 border border-r-0 border-purple-600 rounded-md focus:outline-none focus:shadow-outline-purple':'px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple'"
-                                           th:if="${listProduct.totalPages > 1}"
-                                           th:each="pagenumber : ${pageNumber}"
-                                           th:text="${pagenumber}"
-                                 >
-                                 </a>
-                            </li>
-                               &ensp;
-                            <li>
-                             <a		th:href="@{/admin/products (  page = ${listProduct.totalPages}, size = ${listProduct.size})}"
-                                       th:class="${ listProduct.totalPages == listProduct.number + 1 } ? 'px-3 py-1 text-white transition-colors duration-150 bg-purple-600 border border-r-0 border-purple-600 rounded-md focus:outline-none focus:shadow-outline-purple':'px-3 py-1 rounded-md focus:outline-none focus:shadow-outline-purple'"
-                             >
-                                 Cuối
-                             </a>
-                            </li>
-                          </ul>
-                        </nav>
-                    </span>
+
                 </div>
             </div>
         </main>

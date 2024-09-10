@@ -145,6 +145,8 @@ public class ProductsController {
                                 @RequestParam("brandId") Integer brandId,
                                 @RequestParam("materialId") Integer materialId,
                                 @RequestParam("soleId") Integer soleId,
+                                @RequestParam("existingThumbnail") String existingThumbnail,
+                                @RequestParam("thumbnailUrl") MultipartFile thumbnailUrl,
                                 RedirectAttributes redirectAttributes) {
         try {
             product.setCategory(categoryRepository.findById(categoryId)
@@ -155,6 +157,26 @@ public class ProductsController {
                     .orElseThrow(() -> new IllegalArgumentException("Invalid material ID")));
             product.setSole(soleRepository.findById(soleId)
                     .orElseThrow(() -> new IllegalArgumentException("Invalid sole ID")));
+
+            // Handle thumbnail update
+            if (thumbnailUrl != null && !thumbnailUrl.isEmpty()) {
+                // If a new image is uploaded, update the thumbnail
+                String filename = StringUtils.cleanPath(thumbnailUrl.getOriginalFilename());
+                product.setThumbnail("~/img/product/" + filename);
+
+                String uploadDir = "./src/main/resources/static/img/product/";
+                Path uploadPath = Paths.get(uploadDir);
+                if (!Files.exists(uploadPath)) {
+                    Files.createDirectories(uploadPath);
+                }
+                try (InputStream inputStream = thumbnailUrl.getInputStream()) {
+                    Path filePath = uploadPath.resolve(filename);
+                    Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+                }
+            } else {
+                // If no new image is uploaded, retain the existing image
+                product.setThumbnail(existingThumbnail);
+            }
 
             if (product.getStatus() == null) {
                 product.setStatus(1);  // Set a default status if not provided

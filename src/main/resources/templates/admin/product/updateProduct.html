@@ -453,7 +453,7 @@
                         <label class="block mt-4 text-sm">
                         <span class="text-gray-700 dark:text-gray-400">
                           Chọn thương hiệu
-                        </span>
+</span>
                             <select
                                     class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
                                     name="brandId"
@@ -516,13 +516,22 @@
                             ></textarea>
                         </label>
 
-                        <!--                        &lt;!&ndash;Chon ảnh&ndash;&gt;-->
-                        <!--                        <label class="block mt-4 text-sm">-->
-                        <!--                            <input  class="text-gray-700 dark:text-gray-400"    type="file" name="thumbnailUrl" id="thumbnailUrl" accept="image/png, image/jpeg" th:value="*{multipartFile}" >-->
-                        <!--                        </label>-->
-                        <!--                        <label class="block mt-4 text-sm">-->
-                        <!--                            <img id="thumbnail" alt="Logo Preview" th:src="@{*{thumbnail}}" />-->
-                        <!--                        </label>-->
+                        <!-- Chọn ảnh -->
+                        <label class="block mt-4 text-sm">
+                            <span class="text-gray-700 dark:text-gray-400">Chọn ảnh sản phẩm</span>
+                            <input
+                                    class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 form-input focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+                                    type="file"
+                                    name="thumbnailUrl"
+                                    id="thumbnailUrl"
+                                    accept="image/png, image/jpeg"
+                            />
+                            <!-- Hidden input to retain the existing image if no new image is selected -->
+                            <input type="hidden" name="existingThumbnail" th:value="*{thumbnail}">
+                        </label>
+                        <label class="block mt-4 text-sm">
+                            <img id="thumbnail" alt="Thumbnail Preview" th:src="@{*{thumbnail}}" />
+                        </label>
 
                     </div>
 

@@ -13,6 +13,9 @@ public interface VoucherService {
     List<Voucher> getAllVoucher();
     Voucher getVoucherById(Integer id);
     Voucher saveVoucher(Voucher voucher);
+    Voucher updateVoucher(Voucher voucher);
     Page<Voucher> getVoucherByStatusNot2(Pageable pageable);
     Page<Voucher> searchVoucherByName(String keyword, Pageable pageable);
+    boolean existsByNameVoucherAndNotId(String nameVoucher, Integer id);
+
 }

@@ -11,4 +11,6 @@ import org.springframework.stereotype.Repository;
 public interface VoucherRepository extends JpaRepository<Voucher, Integer>  {
     Page<Voucher> findByStatusNot(int status, Pageable pageable);
     Page<Voucher> findByNameVoucherContainingIgnoreCaseAndStatusNot(String nameVoucher, Integer status, Pageable pageable);
+    boolean existsByNameVoucher(String nameVoucher);
+    boolean existsByNameVoucherAndIdNot(String nameVoucher, Integer id);
 }
