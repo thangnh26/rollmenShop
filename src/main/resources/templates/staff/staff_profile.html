@@ -91,11 +91,11 @@
             </div>
 
             <!-- Thông tin chi tiết người dùng -->
-            <div class="space-y-4">
-                <p class="text-gray-600"><strong class="font-semibold">Tên:</strong> <span class="font-medium text-gray-900">thang</span></p>
-                <p class="text-gray-600"><strong class="font-semibold">Họ:</strong> <span class="font-medium text-gray-900">nguyen</span></p>
-                <p class="text-gray-600"><strong class="font-semibold">Email:</strong> <span class="font-medium text-gray-900">thang@gmail.com</span></p>
-                <p class="text-gray-600"><strong class="font-semibold">Số điện thoại:</strong> <span class="font-medium text-gray-900">0962687236</span></p>
+            <div th:if="${user}">
+                <p><strong>Tên:</strong> <span th:text="${user.firstName}"></span></p>
+                <p><strong>Họ:</strong> <span th:text="${user.lastName}"></span></p>
+                <p><strong>Email:</strong> <span th:text="${user.email}"></span></p>
+                <p><strong>Số Điện Thoại:</strong> <span th:text="${user.phoneNumber}"></span></p>
             </div>
 
             <!-- Nút Đăng xuất -->
