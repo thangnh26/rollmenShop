@@ -1,6 +1,7 @@
 package com.example.shopGiay.repository;
 
 import com.example.shopGiay.model.Category;
+import com.example.shopGiay.model.Material;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -24,4 +25,6 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
     List<String> getListCategoryOfBrand(int id);
     boolean existsByNameCategory(String nameCategory);
     boolean existsByNameCategoryAndIdNot(String nameCategory, Integer id);
+    @Query("SELECT b FROM Category b WHERE b.status = 1")
+    List<Category> findByStatusActive();
 }

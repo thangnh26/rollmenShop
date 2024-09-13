@@ -120,7 +120,7 @@
 
             <div class="quantity-display">
                 <span>Số lượng:</span>
-                <span id="quantityDisplay" th:utext="${productDetail.quantity}"></span>
+                <span id="quantityDisplay" name="quantityDisplay" th:utext="${productDetail.quantity}"></span>
             </div>
 
             <form id="productForm" method="post" class="product-form">
@@ -150,7 +150,7 @@
                     <label for="quantity">Số lượng:</label>
                     <input type="number" min="1" name="quantity" id="quantity" class="form-control"
                            th:value="1" title="Quantity:"/>
-                    <span id="quantityError" class="error-message"></span>
+                    <span id="quantityError" name="quantityError" class="error-message"></span>
                 </div>
                 <input type="hidden" name="proId" th:value="${product.id}">
 
@@ -208,7 +208,7 @@
 <script src="js/main.js"></script>
 <script>
     function submitForm(action) {
-        if (validateQuantity()) {
+        if (validateQuantity()==true) {
             var form = document.getElementById('productForm');
             form.action = action;
             form.submit();
@@ -242,17 +242,18 @@
         }
     }
 
+
     function validateQuantity() {
-        var maxQuantity = [[${productDetail.quantity}]];
+        var maxQuantity = parseInt(document.getElementById('quantityDisplay').textContent)
         var inputQuantity = document.getElementById('quantity').value;
 
         var errorElement = document.getElementById('quantityError');
-
         if (parseInt(inputQuantity) > parseInt(maxQuantity)) {
-            errorElement.textContent = "Số lượng vượt quá số lượng sản phẩm có sẵn!";
+            errorElement.innerHTML = "Số lượng vượt quá số lượng sản phẩm có sẵn!";
             errorElement.style.display = "inline"; // Hiển thị thông báo lỗi
             return false; // Ngăn không cho form gửi đi
-        } else {
+        }
+        else {
             errorElement.style.display = "none"; // Ẩn thông báo lỗi nếu nhập đúng
         }
         if(parseInt(inputQuantity) <= 0){
@@ -266,12 +267,13 @@
             errorElement.textContent = "Số lượng không được để trống";
             errorElement.style.display = "inline";
             return false;
-        } else {
+        }
+        else {
             errorElement.style.display = "none";
             return true;
         }
 
-        return true; // Allow form submission
+        // return true; // Allow form submission
     }
 </script>
 </body>

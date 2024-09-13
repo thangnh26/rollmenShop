@@ -55,4 +55,9 @@ public class SoleServiceImpl implements SoleService {
     public boolean existsByNameAndIdNot(String name, Integer id) {
         return soleRepository.existsByNameAndIdNot(name, id);
     }
+
+    @Override
+    public List<Sole> findByStatusActive() {
+        return soleRepository.findByStatusActive();
+    }
 }

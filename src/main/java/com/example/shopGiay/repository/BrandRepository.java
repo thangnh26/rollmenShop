@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface BrandRepository extends JpaRepository<Brand, Integer> {
     @Query(nativeQuery = true, value = "SELECT * FROM brand WHERE id = ?1")
@@ -16,4 +18,6 @@ public interface BrandRepository extends JpaRepository<Brand, Integer> {
     Page<Brand> findByNameBrandContainingIgnoreCaseAndStatusNot(String name, Integer status, Pageable pageable);
     boolean existsByNameBrand(String nameBrand);
     boolean existsByNameBrandAndIdNot(String nameBrand, Integer id);
+    @Query("SELECT b FROM Brand b WHERE b.status = 1")
+    List<Brand> findByStatusActive();
 }

@@ -91,6 +91,7 @@
                                                     class="input-text qty" onblur="this.form.submit()"/>
                                             </div>
                                         </td>
+
                                         <td>
                                             <a th:href="@{/delete(proId=${item.productDetail.id})}" th:class="ti-close"></a>
                                         </td>
@@ -139,10 +140,9 @@
                                         <h5 th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 0, 'POINT')+ 'đ'}"></h5>
                                     </td>
                                 </tr>
-
-
                         </tbody>
                     </table>
+
                     <div style="display: flex;flex-direction: row; justify-content: center; width: 100%;" th:if="${listItem.size() == 0}">
                         <img src="img/shopping-cart-icon.png" style="width: 100%;width: 300px; height: 163px;" alt="thumbnail" >
                     </div>

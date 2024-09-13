@@ -52,5 +52,10 @@ public class MaterialServiceImpl implements MaterialService {
         return materialRepository.existsByNameAndIdNot(name, id);
     }
 
+    @Override
+    public List<Material> findByStatusActive() {
+        return materialRepository.findByStatusActive();
+    }
+
 }
 

@@ -32,4 +32,9 @@ public class SizeServiceImpl implements SizeService {
     public void deleteSizeById(Integer id) {
         sizeRepository.deleteById(id);
     }
+
+    @Override
+    public List<Size> findByStatusActive() {
+        return sizeRepository.findByStatusActive();
+    }
 }

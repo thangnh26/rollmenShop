@@ -101,12 +101,12 @@ public class ProductsController {
     @GetMapping("/createProduct")
     public String adminCreateProduct(Model model) {
         model.addAttribute("newProduct", new Product());
-        model.addAttribute("listCategory", categoryRepository.findAll());
-        model.addAttribute("listBrand", brandRepository.findAll());
-        model.addAttribute("listMaterial", materialRepository.findAll());
-        model.addAttribute("listSole", soleRepository.findAll());
-        model.addAttribute("listSize", sizeRepository.findAll());
-        model.addAttribute("listColor", colorRepository.findAll());
+        model.addAttribute("listCategory", categoryRepository.findByStatusActive());
+        model.addAttribute("listBrand", brandRepository.findByStatusActive());
+        model.addAttribute("listMaterial", materialRepository.findByStatusActive());
+        model.addAttribute("listSole", soleRepository.findByStatusActive());
+        model.addAttribute("listSize", sizeRepository.findByStatusActive());
+        model.addAttribute("listColor", colorRepository.findByStatusActive());
         return "admin/product/createProduct";
     }
 
@@ -132,10 +132,10 @@ public class ProductsController {
             return "error/404";  // Redirect to a 404 page if the product is not found
         }
         model.addAttribute("product", product);
-        model.addAttribute("listCategory", categoryRepository.findAll());
-        model.addAttribute("listBrand", brandRepository.findAll());
-        model.addAttribute("listMaterial", materialRepository.findAll());
-        model.addAttribute("listSole", soleRepository.findAll());
+        model.addAttribute("listCategory", categoryRepository.findByStatusActive());
+        model.addAttribute("listBrand", brandRepository.findByStatusActive());
+        model.addAttribute("listMaterial", materialRepository.findByStatusActive());
+        model.addAttribute("listSole", soleRepository.findByStatusActive());
         return "admin/product/updateProduct";
     }
 

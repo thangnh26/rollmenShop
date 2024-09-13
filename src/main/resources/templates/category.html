@@ -30,7 +30,6 @@
 
 				<div class="common-filter">
 					<div style="padding-left: 20px;">
-<!--						<a style="color: black;" href="/product">Tất cả sản phẩm</a>-->
 						<form  th:each="brand : ${listBrandsReputation}">
 							<hr>
 							<a style="color: black;" th:href="@{/product(name=${brand.nameBrand})}" ><img style="zoom: 0.45;" th:src="@{${brand.thumbnail}}"> [[${brand.nameBrand}]]</a>

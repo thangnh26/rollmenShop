@@ -58,5 +58,10 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository.existsByNameCategoryAndIdNot(nameCategory, id);
     }
 
+    @Override
+    public List<Category> findByStatusActive() {
+        return categoryRepository.findByStatusActive();
+    }
+
 
 }

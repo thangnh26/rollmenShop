@@ -67,6 +67,6 @@ public interface CartItemRepository extends JpaRepository<CartItem,Integer> {
     @Query(value = "delete from `dbshopgiay`.`cart_item` where `product_detail_id`=:proId", nativeQuery = true)
     void deleteByIdPro(int proId);
 
-    @Query(value = "select ci from CartItem ci where ci.productDetail.product.id=:id and ci.cart.id=:cartId")
+    @Query(value = "select ci from CartItem ci where ci.productDetail.id=:id and ci.cart.id=:cartId")
     Optional<CartItem> findByProductIdAndColorIdAndSizeId(int id, int cartId);
 }

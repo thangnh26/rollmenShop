@@ -3,11 +3,14 @@ package com.example.shopGiay.repository;
 import com.example.shopGiay.model.Color;
 import com.example.shopGiay.model.Material;
 import com.example.shopGiay.model.Size;
+import com.example.shopGiay.model.Sole;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface ColorRepository extends JpaRepository<Color, Integer> {
@@ -21,4 +24,6 @@ public interface ColorRepository extends JpaRepository<Color, Integer> {
     Color findColorNotInProductDetail(Integer productId);
     boolean existsByName(String name);
     boolean existsByNameAndIdNot(String name, Integer id);
+    @Query("SELECT b FROM Color b WHERE b.status = 1")
+    List<Color> findByStatusActive();
 }

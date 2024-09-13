@@ -50,6 +50,13 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public List<Product> getListProductsProminent(int limit) {
+        Pageable pageable = PageRequest.of(0, limit);
+        List<Product> products = productRepository.getListProductsProminent(pageable);
+        return products;
+    }
+
+    @Override
     public Product getDetailProductById(int id) {
         return productRepository.getOne(id).orElseThrow(() -> new NotFoundException("Sản phẩm không tồn tại"));
     }

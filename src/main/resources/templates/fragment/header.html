@@ -35,7 +35,7 @@
                 <li class="nav-item"><a class="nav-link" th:href="@{/product}">Danh sách sản phẩm</a></li>
                 <div th:each="brand: ${listBrandsReputation}">
                   <li class="nav-item">
-                    <a class="nav-link" th:text="${brand.nameBrand}" th:href="@{/products(name=${brand.nameBrand})}"></a>
+                    <a class="nav-link" th:text="${brand.nameBrand}" th:href="@{/product(name=${brand.nameBrand})}"></a>
                   </li>
                 </div>
               </ul>

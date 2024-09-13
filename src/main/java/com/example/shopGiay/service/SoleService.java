@@ -16,4 +16,5 @@ public interface SoleService {
     Page<Sole> searchSoleByName(String keyword, Pageable pageable);
     boolean existsByName(String name);
     boolean existsByNameAndIdNot(String name, Integer id);
+    List<Sole> findByStatusActive();
 }

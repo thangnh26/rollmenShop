@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface BrandService {
     List<Brand> getAllBrands();
+    List<Brand> findByStatusActive();
     Brand getBrandById(Integer id);
     Brand saveBrand(Brand brand);
     void deleteBrandById(Integer id);

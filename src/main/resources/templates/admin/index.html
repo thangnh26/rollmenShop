@@ -176,7 +176,7 @@
           <div class="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-2">
 
             <!-- Card -->
-            <a th:href="@{/admin/users}">
+            <a th:href="@{/admin/index}">
               <div
                       class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800"
               >
@@ -205,7 +205,7 @@
             </a>
 
             <!--đơn hàng đã bán--->
-            <a th:href="@{/admin/orders}">
+            <a th:href="@{/order}">
               <div
                       class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800"
               >
@@ -235,7 +235,7 @@
             </a>
 
             <!-- Card -->
-            <a th:href="@{/admin/orders}">
+            <a th:href="@{/order}">
               <div
                       class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800"
               >
@@ -267,7 +267,7 @@
             </a>
 
             <!--Số sản phẩm đang bán-->
-            <a th:href="@{/admin/products}">
+            <a th:href="@{/admin/index}">
               <div
                       class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800"
               >
@@ -290,9 +290,9 @@
                   </p>
                   <p
                           class="text-lg font-semibold text-gray-700 dark:text-gray-200"
-                          th:text="${total}">
-
+                          th:text="${#numbers.formatDecimal(total, 1, 'COMMA', 2, 'POINT')}">
                   </p>
+
                 </div>
               </div>
             </a>

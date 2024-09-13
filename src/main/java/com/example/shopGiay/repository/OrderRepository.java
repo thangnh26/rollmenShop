@@ -44,10 +44,10 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
     @Query(value = "select count(o) from Order o where o.status=0")
     Integer countDonHangCho();
 
-    @Query(value = "select count(o) from Order o where o.status >=1")
+    @Query(value = "select count(o) from Order o where o.status = 3 ")
     Integer countOrder();
 
-    @Query(value = "select distinct count(o.customer.id) from Order o")
+    @Query("select count(distinct o.customer.id) from Order o where o.status = 3")
     Integer countUser();
 
     @Query(value = "SELECT IFNULL(sum(total_amount), 0.0) FROM `order`", nativeQuery = true)

@@ -23,6 +23,14 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     @Query(value = "SELECT distinct p FROM Product p where p.status=1 and p.id = :id")
     Optional<Product> getOne(int id);
 
+    // lấy ra 8 sản phẩm nổi bất có thương hiệu Adidas
+    @Query(value = "SELECT DISTINCT p FROM Product p " +
+            "JOIN p.brand m " +
+            "WHERE p.status = 1 AND m.nameBrand = 'Adidas' " +
+            "ORDER BY p.createDate DESC")
+    List<Product> getListProductsProminent(Pageable pageable);
+
+    // lấy ra 8 sản phẩm ở banner
     @Query(value = "SELECT distinct p FROM Product p where p.status=1 ORDER BY p.createDate DESC")
     List<Product> getListNewProducts(Pageable pageable);
 

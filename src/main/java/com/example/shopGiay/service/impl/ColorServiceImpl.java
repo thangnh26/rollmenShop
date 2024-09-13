@@ -62,4 +62,9 @@ public class ColorServiceImpl implements ColorService {
     public boolean existsByNameAndIdNot(String name, Integer id) {
         return colorRepository.existsByNameAndIdNot(name, id);
     }
+
+    @Override
+    public List<Color> findByStatusActive() {
+        return colorRepository.findByStatusActive();
+    }
 }

@@ -1,5 +1,6 @@
 package com.example.shopGiay.service;
 
+import com.example.shopGiay.model.Brand;
 import com.example.shopGiay.model.Color;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,4 +16,5 @@ public interface ColorService {
     Page<Color> searchColorsByName(String name, Pageable pageable);
     boolean existsByName(String name);
     boolean existsByNameAndIdNot(String name, Integer id);
+    List<Color> findByStatusActive();
 }

@@ -153,7 +153,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
         ProductDetail productDetail = productDetailRepository.getOneProductDetail(productId,colorId,sizeId);
         // Fetch the cart item from the database based on productId, colorId, and sizeId
-        CartItem cartItem = cartItemRepository.findByProductIdAndColorIdAndSizeId(productId, cartId)
+        CartItem cartItem = cartItemRepository.findByProductIdAndColorIdAndSizeId(productDetail.getId(), cartId)
                 .orElseThrow(() -> new IllegalArgumentException("Cart item not found"));
 
         // Update the quantity

@@ -80,24 +80,29 @@ public class HomeController {
         List<Brand> brandsReputation = brandService.getAllBrands();
         model.addAttribute("listBrandsReputation", brandsReputation);
 
-        //Lấy 10 sản phẩm mới nhất
-        List<Product> newProductsBanner = productService.getListNewProducts(10);
+        //lấy ra 8 sản phẩm ở banner
+        List<Product> newProductsBanner = productService.getListNewProducts(8);
         model.addAttribute("newProducts", newProductsBanner);
 
-        //Lấy 10 sản phẩm mới nhất
-        List<Product> newProducts = productService.getListNewProducts(10);
+        //lấy ra 8 sản phẩm nổi bật
+        List<Product> ListProductsProminent = productService.getListProductsProminent(8);
+        model.addAttribute("ListProductsProminent", ListProductsProminent);
+
+        //Lấy 8 sản phẩm mới nhất
+        List<Product> newProducts = productService.getListNewProducts(8);
         model.addAttribute("listNewProduct", newProducts);
 
 
-        //sp bán chạy
+        //Lấy ra 4 sản phẩm bán chạy nhất
         List<Product> productHot = productService.getProductHot();
         model.addAttribute("hot", productHot);
 
 
         List<BigDecimal> price = productDetailRepository.findListPricreByProductId(newProducts.stream().map(Product::getId).collect(Collectors.toList()));
 
-        //Lấy 10 sản phẩm ngẫu nhiên
-        List<Product> randomProducts = productService.getListNewProducts(10);
+        //Lấy 8 sp giá thấp nhất
+        List<Product> randomProducts = productService.getListNewProducts(8);
+
         List<BigDecimal> priceRandomProducts = productDetailRepository.findListPricreByProductId(randomProducts.stream().map(Product::getId).collect(Collectors.toList()));
 
         model.addAttribute("listRandomProduct", randomProducts);
@@ -110,6 +115,7 @@ public class HomeController {
     public String showAddForm(Address address) {
         return "addAddress";
     }
+
     @PostMapping("/add-address")
     public String addAddress(@Valid Address address, BindingResult result, Model model) {
         if (result.hasErrors()) {

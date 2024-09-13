@@ -1,16 +1,8 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<!--      th:replace="~{/layout/layout :: main-fragment(-->
-<!--                                                                     ~{:: title},-->
-<!--                                                                    'header',-->
-<!--                                                                    'footer',-->
-<!--                                                                     ~{:: #css-resources},-->
-<!--                                                                     ~{:: #js-resources},-->
-<!--                                                                     ~{:: #main-content}-->
-<!--                                                                    )}">-->
 <head>
   <meta charset="UTF-8">
-  <title>Không tìm thấy</title>
+  <title>Không tìm thấy đường dẫn</title>
   <th:block id="css-resources">
     <style>
       .error-div {
@@ -19,10 +11,32 @@
         justify-content: center;
         flex-direction: column;
         margin-bottom: 50px;
+        text-align: center; /* Center text alignment */
       }
-      .error-div img{
+      .error-div img {
         height: 350px;
         width: 350px;
+      }
+      .error-div h1 {
+        font-size: 24px;
+        color: #333;
+        margin-bottom: 20px;
+      }
+      .primary-btn {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 10px 2px;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+      .primary-btn:hover {
+        background-color: #0056b3;
       }
     </style>
   </th:block>
@@ -31,12 +45,12 @@
 <body>
 <main id="main-content">
   <div class="error-div">
-    <img src="./img/404.png" alt="404" >
+    <h1>Không tìm thấy đường dẫn</h1>
+    <img src="./img/404.png" alt="404">
     <a href="/">
       <button class="primary-btn">Quay về trang chủ</button>
     </a>
   </div>
-
 </main>
 <th:block id="js-resources">
 

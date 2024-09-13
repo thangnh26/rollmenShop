@@ -1,16 +1,8 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<!--      th:replace="~{/layout/layout :: main-fragment(-->
-<!--                                                                     ~{:: title},-->
-<!--                                                                    'header',-->
-<!--                                                                    'footer',-->
-<!--                                                                     ~{:: #css-resources},-->
-<!--                                                                     ~{:: #js-resources},-->
-<!--                                                                     ~{:: #main-content}-->
-<!--                                                                    )}">-->
 <head>
     <meta charset="UTF-8">
-    <title>Không tìm thấy</title>
+    <title>Không được phép truy cập</title>
     <th:block id="css-resources">
         <style>
             .error-div {
@@ -19,10 +11,16 @@
                 justify-content: center;
                 flex-direction: column;
                 margin-bottom: 50px;
+                text-align: center;
             }
             .error-div img{
                 height: 350px;
                 width: 350px;
+            }
+            .error-div h1 {
+                font-size: 24px;
+                color: #333;
+                margin-bottom: 20px;
             }
         </style>
     </th:block>
@@ -31,12 +29,12 @@
 <body>
 <main id="main-content">
     <div class="error-div">
-        <img src="./img/403.png" alt="403" >
+        <h1>Không được phép truy cập</h1>
+        <img src="./img/403.png" alt="403">
         <a href="/">
             <button class="primary-btn">Quay về trang chủ</button>
         </a>
     </div>
-
 </main>
 <th:block id="js-resources">
 
