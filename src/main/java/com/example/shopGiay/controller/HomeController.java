@@ -651,7 +651,11 @@ public class HomeController {
         } else {
             email = principal.toString();
         }
+
         Customer user = userRepo.findByEmail(email);
+        if (user==null){
+            return "redirect:/login";
+        }
         Address address = addressRepository.findByCustomerId(user.getId());
         List<Address> allAddressByCusId = addressRepository.findByCusId(user.getId());
         if (allAddressByCusId.size()==0){
