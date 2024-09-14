@@ -62,29 +62,24 @@
                                         </td>
                                         <td>
                                             <div class="default-select" id="default-select-color">
-                                                <select name="color" id="colorSelect" onchange="this.form.submit()">
-                                                    <option value="" disabled>Select a Color</option>
-                                                    <option th:each="color : ${colors}"
-                                                            th:value="${color.id}"
-                                                            th:text="${color.name}"
-                                                            th:selected="${color.id == item.productDetail.color.id}">
-                                                    </option>
-                                                </select>
+                                                <input type="text"
+                                                       name="color"
+                                                       th:value="${item.productDetail.color.name}"
+                                                       readonly
+                                                       style="border: none; background: transparent; outline: none; color: inherit;"
+                                                       class="block w-full mt-1 text-sm"/>
                                             </div>
                                         </td>
                                         <td>
                                             <div class="default-select" id="default-select-size">
-                                                <select name="size" id="sizeSelect" onchange="this.form.submit()">
-                                                    <option value="" disabled>Select a Size</option>
-                                                    <option th:each="size : ${sizes}"
-                                                            th:value="${size.id}"
-                                                            th:text="${size.sizeNumber}"
-                                                            th:selected="${size.id == item.productDetail.size.id}">
-                                                    </option>
-                                                </select>
+                                                <input type="text"
+                                                       name="size"
+                                                       th:value="${item.productDetail.size.sizeNumber}"
+                                                       readonly
+                                                       style="border: none; background: transparent; outline: none; color: inherit;"
+                                                       class="block w-full mt-1 text-sm"/>
                                             </div>
                                         </td>
-
                                         <td>
                                             <div class="product_count">
                                                 <input type="number" min="1" name="qty" id="sst" maxlength="12" th:value="${item.quantity}" title="Số lượng:"

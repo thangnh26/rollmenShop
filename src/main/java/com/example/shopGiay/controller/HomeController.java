@@ -652,6 +652,11 @@ public class HomeController {
             email = principal.toString();
         }
         Customer user = userRepo.findByEmail(email);
+        Address address = addressRepository.findByCustomerId(user.getId());
+        List<Address> allAddressByCusId = addressRepository.findByCusId(user.getId());
+        if (allAddressByCusId.size()==0){
+            return "redirect:/add-address";
+        }
 
         if (user != null) {
             int pageSize = 5; // Số mục trên mỗi trang
@@ -669,6 +674,7 @@ public class HomeController {
             model.addAttribute("status", status);
             session.setAttribute("loggedInUser", user);
             model.addAttribute("user", user);
+            model.addAttribute("addresses",allAddressByCusId);
             return "user_profile";
         } else {
             model.addAttribute("error", "User not found");

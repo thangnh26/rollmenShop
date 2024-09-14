@@ -155,10 +155,10 @@
             border-color: #1e7e34;
         }
 
-        .btn-danger {
+
+        .btn-danger-custom {
             background-color: #dc3545;
             border-color: #dc3545;
-            color: #fff;
         }
 
         .btn-danger:hover {
@@ -169,7 +169,7 @@
         footer {
             margin-top: 20px;
             padding: 10px 0;
-            background-color: #007bff;
+            background-color: #4e555b;
             color: #fff;
             text-align: center;
         }
@@ -218,6 +218,19 @@
         .table tbody tr:hover {
             background-color: #f1f1f1;
         }
+        .btn-custom {
+            font-size: 0.90rem; /* Giảm kích thước chữ */
+            padding: 0.25rem 0.5rem; /* Điều chỉnh padding */
+            margin: 2px; /* Giảm khoảng cách giữa các nút */
+            border-radius: 0.25rem; /* Đổi kiểu viền góc */
+        }
+        .btn-success-custom {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+        .btn-custom:hover {
+            opacity: 0.8; /* Hiệu ứng khi di chuột qua nút */
+        }
 
 
 
@@ -235,15 +248,22 @@
     <div class="profile-details">
         <h3>Thông Tin Khách Hàng</h3>
         <p><strong>ID Khách Hàng:</strong> <span th:text="${user.id}"></span></p>
-        <p><strong>First Name:</strong> <span th:text="${user.firstName}"></span></p>
-        <p><strong>Last Name:</strong> <span th:text="${user.lastName}"></span></p>
+        <p><strong>Họ Tên:</strong> <span th:text="${user.lastName}"></span> <span th:text="${user.firstName}"></span></p>
         <p><strong>Email:</strong> <span th:text="${user.email}"></span></p>
-        <p><strong>Phone Number:</strong> <span th:text="${user.phoneNumber}"></span></p>
+        <p><strong>Số điện thoại:</strong> <span th:text="${user.phoneNumber}"></span></p>
+        <p><strong>Địa chỉ:</strong>
+            <span th:text="${addresses[0].nameAddress}"></span>
+        </p>
         <div th:if="${error}">
             <p class="error" th:text="${error}"></p>
         </div>
-        <a href="/logout" class="btn">Logout</a>
-        <a href="/add-address" class="btn btn-outline-warning">Add Address</a>
+        <a th:href="@{/customer/edit/{id}(id=${user.id})}" class="btn btn-outline-warning">Sửa thông tin cá nhân</a>
+        <a href="/add-address" class="btn btn-outline-warning">Thêm địa chỉ</a>
+        <div>
+            <a href="/logout" class="btn btn-outline-warning">Đăng xuất</a>
+        </div>
+
+
     </div>
 
     <div class="order-history">
@@ -260,8 +280,8 @@
             </select>
             <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
         </form>
-        <table class="table table-striped">
-            <thead>
+        <table class="table table-striped table-bordered">
+            <thead class="thead-dark">
             <tr>
                 <th>Mã hóa đơn</th>
                 <th>Ngày mua</th>
@@ -281,14 +301,14 @@
                 <td th:text="${order.phoneReceiver}">Phone</td>
                 <td th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}"></td>
                 <td>
-                    <a class="btn btn-success" th:if="${order.status == 0}">Chờ xác nhận</a>
-                    <a class="btn btn-danger" th:if="${order.status == 0 || order.status == 1 || order.status == 2}"
+                    <a class="btn btn-success btn-custom btn-success-custom" th:if="${order.status == 0}">Chờ xác nhận</a>
+                    <a class="btn btn-danger btn-custom btn-danger-custom" th:if="${order.status == 0 || order.status == 1 || order.status == 2}"
                        th:href="@{/order/cancelled-customer/{id}(id=${order.id})}">Hủy</a>
-                    <a class="btn btn-success" th:if="${order.status == 1}">Đã xác nhận</a>
-                    <a class="btn btn-success" th:if="${order.status == 2}">Đang giao hàng</a>
-                    <a class="btn btn-success" th:if="${order.status == 3}">Thành công</a>
-                    <a class="btn btn-danger" th:if="${order.status == 4}">Đã hủy</a>
-                    <a class="btn btn-success" th:href="@{/order-detail-customer(id=${order.id})}">Xem chi tiết</a>
+                    <a class="btn btn-success btn-custom btn-success-custom" th:if="${order.status == 1}">Đã xác nhận</a>
+                    <a class="btn btn-warning btn-custom btn-warning-custom" th:if="${order.status == 2}">Đang giao hàng</a>
+                    <a class="btn btn-success btn-custom btn-success-custom" th:if="${order.status == 3}">Thành công</a>
+                    <a class="btn btn-danger btn-custom btn-danger-custom" th:if="${order.status == 4}">Đã hủy</a>
+                    <a class="btn btn-info btn-custom btn-info-custom" th:href="@{/order-detail-customer(id=${order.id})}">Xem chi tiết</a>
                 </td>
             </tr>
             </tbody>
