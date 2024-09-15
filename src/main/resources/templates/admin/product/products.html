@@ -521,6 +521,35 @@
 
                             </tbody>
                         </table>
+                        <div class="flex justify-center mt-4">
+                            <nav aria-label="Page navigation">
+                                <ul class="inline-flex space-x-1">
+                                    <!-- Nút Trang trước -->
+                                    <li class="page-item" th:classappend="${listProduct.number == 0} ? 'disabled'">
+                                        <a class="page-link px-3 py-1 text-gray-700 bg-white border border-gray-300 rounded-l-md hover:bg-gray-200"
+                                           th:href="@{/admin/products(page=${listProduct.number - 1}, size=${listProduct.size})}"
+                                           th:aria-disabled="${listProduct.number == 0}">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+
+                                    <!-- Hiển thị danh sách các số trang -->
+                                    <li th:each="pageNum : ${pageNumber}" class="page-item"
+                                        th:classappend="${pageNum == listProduct.number + 1} ? 'active'">
+                                        <a class="page-link px-3 py-1 text-gray-700 bg-white border border-gray-300 hover:bg-gray-200"
+                                           th:href="@{/admin/products(page=${pageNum}, size=${listProduct.size})}"
+                                           th:text="${pageNum}"></a>
+                                    </li>
+
+                                    <!-- Nút Trang sau -->
+                                    <li class="page-item" th:classappend="${listProduct.number + 1 == listProduct.totalPages} ? 'disabled'">
+                                        <a class="page-link px-3 py-1 text-gray-700 bg-white border border-gray-300 rounded-l-md hover:bg-gray-200" th:href="@{/admin/products(page=${listProduct.number + 2}, size=${listProduct.size})}"
+                                           th:aria-disabled="${listProduct.number + 1 == listProduct.totalPages}"><span aria-hidden="true">&raquo;</span></a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+
                     </div>
 
                 </div>

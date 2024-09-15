@@ -75,8 +75,11 @@ public class ProductsController {
     @GetMapping("/products")
     public String adminProducts(Model model, @RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size) {
         int currentPage = page.orElse(1);
-        int sizePage = size.orElse(10);
-
+        int sizePage = size.orElse(5);
+        // Đảm bảo currentPage không nhỏ hơn 1
+        if (currentPage < 1) {
+            currentPage = 1;
+        }
         Pageable pageable = PageRequest.of(currentPage - 1, sizePage);
         Page<Product> listProduct = productService.findAllOrderById(pageable);
         model.addAttribute("listProduct", listProduct);

@@ -89,7 +89,7 @@ public class CustomerController {
         existingCustomer.setStatus(customer.getStatus());
         existingCustomer.setUpdateDate(LocalDate.now()); // Cập nhật ngày update
         customerService.saveCustomer(existingCustomer); // Lưu lại khách hàng đã cập nhật
-        return "redirect:/customer";
+        return "redirect:/user/profile";
     }
 
     @GetMapping("/{id}")
