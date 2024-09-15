@@ -20,7 +20,7 @@ import java.util.Optional;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Integer> {
 
-    @Query(value = "SELECT distinct p FROM Product p where p.status=1 and p.id = :id")
+    @Query(value = "SELECT distinct p FROM Product p WHERE p.id = :id")
     Optional<Product> getOne(int id);
 
     @Query(value = "SELECT distinct new com.example.shopGiay.dto.ProductDto(p.id, p.thumbnail, p.name, (SELECT CAST(MIN(pd.price) AS java.math.BigDecimal) FROM ProductDetail pd WHERE pd.product.id = p.id)) FROM Product p  where p.status=1 ORDER BY p.createDate DESC")

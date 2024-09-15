@@ -131,6 +131,7 @@ public class ProductsController {
         if (product == null) {
             return "error/404";  // Redirect to a 404 page if the product is not found
         }
+        product.getStatus();
         model.addAttribute("product", product);
         model.addAttribute("listCategory", categoryRepository.findByStatusActive());
         model.addAttribute("listBrand", brandRepository.findByStatusActive());

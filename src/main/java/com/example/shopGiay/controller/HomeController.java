@@ -192,17 +192,6 @@ public class HomeController {
         Page<Comment> listComment = commentService.findAllByProductId(id, pageable);
         ProductDetail productDetail = productDetailRepository.findPricreByProductId(product.getId());
 
-        // Định dạng số với 2 chữ số sau dấu phẩy và dấu phẩy ngăn cách mỗi 3 chữ số
-//        DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.US);
-//        symbols.setGroupingSeparator(',');
-//        DecimalFormat df = new DecimalFormat("#,##0.00", symbols);
-//        String formatPrice = df.format(productDetail.getPrice());
-//
-//        // Loại bỏ dấu phẩy trước khi chuyển đổi lại thành BigDecimal
-//        String plainStringPrice = formatPrice.replace(",", "");
-//        BigDecimal formatBig = new BigDecimal(plainStringPrice);
-//        productDetail.setPrice(formatBig);
-
         model.addAttribute("product", product);
         model.addAttribute("productDetail", productDetail);
         model.addAttribute("listCommnet", listComment);
