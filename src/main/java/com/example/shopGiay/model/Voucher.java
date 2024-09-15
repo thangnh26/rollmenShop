@@ -33,11 +33,15 @@ public class Voucher {
 
     @Future(message = "Ngày bắt đầu phải là ngày trong tương lai", groups = CreatedDate.class)
     @NotNull(message = "Ngày bắt đầu không được để trống", groups = CreatedDate.class)
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate startDate;
+
 
     @Future(message = "Ngày kết thúc phải là ngày trong tương lai", groups = CreatedDate.class)
     @NotNull(message = "Ngày kết thúc không được để trống", groups = CreatedDate.class)
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate endDate;
+
 
     @Column(name = "status")
     private Integer status;
