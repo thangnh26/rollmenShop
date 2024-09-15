@@ -193,15 +193,15 @@ public class HomeController {
         ProductDetail productDetail = productDetailRepository.findPricreByProductId(product.getId());
 
         // Định dạng số với 2 chữ số sau dấu phẩy và dấu phẩy ngăn cách mỗi 3 chữ số
-        DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.US);
-        symbols.setGroupingSeparator(',');
-        DecimalFormat df = new DecimalFormat("#,##0.00", symbols);
-        String formatPrice = df.format(productDetail.getPrice());
-
-        // Loại bỏ dấu phẩy trước khi chuyển đổi lại thành BigDecimal
-        String plainStringPrice = formatPrice.replace(",", "");
-        BigDecimal formatBig = new BigDecimal(plainStringPrice);
-        productDetail.setPrice(formatBig);
+//        DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.US);
+//        symbols.setGroupingSeparator(',');
+//        DecimalFormat df = new DecimalFormat("#,##0.00", symbols);
+//        String formatPrice = df.format(productDetail.getPrice());
+//
+//        // Loại bỏ dấu phẩy trước khi chuyển đổi lại thành BigDecimal
+//        String plainStringPrice = formatPrice.replace(",", "");
+//        BigDecimal formatBig = new BigDecimal(plainStringPrice);
+//        productDetail.setPrice(formatBig);
 
         model.addAttribute("product", product);
         model.addAttribute("productDetail", productDetail);
@@ -254,9 +254,23 @@ public class HomeController {
         ProductDetail productDetail = productDetailRepository.findBySizeIdAndColorIdAndProductId(sizeId, colorId, productId);
 
         Map<String, Integer> response = new HashMap<>();
+        Map<String, BigDecimal> response1 = new HashMap<>();
         response.put("quantity", productDetail != null ? productDetail.getQuantity() : 0);
+        response1.put("price", productDetail != null ? productDetail.getPrice() : BigDecimal.ZERO);
 
         return response;
+    }
+    @GetMapping("/product-detail/price")
+    @ResponseBody
+    public Map<String, BigDecimal> getProductDetailPrice(@RequestParam("sizeId") Integer sizeId,
+                                                         @RequestParam("colorId") Integer colorId,
+                                                         @RequestParam("productId") Integer productId) {
+        ProductDetail productDetail = productDetailRepository.findBySizeIdAndColorIdAndProductId(sizeId, colorId, productId);
+
+        Map<String, BigDecimal> response1 = new HashMap<>();
+        response1.put("price", productDetail != null ? productDetail.getPrice() : BigDecimal.ZERO);
+
+        return response1;
     }
 
 

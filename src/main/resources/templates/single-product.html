@@ -116,7 +116,7 @@
         <!-- Thông tin sản phẩm -->
         <div class="s_product_text col-lg-5">
             <h6 class="product-name" th:text="${product.name}"></h6>
-            <h2 class="product-price" th:text="${#numbers.formatDecimal(productDetail.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></h2>
+            <h2 class="productPrice" name="productPrice" id="productPrice" th:utext="${#numbers.formatDecimal(productDetail.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></h2>
 
             <div class="quantity-display">
                 <span>Số lượng:</span>
@@ -227,7 +227,7 @@
 
         if (sizeId && colorId && productId) {
             fetch(`/product-detail/quantity?sizeId=${sizeId}&colorId=${colorId}&productId=${productId}`)
-                .then(response => response.json())
+                .then(response1 => response1.json())
                 .then(data => {
                     // Reset quantity input to 1 and update the displayed quantity
                     document.getElementById("quantity").value = 1;
@@ -236,6 +236,24 @@
                         quantityDisplayElement.innerHTML = data.quantity;
                     } else {
                         console.error("Quantity display element not found.");
+                    }
+                })
+            fetch(`/product-detail/price?sizeId=${sizeId}&colorId=${colorId}&productId=${productId}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Định dạng lại giá theo kiểu số với dấu phẩy
+                    const formattedPrice = new Intl.NumberFormat('vi-VN', {
+                        style: 'decimal',
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0
+                    }).format(data.price);
+
+                    // Cập nhật giá hiển thị trong phần tử h2 và thêm "VNĐ"
+                    var priceElement = document.getElementById("productPrice");
+                    if (priceElement) {
+                        priceElement.innerHTML = formattedPrice + ' VNĐ';
+                    } else {
+                        console.error("Price display element not found.");
                     }
                 })
                 .catch(error => console.error('Error fetching quantity:', error));

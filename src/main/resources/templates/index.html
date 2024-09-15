@@ -173,6 +173,7 @@
                         <img class="img-fluid" th:src="@{${product.thumbnail}}" alt="">
                         <div class="product-details" >
                             <h6 th:text="${product.name}"></h6>
+
                             <div class="prd-bottom">
                                 <a th:href="@{/{id}(id = ${product.id})}" style="width: 100%;" class="social-info">
                                     <span class="ti-info"></span>
