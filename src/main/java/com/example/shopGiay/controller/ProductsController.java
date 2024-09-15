@@ -125,6 +125,7 @@ public class ProductsController {
             e.printStackTrace();
             redirectAttributes.addFlashAttribute("errorMessage", "Error creating product");
         }
+        redirectAttributes.addFlashAttribute("successMessage", "Thêm mới thành công!");
         return "redirect:/admin/products";
     }
 
@@ -187,7 +188,7 @@ public class ProductsController {
             }
 
             productService.saveOrUpdateProduct(product);
-            redirectAttributes.addFlashAttribute("successMessage", "Product updated successfully!");
+            redirectAttributes.addFlashAttribute("successMessage", "Sửa thành công!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Failed to update product. Please try again.");
             return "redirect:/admin/product/update/" + product.getId();

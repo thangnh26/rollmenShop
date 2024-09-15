@@ -2,6 +2,19 @@
 <html :class="{ 'theme-dark': dark }" x-data="data()" lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:x-transition="">
 <head th:replace="fragment/fragmentAdmin::head_admin"/>
+<style>
+    .alert {
+        padding: 15px;
+        margin-bottom: 20px;
+        border: 1px solid transparent;
+        border-radius: 4px;
+    }
+    .alert-success {
+        color: #3c763d;
+        background-color: #dff0d8;
+        border-color: #d6e9c6;
+    }
+</style>
 <body>
 <div
         class="flex h-screen bg-gray-50 dark:bg-gray-900"
@@ -424,7 +437,9 @@
                     </div>
                     <span>Thêm mới &RightArrow;</span>
                 </a>
-
+                <div>
+                    <div id="successMessage" class="alert alert-success" th:if="${successMessage}" th:text="${successMessage}"></div>
+                </div>
                 <!-- New Table -->
                 <div class="w-full overflow-hidden rounded-lg shadow-xs">
                     <div class="w-full overflow-x-auto">
@@ -542,7 +557,7 @@
                                     </li>
 
                                     <!-- Nút Trang sau -->
-                                    <li class="page-item" th:classappend="${listProduct.number + 1 == listProduct.totalPages} ? 'disabled'">
+                                    <li class="page-item" th:classappend="${listProduct.number + 1 >= listProduct.totalPages} ? 'disabled'">
                                         <a class="page-link px-3 py-1 text-gray-700 bg-white border border-gray-300 rounded-l-md hover:bg-gray-200" th:href="@{/admin/products(page=${listProduct.number + 2}, size=${listProduct.size})}"
                                            th:aria-disabled="${listProduct.number + 1 == listProduct.totalPages}"><span aria-hidden="true">&raquo;</span></a>
                                     </li>
@@ -557,5 +572,15 @@
         </main>
     </div>
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var successMessageElement = document.getElementById('successMessage');
+        if (successMessageElement) {
+            setTimeout(function() {
+                successMessageElement.style.display = 'none';
+            }, 2000);
+        }
+    });
+</script>
 </body>
 </html>
