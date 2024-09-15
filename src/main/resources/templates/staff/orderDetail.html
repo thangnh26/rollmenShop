@@ -419,33 +419,47 @@
                         <td class="px-4 py-2 border-b" th:text="${detail.productDetail.size.sizeNumber}"></td>
                         <td class="px-4 py-2 border-b" th:text="${detail.productDetail.color.name}"></td>
                         <td class="px-4 py-2 border-b" th:text="${detail.quantity}">Quantity</td>
-                        <td class="px-4 py-2 border-b" th:text="${#numbers.formatDecimal(detail.price, 0, 'COMMA', 0, 'POINT') + ' vnđ'}">Price</td>
-                        <td class="px-4 py-2 border-b" th:text="${#numbers.formatDecimal(detail.quantity * detail.price, 0, 'COMMA', 0, 'POINT') + ' vnđ'}">
-                            Total
-                        </td>
+                        <td class="px-4 py-2 border-b" th:text="${#numbers.formatDecimal(detail.productDetail.price, 0, 'COMMA', 0, 'POINT') + ' vnđ'}">Price</td>
+                        <td class="px-4 py-2 border-b" th:text="${#numbers.formatDecimal(detail.quantity * detail.productDetail.price, 0, 'COMMA', 0, 'POINT') + ' vnđ'}">Total</td>
                     </tr>
                     </tbody>
                 </table>
-                <!-- Display total amount -->
+
+                <!-- Display total amounts (Initial total, Discount, Final total) -->
                 <div class="order-summary flex justify-end items-center space-x-3 p-3 border border-gray-200 rounded-lg shadow-sm">
-                    <span class="text-lg font-semibold">Tổng tiền đơn hàng:</span>
-                    <span class="text-xl font-bold text-gray-800" th:text="${#numbers.formatDecimal(totalOrderAmount, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}"></span>
+                    <div class="text-right">
+                        <p><strong>Tổng tiền ban đầu:</strong>
+                            <span class="text-lg font-semibold" th:text="${#numbers.formatDecimal(initialTotal, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}"></span>
+                        </p>
+                        <p><strong>Giảm giá đã áp dụng:</strong>
+                            <span class="text-lg font-semibold" th:text="${#numbers.formatDecimal(discount, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}"></span>
+                        </p>
+                        <p><strong>Tổng tiền thanh toán:</strong>
+                            <span class="text-xl font-bold text-gray-800" th:text="${#numbers.formatDecimal(finalTotal, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}"></span>
+                        </p>
+                    </div>
                 </div>
+
                 <br>
-                <p class="mb-2"><strong>Tên đặt hàng:</strong> <span th:text="${oder.nameReceiver}"></span></p>
-                <p class="mb-2"><strong>Địa chỉ:</strong> <span th:text="${oder.addressReceiver}"></span></p>
-                <p class="mb-2"><strong>Số điện thoại:</strong> <span th:text="${oder.phoneReceiver}"></span></p>
-                <p class="mb-2"><strong>Mã đơn hàng:</strong> <span th:text="${oder.code}"></span></p>
+
+                <!-- Order details (Customer and order metadata) -->
+                <p class="mb-2"><strong>Tên đặt hàng:</strong> <span th:text="${order.nameReceiver}"></span></p>
+                <p class="mb-2"><strong>Địa chỉ:</strong> <span th:text="${order.addressReceiver}"></span></p>
+                <p class="mb-2"><strong>Số điện thoại:</strong> <span th:text="${order.phoneReceiver}"></span></p>
+                <p class="mb-2"><strong>Mã đơn hàng:</strong> <span th:text="${order.code}"></span></p>
                 <p class="mb-2"><strong>Trạng thái:</strong>
                     <span>
-                        <span th:if="${oder.status == 0}">Chưa xác nhận</span>
-                        <span th:if="${oder.status == 1}">Đã xác nhận</span>
-                        <span th:if="${oder.status == 2}">Đang giao hàng</span>
-                        <span th:if="${oder.status == 3}">Đã giao hàng</span>
-                        <span th:if="${oder.status == 4}">Đã hủy</span>
-                    </span>
+                <span th:if="${order.status == 0}">Chưa xác nhận</span>
+                <span th:if="${order.status == 1}">Đã xác nhận</span>
+                <span th:if="${order.status == 2}">Đang giao hàng</span>
+                <span th:if="${order.status == 3}">Đã giao hàng</span>
+                <span th:if="${order.status == 4}">Đã hủy</span>
+            </span>
                 </p>
+
                 <br>
+
+                <!-- Back button -->
                 <a class="flex items-center justify-between p-4 mb-8 text-sm font-semibold text-purple-100 bg-purple-600 rounded-lg shadow-md focus:outline-none focus:shadow-outline-purple"
                    th:href="@{/order}" style="width: 120px;">
                     <div class="flex items-center">

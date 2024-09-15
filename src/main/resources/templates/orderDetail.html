@@ -82,6 +82,8 @@
 
 <div class="container">
     <h1>Order Details</h1>
+
+    <!-- Order Detail Table -->
     <table class="order-detail-table">
         <thead>
         <tr>
@@ -107,25 +109,31 @@
         </tbody>
     </table>
 
-    <!-- Display total amount -->
+    <!-- Display Calculated Totals (Tổng tiền ban đầu, Giảm giá, Tổng tiền thanh toán) -->
     <div class="order-summary">
-        <span>Tổng tiền đơn hàng: </span>
-        <span th:text="${#numbers.formatDecimal(totalOrderAmount, 0, 'COMMA', 0, 'POINT') + ' vnđ'}"></span>
+        <p><strong>Tổng tiền ban đầu:</strong>
+            <span th:text="${#numbers.formatDecimal(initialTotal, 0, 'COMMA', 0, 'POINT') + ' vnđ'}"></span>
+        </p>
+        <p><strong>Giảm giá đã áp dụng:</strong>
+            <span th:text="${#numbers.formatDecimal(discount, 0, 'COMMA', 0, 'POINT') + ' vnđ'}"></span>
+        </p>
+        <p><strong>Tổng tiền thanh toán:</strong>
+            <span th:text="${#numbers.formatDecimal(finalTotal, 0, 'COMMA', 0, 'POINT') + ' vnđ'}"></span>
+        </p>
     </div>
 
     <br>
-    <p><strong>Tên đặt hàng:</strong> <span th:text="${oder.nameReceiver}"></span></p>
-    <p><strong>Địa chỉ:</strong> <span th:text="${oder.addressReceiver}"></span></p>
-    <p><strong>Số điện thoại:</strong> <span th:text="${oder.phoneReceiver}"></span></p>
-    <p><strong>Mã đơn hàng:</strong> <span th:text="${oder.code}"></span></p>
+    <!-- Order Information -->
+    <p><strong>Tên đặt hàng:</strong> <span th:text="${order.nameReceiver}"></span></p>
+    <p><strong>Địa chỉ:</strong> <span th:text="${order.addressReceiver}"></span></p>
+    <p><strong>Số điện thoại:</strong> <span th:text="${order.phoneReceiver}"></span></p>
+    <p><strong>Mã đơn hàng:</strong> <span th:text="${order.code}"></span></p>
     <p><strong>Trạng thái:</strong>
-        <span>
-        <span th:if="${oder.status == 0}">Chưa xác nhận</span>
-        <span th:if="${oder.status == 1}">Đã xác nhận</span>
-        <span th:if="${oder.status == 2}">Đang giao hàng</span>
-        <span th:if="${oder.status == 3}">Đã giao hàng</span>
-        <span th:if="${oder.status == 4}">Đã hủy</span>
-    </span>
+        <span th:if="${order.status == 0}">Chưa xác nhận</span>
+        <span th:if="${order.status == 1}">Đã xác nhận</span>
+        <span th:if="${order.status == 2}">Đang giao hàng</span>
+        <span th:if="${order.status == 3}">Đã giao hàng</span>
+        <span th:if="${order.status == 4}">Đã hủy</span>
     </p>
 
     <br>

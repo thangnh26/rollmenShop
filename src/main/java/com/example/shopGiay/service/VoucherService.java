@@ -17,5 +17,5 @@ public interface VoucherService {
     Page<Voucher> getVoucherByStatusNot2(Pageable pageable);
     Page<Voucher> searchVoucherByName(String keyword, Pageable pageable);
     boolean existsByNameVoucherAndNotId(String nameVoucher, Integer id);
-
+    Voucher reduceVoucherQuantity(Integer voucherId, int quantityToReduce);
 }

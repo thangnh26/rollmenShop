@@ -2,6 +2,8 @@ package com.example.shopGiay.model;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
@@ -29,14 +31,12 @@ public class Voucher {
     @NotBlank(message = "Tên không được để trống")
     private String nameVoucher;
 
-    @NotNull(message = "Ngày bắt đầu không được để trống")
-    @Future(message = "Ngày bắt đầu phải là ngày trong tương lai")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    @Future(message = "Ngày bắt đầu phải là ngày trong tương lai", groups = CreatedDate.class)
+    @NotNull(message = "Ngày bắt đầu không được để trống", groups = CreatedDate.class)
     private LocalDate startDate;
 
-    @NotNull(message = "Ngày kết thúc không được để trống")
-    @Future(message = "Ngày kết thúc phải là ngày trong tương lai")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    @Future(message = "Ngày kết thúc phải là ngày trong tương lai", groups = CreatedDate.class)
+    @NotNull(message = "Ngày kết thúc không được để trống", groups = CreatedDate.class)
     private LocalDate endDate;
 
     @Column(name = "status")
