@@ -80,42 +80,27 @@ public class HomeController {
         List<Brand> brandsReputation = brandService.getAllBrands();
         model.addAttribute("listBrandsReputation", brandsReputation);
 
-        //lấy ra 8 sản phẩm ở banner
-        List<Product> newProductsBanner = productService.getListNewProducts(8);
+        //Lấy 10 sản phẩm mới nhất
+        List<ProductDto> newProductsBanner = productService.getListNewProducts(10);
         model.addAttribute("newProducts", newProductsBanner);
 
-        //lấy ra 8 sản phẩm nổi bật
-        List<Product> ListProductsProminent = productService.getListProductsProminent(8);
-        model.addAttribute("ListProductsProminent", ListProductsProminent);
-
-        //Lấy 8 sản phẩm mới nhất
-        List<Product> newProducts = productService.getListNewProducts(8);
+        //Lấy 10 sản phẩm mới nhất
+        List<ProductDto> newProducts = productService.getListNewProducts(10);
         model.addAttribute("listNewProduct", newProducts);
 
 
-        //Lấy ra 4 sản phẩm bán chạy nhất
+        //sp bán chạy
         List<Product> productHot = productService.getProductHot();
         model.addAttribute("hot", productHot);
 
-
-        List<BigDecimal> price = productDetailRepository.findListPricreByProductId(newProducts.stream().map(Product::getId).collect(Collectors.toList()));
-
-        //Lấy 8 sp giá thấp nhất
-        List<Product> randomProducts = productService.getListNewProducts(8);
-
-        List<BigDecimal> priceRandomProducts = productDetailRepository.findListPricreByProductId(randomProducts.stream().map(Product::getId).collect(Collectors.toList()));
-
+        List<ProductDto> randomProducts = productService.getListNewProducts(10);
         model.addAttribute("listRandomProduct", randomProducts);
-        model.addAttribute("price", price);
-        model.addAttribute("priceRandomProducts", priceRandomProducts);
-
         return "index";
     }
     @GetMapping("/add-address")
     public String showAddForm(Address address) {
         return "addAddress";
     }
-
     @PostMapping("/add-address")
     public String addAddress(@Valid Address address, BindingResult result, Model model) {
         if (result.hasErrors()) {
@@ -306,10 +291,8 @@ public class HomeController {
 
 //        Pageable pageable = PageRequest.of(currentPage - 1, sizePage);
 
-        Page<Product> pageProduct = productService.searchProduct(keyword, pageable);//Lấy các
-        List<BigDecimal> price = productDetailRepository.findListPricreByProductId(pageProduct.getContent().stream().map(Product::getId).collect(Collectors.toList()));
+        Page<ProductDto> pageProduct = productService.searchProduct(keyword, pageable);//Lấy các
         model.addAttribute("listProduct", pageProduct);
-        model.addAttribute("price", price);
         model.addAttribute("keyword", keyword);
 
         int totalPage = pageProduct.getTotalPages();
@@ -651,7 +634,6 @@ public class HomeController {
         } else {
             email = principal.toString();
         }
-
         Customer user = userRepo.findByEmail(email);
         if (user==null){
             return "redirect:/login";

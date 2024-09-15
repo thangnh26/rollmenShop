@@ -93,20 +93,20 @@
             <div class="row justify-content-center">
                 <div class="col-lg-6 text-center">
                     <div class="section-title">
-                        <h1 style="text-shadow: 1px 1px 2px #000000, 0 0 25px #808080, 0 0 5px gray; padding-top: 10px;">Sản phẩm nổi bật</h1>
+                        <h1 style="text-shadow: 1px 1px 2px black, 0 0 25px gray, 0 0 5px gray; padding-top: 10px;">Sản phẩm nổi bật</h1>
                     </div>
                 </div>
             </div>
             <div class="row">
                 <!-- single product -->
-                <div class="col-lg-3 col-md-6" th:each="product: ${ListProductsProminent}">
+                <div class="col-lg-3 col-md-6" th:each="product: ${listRandomProduct}">
                     <div class="single-product" style="height: 90%;"  >
                         <a th:href="@{/{id}(id=${product.id})}">
                             <img class="img-fluid" th:src="@{${product.thumbnail}}" alt="">
                             <div class="product-details" >
                                 <h6 th:text="${product.name}"></h6>
                                 <div class="price">
-                                    <h6 th:text="${#numbers.formatDecimal(priceRandomProducts, 0, 'COMMA', 0, 'POINT')} + ' vnđ'"></h6>
+                                    <h6 th:text="${#numbers.formatDecimal(product.price ?: 0, 0, 'COMMA', 0, 'POINT')} + ' vnđ'"></h6>
                                 </div>
                                 <div class="prd-bottom">
                                     <a th:href="@{/{id}(id = ${product.id})}" style="width: 100%;" class="social-info">
@@ -140,7 +140,7 @@
                             <div class="product-details" >
                                 <h6 th:text="${product.name}"></h6>
                                 <div class="price">
-                                    <h6 th:text="${#numbers.formatDecimal(price, 0, 'COMMA', 0, 'POINT')} + ' vnđ'"></h6>
+                                    <h6 th:text="${#numbers.formatDecimal(product.price ?: 0, 0, 'COMMA', 0, 'POINT')} + ' vnđ'"></h6>
                                 </div>
                                 <div class="prd-bottom">
                                     <a th:href="@{/{id}(id = ${product.id})}" style="width: 100%;" class="social-info">
