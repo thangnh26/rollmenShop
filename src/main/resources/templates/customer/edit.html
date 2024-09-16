@@ -41,17 +41,17 @@
     <h1>Sửa thông tin khách hàng</h1>
     <form th:action="@{/customer/{id}(id=${customer.id})}" th:object="${customer}" method="post">
         <div class="form-group">
-            <label for="code">Code</label>
+            <label for="code">Mã Khách Hàng</label>
             <input type="text" class="form-control" id="code" th:field="*{code}" placeholder="Enter code">
             <div th:if="${#fields.hasErrors('code')}" th:errors="*{code}" class="text-danger"></div>
         </div>
         <div class="form-group">
-            <label for="firstName">First Name</label>
+            <label for="firstName">Tên </label>
             <input type="text" class="form-control" id="firstName" th:field="*{firstName}" placeholder="Enter first name">
             <div th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}" class="text-danger"></div>
         </div>
         <div class="form-group">
-            <label for="lastName">Last Name</label>
+            <label for="lastName">Họ và Tên Đệm</label>
             <input type="text" class="form-control" id="lastName" th:field="*{lastName}" placeholder="Enter last name">
             <div th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}" class="text-danger"></div>
         </div>
@@ -61,20 +61,20 @@
             <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-danger"></div>
         </div>
         <div class="form-group">
-            <label for="phoneNumber">Phone Number</label>
+            <label for="phoneNumber">Số Điện Thoại</label>
             <input type="text" class="form-control" id="phoneNumber" th:field="*{phoneNumber}" placeholder="Enter phone number">
             <div th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}" class="text-danger"></div>
         </div>
         <div class="form-group">
-            <label for="gender">Gender</label>
+            <label for="gender">Giới Tính</label>
             <select class="form-control" id="gender" th:field="*{gender}">
-                <option value="1" th:selected="${customer.gender == 1}">Male</option>
-                <option value="2" th:selected="${customer.gender == 2}">Female</option>
+                <option value="1" th:selected="${customer.gender == 1}">Nam </option>
+                <option value="2" th:selected="${customer.gender == 2}">Nữ</option>
             </select>
             <div th:if="${#fields.hasErrors('gender')}" th:errors="*{gender}" class="text-danger"></div>
         </div>
         <div class="form-group">
-            <label for="password">Password</label>
+            <label for="password">Mật Khẩu</label>
             <input type="password" class="form-control" id="password" th:field="*{password}" placeholder="Enter new password">
             <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="text-danger"></div>
         </div>
