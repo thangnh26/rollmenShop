@@ -2,6 +2,49 @@
 <html :class="{ 'theme-dark': dark }" x-data="data()" lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:x-transition="">
 <head th:replace="fragment/fragmentAdmin::head_admin"/>
+<head>
+<style>
+    /* Phần phân trang */
+    .pagination {
+        display: flex;
+        justify-content: center; /* Căn giữa các phần tử trong phân trang */
+        margin-top: 20px;
+    }
+
+    .page-item {
+        margin: 0 2px; /* Khoảng cách giữa các nút phân trang */
+    }
+
+    .page-link {
+        display: inline-block;
+        padding: 8px 16px; /* Kích thước padding của các nút phân trang */
+        border-radius: 5px;
+        border: 1px solid #ddd; /* Viền của các nút phân trang */
+        color: #007bff; /* Màu chữ */
+        text-decoration: none;
+        background-color: #fff;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    .page-link:hover {
+        background-color: #007bff;
+        color: #fff;
+    }
+
+    .page-item.disabled .page-link {
+        color: #aaa; /* Màu chữ cho nút phân trang bị vô hiệu hóa */
+        border-color: #ddd; /* Viền của nút phân trang bị vô hiệu hóa */
+        cursor: not-allowed;
+    }
+
+    .page-item.active .page-link {
+        background-color: #007bff;
+        color: #fff; /* Màu chữ của nút phân trang đang hoạt động */
+        border-color: #007bff; /* Viền của nút phân trang đang hoạt động */
+    }
+
+</style>
+</head>
 <body>
 <div
         class="flex h-screen bg-gray-50 dark:bg-gray-900"
@@ -399,13 +442,11 @@
         </header>
         <main class="h-full overflow-y-auto">
             <div class="container px-6 mx-auto grid">
-                <h2
-                        class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"
-                >Danh sách hóa đơn</h2>
-                <!--    <a class="btn btn-primary" th:href="@{/order/new}">Add New Order</a>-->
-                <form th:action="@{/order}" method="get" class="flex flex-wrap mt-2">
-                    <input class="form-input mr-2 mb-2" type="search" placeholder="Tìm kiếm theo mã hóa đơn" aria-label="Search" name="codeCustomer" th:value="${codeCustomer != null ? codeCustomer : ''}">
-                    <select class="form-select mr-2 mb-2" name="status" aria-label="Search">
+                <h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">Danh sách hóa đơn</h2>
+
+                <form th:action="@{/order}" method="get" class="flex items-center mb-4 space-x-4">
+                    <input class="form-input px-4 py-2 rounded-md shadow-sm border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" type="search" placeholder="Tìm kiếm theo mã hóa đơn" aria-label="Search" name="codeCustomer" th:value="${codeCustomer != null ? codeCustomer : ''}">
+                    <select class="form-select px-4 py-2 rounded-md shadow-sm border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" name="status" aria-label="Search">
                         <option value="" th:selected="${status != null && status == null}">Tất cả</option>
                         <option value="0" th:selected="${status != null && status == 0}">Chờ xác nhận</option>
                         <option value="1" th:selected="${status != null && status == 1}">Xác nhận</option>
@@ -413,43 +454,37 @@
                         <option value="3" th:selected="${status != null && status == 3}">Giao hàng thành công</option>
                         <option value="4" th:selected="${status != null && status == 4}">Hủy</option>
                     </select>
-                    <input class="form-input mr-2 mb-2" type="search" placeholder="Tìm kiếm theo số điện thoại" aria-label="Search" name="phone" th:value="${phone != null ? phone : ''}">
-                    <button class="border border-green-500 text-green-500 hover:bg-green-500 hover:text-white font-bold py-2 px-4 rounded" type="submit">Tìm kiếm</button>
+                    <button class="btn btn-primary px-4 py-2 rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500" type="submit">Tìm kiếm</button>
                 </form>
 
-                <table class="table-auto w-full mt-4">
-                    <thead>
-                    <tr
-                            class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
-                    >
-                        <th>ID</th>
-                        <th>Mã hóa đơn</th>
-                        <th>Ngày tạo</th>
-                        <th>Ngày sửa</th>
-                        <th>Trạng thái</th>
-                        <th>Địa chỉ</th>
-                        <th>Tên khách hàng</th>
-                        <th>Số điện thoại</th>
-                        <th>Tổng tiền</th>
-                        <th>Thao Tác</th>
+                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                    <thead class="bg-gray-50 dark:bg-gray-800">
+                    <tr class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase dark:text-gray-400">
+                        <th class="px-4 py-3">ID</th>
+                        <th class="px-4 py-3">Mã hóa đơn</th>
+                        <th class="px-4 py-3">Ngày tạo</th>
+                        <th class="px-4 py-3">Trạng thái</th>
+                        <th class="px-4 py-3">Địa chỉ</th>
+                        <th class="px-4 py-3">Tên khách hàng</th>
+                        <th class="px-4 py-3">Số điện thoại</th>
+                        <th class="px-4 py-3">Tổng tiền</th>
+                        <th class="px-4 py-3">Thao tác</th>
                     </tr>
                     </thead>
-                    <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
-                    <tr class="text-gray-700 dark:text-gray-400"
-                        th:each="order : ${orders}">
-                        <td class="px-4 py-3" th:text="${order.id}">1</td>
-                        <td class="px-4 py-3" th:text="${order.code}">Customer</td>
-                        <td class="px-4 py-3" th:text="${order.createDate}">2022-01-01</td>
-                        <td class="px-4 py-3" th:text="${order.updateDate}">2022-01-01</td>
+                    <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+                    <tr th:each="order : ${orders}">
+                        <td class="px-4 py-3" th:text="${order.id}"></td>
+                        <td class="px-4 py-3" th:text="${order.code}"></td>
+                        <td class="px-4 py-3" th:text="${order.createDate}"></td>
                         <td class="px-4 py-3" th:text="${order.status == 0 ? 'Chờ xác nhận' :
-              order.status == 1 ? 'Xác nhận' :
-              order.status == 2 ? 'Đang giao hàng' :
-              order.status == 3 ? 'Giao hàng thành công' :
-              order.status == 4 ? 'Đã hủy' : 'Unknown'}"></td>
-                        <td class="px-4 py-3" th:text="${order.addressReceiver}">Address</td>
-                        <td class="px-4 py-3" th:text="${order.nameReceiver}">Name</td>
-                        <td class="px-4 py-3" th:text="${order.phoneReceiver}">Phone</td>
-                        <td class="px-4 py-3" th:text="${order.totalAmount}">1000</td>
+                        order.status == 1 ? 'Xác nhận' :
+                        order.status == 2 ? 'Đang giao hàng' :
+                        order.status == 3 ? 'Giao hàng thành công' :
+                        order.status == 4 ? 'Đã hủy' : 'Unknown'}"></td>
+                        <td class="px-4 py-3" th:text="${order.addressReceiver}"></td>
+                        <td class="px-4 py-3" th:text="${order.nameReceiver}"></td>
+                        <td class="px-4 py-3" th:text="${order.phoneReceiver}"></td>
+                        <td class="px-4 py-3" th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}"></td>
                         <td class="px-4 py-3">
                             <a style="background-color: #0e9f6e;text-align: center" class="flex items-center justify-between p-1 mb-2 text-sm font-semibold text-purple-100 bg-purple-600 rounded-lg shadow-md focus:outline-none focus:shadow-outline-purple" th:if="${order.status == 0}" th:href="@{/order/confirm-payment/{id}(id=${order.id})}">Xác nhận</a>
                             <a style="background-color: #bd2130;text-align: center" class="flex items-center justify-between p-1 mb-2 text-sm font-semibold text-purple-100 bg-purple-600 rounded-lg shadow-md focus:outline-none focus:shadow-outline-purple"th:if="${order.status == 0}" th:href="@{/order/cancelled/{id}(id=${order.id})}">Hủy</a>
@@ -462,19 +497,20 @@
                     </tr>
                     </tbody>
                 </table>
-                <div class="flex justify-center mt-4">
+
+
                     <nav aria-label="Page navigation">
-                        <ul class="inline-flex space-x-1">
-                            <li th:class="${currentPage == 0 ? 'page-item disabled' : 'page-item'}">
-                                <a class="page-link px-3 py-1 text-gray-700 bg-white border border-gray-300 rounded-l-md hover:bg-gray-200" th:href="@{/order?page=0}" aria-label="Previous">
+                        <ul class="pagination">
+                            <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
+                                <a class="page-link" th:href="@{${currentUrl}(page=${currentPage - 1}, codeCustomer=${codeCustomer}, phone=${phone}, status=${status})}" aria-label="Previous">
                                     <span aria-hidden="true">&laquo;</span>
                                 </a>
                             </li>
-                            <li th:each="pageNo : ${#numbers.sequence(0, totalPages-1)}" th:class="${currentPage == pageNo ? 'page-item active' : 'page-item'}">
-                                <a class="page-link px-3 py-1 text-gray-700 bg-white border border-gray-300 hover:bg-gray-200" th:href="@{/order?page=__${pageNo}__}" th:text="${pageNo + 1}">1</a>
+                            <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}" th:classappend="${i == currentPage ? 'active' : ''}">
+                                <a class="page-link" th:href="@{${currentUrl}(page=${i}, codeCustomer=${codeCustomer}, phone=${phone}, status=${status})}" th:text="${i + 1}"></a>
                             </li>
-                            <li th:class="${currentPage == totalPages-1 ? 'page-item disabled' : 'page-item'}">
-                                <a class="page-link px-3 py-1 text-gray-700 bg-white border border-gray-300 rounded-r-md hover:bg-gray-200" th:href="@{/order?page=__${totalPages-1}__}" aria-label="Next">
+                            <li class="page-item" th:classappend="${currentPage == totalPages - 1 ? 'disabled' : ''}">
+                                <a class="page-link" th:href="@{${currentUrl}(page=${currentPage + 1}, codeCustomer=${codeCustomer}, phone=${phone}, status=${status})}" aria-label="Next">
                                     <span aria-hidden="true">&raquo;</span>
                                 </a>
                             </li>
@@ -483,6 +519,7 @@
                 </div>
             </div>
         </main>
+
     </div>
 
 

@@ -28,4 +28,6 @@ public interface OrderService {
     void ok(Integer id);
 
     BigDecimal total();
+
+
 }

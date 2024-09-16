@@ -51,6 +51,7 @@ public class Order {
     @Column(name = "total_amount", nullable = false)
     private Double totalAmount;
 
+
 //    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
 //    private List<OrderDetail> orderDetails;
 

@@ -122,41 +122,7 @@
 
 <!-- JavaScript for voucher application -->
 <script>
-    paypal.Buttons({
-        createOrder: function(data, actions){
-            return actions.order.create({
-                intent: 'CAPTURE',
-                payer: {
-                    name: {
-                        given_name: "[[${user.firstName}]]",
-                        surname: "[[${user.lastName}]]"
-                    },
-                    email_address: "[[${user.email}]]",
-                },
-                purchase_units: [{
-                    amount: {
-                        value: '[[${total}]]'
-                    }
-                }]
-            });
-        },
-
-        onApprove: function( data, actions){
-            return actions.order.capture().then(function(details){
-                console.log(details);
-                alert("Bạn đã thanh toán thành công!");
-            });
-        },
-
-        onCancel: function(data){
-            alert("Giao dịch đã bị hủy!");
-        },
-
-        onError: function(err) {
-            alert("Bạn hãy kiểm tra lại địa chỉ để tiếp tục thanh toán!");
-        }
-    }).render("#paypal-button-container");
-	 // Store the initial total amount when the page loads
+    // Store the initial total amount when the page loads
     let initialTotal = parseFloat(document.getElementById('finalTotal').getAttribute('data-total'));
 
     function applyVoucher() {
@@ -179,7 +145,11 @@
         finalTotalElement.setAttribute('data-total', discountedTotal);  // Update the data-total attribute
 
         // Do not modify the price input in the frontend, leave that to the backend.
-</script>
-</body>
+    }
 
+
+</script>
+
+
+</body>
 </html>

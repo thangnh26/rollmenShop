@@ -19,8 +19,11 @@ import java.util.List;
 public interface ProductService {
 
 
-    //Lấy sản 10 phẩm mới nhất
+    //Lấy sản phẩm mới nhất
     List<ProductDto> getListNewProducts(int limit);
+
+    // san pham moi nhat 8
+    List<ProductDto> getNewProducts8(int limit);
 
     //Lấy danh sách các sản phẩm nổi bật
     List<Product> findAll();

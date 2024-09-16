@@ -54,6 +54,14 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             "WHERE pd.product.id = :productId")
     List<ProductColorResponse> colorInProduct(int productId);
 
+    //san pham moi nhat
+    @Query(value = "SELECT distinct new com.example.shopGiay.dto.ProductDto(p.id, p.thumbnail, p.name, (SELECT CAST(MIN(pd.price) AS java.math.BigDecimal) FROM ProductDetail pd WHERE pd.product.id = p.id)) FROM Product p  where p.status=1 ORDER BY p.id DESC")
+    List<ProductDto> getNewProducts8(Pageable pageable);
+
+    //san pham noi bat
+    @Query(value = "SELECT distinct new com.example.shopGiay.dto.ProductDto(p.id, p.thumbnail, p.name, (SELECT CAST(MIN(pd.price) AS java.math.BigDecimal) FROM ProductDetail pd WHERE pd.product.id = p.id)) FROM Product p where p.status=1 and p.brand.nameBrand ='Adidas' ")
+    List<ProductDto> getProduct(Pageable pageable);
+
     //lấy 4
     @Query(value = "SELECT * " +
             "FROM product p " +

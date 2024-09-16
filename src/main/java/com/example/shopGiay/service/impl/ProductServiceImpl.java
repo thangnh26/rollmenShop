@@ -45,8 +45,15 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<ProductDto> getListNewProducts(int limit) {
         Pageable pageable = PageRequest.of(0, limit);
-        List<ProductDto> products = productRepository.getListNewProducts(pageable);
+        List<ProductDto> products = productRepository.getProduct(pageable);
         return products;
+    }
+
+    @Override
+    public List<ProductDto> getNewProducts8(int limit) {
+        Pageable pageable = PageRequest.of(0, limit);
+        List<ProductDto> products8moi = productRepository.getNewProducts8(pageable);
+        return products8moi;
     }
 
     @Override

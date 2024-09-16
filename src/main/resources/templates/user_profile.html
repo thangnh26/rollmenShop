@@ -302,7 +302,7 @@
                 <td th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}"></td>
                 <td>
                     <a class="btn btn-success btn-custom btn-success-custom" th:if="${order.status == 0}">Chờ xác nhận</a>
-                    <a class="btn btn-danger btn-custom btn-danger-custom" th:if="${order.status == 0 || order.status == 1 || order.status == 2}"
+                    <a class="btn btn-danger btn-custom btn-danger-custom" th:if="${order.status == 0 || order.status == 1}"
                        th:href="@{/order/cancelled-customer/{id}(id=${order.id})}">Hủy</a>
                     <a class="btn btn-success btn-custom btn-success-custom" th:if="${order.status == 1}">Đã xác nhận</a>
                     <a class="btn btn-warning btn-custom btn-warning-custom" th:if="${order.status == 2}">Đang giao hàng</a>
@@ -310,6 +310,7 @@
                     <a class="btn btn-danger btn-custom btn-danger-custom" th:if="${order.status == 4}">Đã hủy</a>
                     <a class="btn btn-info btn-custom btn-info-custom" th:href="@{/order-detail-customer(id=${order.id})}">Xem chi tiết</a>
                 </td>
+
             </tr>
             </tbody>
         </table>

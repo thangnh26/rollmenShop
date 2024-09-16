@@ -82,12 +82,12 @@ public class HomeController {
         List<Brand> brandsReputation = brandService.getAllBrands();
         model.addAttribute("listBrandsReputation", brandsReputation);
 
-        //Lấy 8  sản phẩm mới nhất
-        List<ProductDto> newProductsBanner = productService.getListNewProducts(8);
+        //lay  ra sp o banner
+        List<ProductDto> newProductsBanner = productService.getNewProducts8(8);
         model.addAttribute("newProducts", newProductsBanner);
 
-        //Lấy 8 sản phẩm mới nhất
-        List<ProductDto> newProducts = productService.getListNewProducts(8);
+        //Lấy 8 sản phẩm mới nhất (dung)
+        List<ProductDto> newProducts = productService.getNewProducts8(8);
         model.addAttribute("listNewProduct", newProducts);
 
 
@@ -95,6 +95,7 @@ public class HomeController {
         List<Product> productHot = productService.getProductHot();
         model.addAttribute("hot", productHot);
 
+        // san pham noi bat co thuong hieu la adias
         List<ProductDto> randomProducts = productService.getListNewProducts(8);
         model.addAttribute("listRandomProduct", randomProducts);
         return "index";
