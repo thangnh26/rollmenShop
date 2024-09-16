@@ -1,7 +1,8 @@
 package com.example.shopGiay.repository;
 
 import com.example.shopGiay.model.Size;
-import com.example.shopGiay.model.Sole;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -17,4 +18,8 @@ public interface SizeRepository extends JpaRepository<Size, Integer> {
     Size findSizeNotInProductDetail(Integer productId);
     @Query("SELECT b FROM Size b WHERE b.status = 1")
     List<Size> findByStatusActive();
+    @Query(nativeQuery = true, value = "SELECT * FROM size ORDER BY Id DESC")
+    Page<Size> findAllOrderById(Pageable pageable);
+    boolean existsBySizeNumber(Integer sizeNumber);
+    boolean existsBySizeNumberAndIdNot(Integer sizeNumber, Integer id);
 }

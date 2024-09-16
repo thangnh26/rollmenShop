@@ -12,6 +12,8 @@ public class Size {
     private Integer id;
 
     @Column(name = "size_number", nullable = false)
+    @NotNull(message = "Kích thước không được để trống")
+    @Min(value = 1, message = "Kích thước phải là một số nguyên dương")
     private Integer sizeNumber;
 
     @Column(name = "create_date")
