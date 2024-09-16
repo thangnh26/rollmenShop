@@ -90,7 +90,6 @@ public class HomeController {
         List<ProductDto> newProducts = productService.getNewProducts8(8);
         model.addAttribute("listNewProduct", newProducts);
 
-
         //sp bán chạy
         List<Product> productHot = productService.getProductHot();
         model.addAttribute("hot", productHot);
