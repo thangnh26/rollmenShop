@@ -411,13 +411,13 @@
                         <label class="block text-sm">
                             <span class="text-gray-700 dark:text-gray-400">Tên sản phẩm</span>
                             <input class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                                   name="name" placeholder="Nhập tên sản phẩm"/>
+                                   name="name" placeholder="Nhập tên sản phẩm" required/>
                         </label>
 
                         <!-- Category -->
                         <label class="block mt-4 text-sm">
                             <span class="text-gray-700 dark:text-gray-400">Chọn thể loại</span>
-                            <select name="categoryId" class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-select">
+                            <select name="categoryId" class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-select" required>
                                 <option th:each="category : ${listCategory}" th:value="${category.id}" th:text="${category.nameCategory}"></option>
                             </select>
                         </label>
@@ -425,7 +425,7 @@
                         <!-- Brand -->
                         <label class="block mt-4 text-sm">
                             <span class="text-gray-700 dark:text-gray-400">Chọn thương hiệu</span>
-                            <select name="brandId" class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-select">
+                            <select name="brandId" class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-select" required>
                                 <option th:each="brand : ${listBrand}" th:value="${brand.id}" th:text="${brand.nameBrand}"></option>
                             </select>
                         </label>
@@ -433,7 +433,7 @@
                         <!-- Material -->
                         <label class="block mt-4 text-sm">
                             <span class="text-gray-700 dark:text-gray-400">Chọn chất liệu</span>
-                            <select name="materialId" class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-select">
+                            <select name="materialId" class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-select" required>
                                 <option th:each="material : ${listMaterial}" th:value="${material.id}" th:text="${material.name}"></option>
                             </select>
                         </label>
@@ -441,7 +441,7 @@
                         <!-- Sole -->
                         <label class="block mt-4 text-sm">
                             <span class="text-gray-700 dark:text-gray-400">Chọn sole</span>
-                            <select name="soleId" class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-select">
+                            <select name="soleId" class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-select" required>
                                 <option th:each="sole : ${listSole}" th:value="${sole.id}" th:text="${sole.name}"></option>
                             </select>
                         </label>
@@ -471,28 +471,30 @@
                         <!-- Quantity -->
                         <label class="block mt-4 text-sm">
                             <span class="text-gray-700 dark:text-gray-400">Số lượng</span>
-                            <input name="quantity" class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                                   placeholder="Số lượng"/>
+                            <input name="quantity" type="number" min="1" step="1" class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700
+                   focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300
+                   dark:focus:shadow-outline-gray form-input" placeholder="Số lượng" oninput="this.value = this.value > 0 ? this.value : 1;" required>
                         </label>
 
                         <!-- Price -->
                         <label class="block mt-4 text-sm">
                             <span class="text-gray-700 dark:text-gray-400">Đơn giá</span>
-                            <input name="price" class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-                                   placeholder="Đơn giá"/>
+                            <input name="price" type="number" min="1" step="any" class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700
+                   focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300
+                   dark:focus:shadow-outline-gray form-input" placeholder="Đơn giá" oninput="this.value = this.value > 0 ? this.value : 1;" required>
                         </label>
 
                         <!-- Description -->
                         <label class="block mt-4 text-sm">
                             <span class="text-gray-700 dark:text-gray-400">Mô tả</span>
                             <textarea name="description" class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-textarea focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
-                                      rows="3" placeholder="Nhập mô tả sản phẩm..."></textarea>
+                                      rows="3" placeholder="Nhập mô tả sản phẩm..." required></textarea>
                         </label>
 
                         <!-- Thumbnail -->
                         <label class="block mt-4 text-sm">
                             <span class="text-gray-700 dark:text-gray-400">Chọn ảnh</span>
-                            <input type="file" name="thumbnailUrl" id="thumbnailUrl" accept="image/png, image/jpeg"/>
+                            <input type="file" name="thumbnailUrl" id="thumbnailUrl" accept="image/png, image/jpeg" required/>
                         </label>
 
                         <!-- Thumbnail Preview -->

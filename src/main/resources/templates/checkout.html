@@ -134,6 +134,22 @@
         const finalTotalElement = document.getElementById('finalTotal');
         const voucherDiscountElement = document.getElementById('voucherDiscount');
 
+        // Check if the voucher value is greater than the initial total
+        if (voucherValue > initialTotal) {
+            // Alert the user that the voucher cannot be applied
+            alert("Giá trị voucher không được lớn hơn tổng tiền ban đầu.");
+
+            // Reset the voucher selection
+            voucherSelect.selectedIndex = 0;
+
+            // Reset the displayed discount and total
+            voucherDiscountElement.innerText = '0đ';
+            finalTotalElement.innerText = initialTotal.toLocaleString() + 'đ';
+            finalTotalElement.setAttribute('data-total', initialTotal);  // Reset data-total attribute
+
+            return;
+        }
+
         // Calculate the discounted total based on the initial price
         const discountedTotal = initialTotal - voucherValue;
 
@@ -143,11 +159,7 @@
         // Update the displayed final total (for user reference)
         finalTotalElement.innerText = discountedTotal.toLocaleString() + 'đ';
         finalTotalElement.setAttribute('data-total', discountedTotal);  // Update the data-total attribute
-
-        // Do not modify the price input in the frontend, leave that to the backend.
     }
-
-
 </script>
 
 

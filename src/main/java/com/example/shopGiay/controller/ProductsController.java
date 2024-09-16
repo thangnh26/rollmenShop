@@ -13,10 +13,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.validation.Valid;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -114,10 +116,15 @@ public class ProductsController {
     }
 
     @PostMapping("/createProduct")
-    public String adminCreateProducts(@ModelAttribute ProductDetailForm productDTO,
+    public String adminCreateProducts(@Valid @ModelAttribute ProductDetailForm productDTO,
+                                      BindingResult bindingResult,
                                       @RequestParam("sizeIds") List<Integer> sizeIds,
                                       @RequestParam("colorIds") List<Integer> colorIds,
                                       RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            return "admin/product/createProduct";  // Return back to the form if there are errors
+        }
+
         try {
             createProductAndDetails(productDTO, sizeIds, colorIds);
             redirectAttributes.addFlashAttribute("successMessage", "Product created successfully with multiple details");
@@ -125,9 +132,11 @@ public class ProductsController {
             e.printStackTrace();
             redirectAttributes.addFlashAttribute("errorMessage", "Error creating product");
         }
+
         redirectAttributes.addFlashAttribute("successMessage", "Thêm mới thành công!");
         return "redirect:/admin/products";
     }
+
 
     @GetMapping("/product/update/{id}")
     public String updateProductForm(Model model, @PathVariable("id") Integer id) {
