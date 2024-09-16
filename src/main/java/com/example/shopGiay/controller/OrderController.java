@@ -57,6 +57,7 @@ public class OrderController {
                              @RequestParam(required = false) String phone,
                              @RequestParam(required = false)Integer status) {
 
+
         // Define pagination parameters
         int pageSize = 5; // Number of items per page
         Pageable pageable = PageRequest.of(page, pageSize);
@@ -72,17 +73,11 @@ public class OrderController {
         Customer user = userRepository.findByEmail(email);
 
         Page<Order> orders;
-//        if (keyword != null && !keyword.isEmpty()) {
             orders = orderService.searchOrder(codeCustomer,phone,status, pageable);
         List<Integer> orderIds = orders.getContent().stream()
                 .map(Order::getId) // Assuming Order class has getId() method
                 .collect(Collectors.toList());
         List<OrderDetail> orderDetail = orderDetailService.getByIds(orderIds);
-//        } else {
-//            orders = orderService.getOrderByStatusNot2(pageable);
-//        }
-
-        // Add pagination information to the model
 
         model.addAttribute("orders", orders.getContent());
         model.addAttribute("size", orderDetail.stream());
