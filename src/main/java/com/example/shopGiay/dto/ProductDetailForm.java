@@ -28,8 +28,10 @@ public class ProductDetailForm {
     @NotNull(message = "Sole là bắt buộc")
     private Integer soleId;
 
+    @NotNull(message = "Kích thước là bắt buộc")
     private List<Integer> sizeIds;
 
+    @NotNull(message = "Màu sắc là bắt buộc")
     private List<Integer> colorIds;
 
     @Min(value = 1, message = "Số lượng phải lớn hơn 0")
@@ -38,7 +40,6 @@ public class ProductDetailForm {
     @Min(value = 1, message = "Đơn giá phải lớn hơn 0")
     private Double price;
 
-    @NotNull(message = "Mô tả là bắt buộc")
     private String description;
     private MultipartFile thumbnailUrl;
 }
