@@ -120,9 +120,8 @@
 
             <div class="quantity-display">
                 <span>Số lượng:</span>
-                <span id="quantityDisplay" name="quantityDisplay" th:utext="${productDetail.quantity > 0 ? productDetail.quantity : 'Hết hàng'}"></span>
+                <span id="quantityDisplay" name="quantityDisplay" th:text="${productDetail.quantity}"></span>
             </div>
-
 
             <form id="productForm" method="post" class="product-form">
                 <div class="form-group">
