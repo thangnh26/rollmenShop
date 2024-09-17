@@ -493,7 +493,7 @@
 
                             <a style="background-color: #bd2130; text-align: center"
                                class="flex items-center justify-between p-1 mb-2 text-sm font-semibold text-purple-100 bg-purple-600 rounded-lg shadow-md focus:outline-none focus:shadow-outline-purple"
-                               th:if="${order.status == 0 || order.status == 1}"
+                               th:if="${order.status == 0 }"
                                th:href="@{/order/cancelled/{id}(id=${order.id})}"
                                onclick="return confirmCancel(event)">Hủy</a>
 
