@@ -41,7 +41,7 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
     @Query(value = "UPDATE `dbshopgiay`.`order` SET `status` = :status WHERE `id` = :id",nativeQuery = true)
     void confirm(Integer id, int status);
 
-    @Query(value = "select count(o) from Order o where o.status=0")
+    @Query(value = "select count(o) from Order o where o.status=0 ")
     Integer countDonHangCho();
 
     @Query(value = "select count(o) from Order o where o.status = 3 ")
