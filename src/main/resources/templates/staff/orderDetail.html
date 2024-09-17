@@ -432,7 +432,9 @@
                             <span class="text-lg font-semibold" th:text="${#numbers.formatDecimal(initialTotal, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}"></span>
                         </p>
                         <p><strong>Giảm giá đã áp dụng:</strong>
-                            <span class="text-lg font-semibold" th:text="${#numbers.formatDecimal(discount, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}"></span>
+                            <span th:if="${order.voucher != null}"
+                                  th:text="${#numbers.formatDecimal(order.voucher.value, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}"></span>
+                            <span th:if="${order.voucher == null}">Không áp dụng</span>
                         </p>
                         <p><strong>Tổng tiền thanh toán:</strong>
                             <span class="text-xl font-bold text-gray-800" th:text="${#numbers.formatDecimal(finalTotal, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}"></span>

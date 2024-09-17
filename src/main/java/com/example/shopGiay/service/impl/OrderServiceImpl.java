@@ -4,6 +4,7 @@ import com.example.shopGiay.dto.SearchOrder;
 import com.example.shopGiay.model.*;
 import com.example.shopGiay.repository.*;
 import com.example.shopGiay.service.OrderService;
+import com.example.shopGiay.service.VoucherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +31,9 @@ public class OrderServiceImpl implements OrderService {
     OrderDetailRepository orderDetailRepository;
     @Autowired
     ProductDetailRepository productDetailRepository;
+
+    @Autowired
+    private VoucherService voucherService;
 
     @Override
     public List<Order> getAllOrders() {
@@ -67,25 +71,39 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order createOrder(String nameReceiver, String phoneReceiver, String addressReceiver, String note, String price, Integer id) {
+    public Order createOrder(String nameReceiver, String phoneReceiver, String addressReceiver, String note, String price, Integer id, Integer voucherId) {
         Order order = new Order();
         Customer customer = customerRepository.getById(id);
         order.setCustomer(customer);
-//        order.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+
+        // Generate random order code
         Random random = new Random();
         int randomDigits = 100 + random.nextInt(900);
-        order.setCode("HD"+randomDigits);
+        order.setCode("HD" + randomDigits);
+
+        // Set order details
         order.setCreateDate(LocalDate.now());
         order.setNameReceiver(nameReceiver);
         order.setPhoneReceiver(phoneReceiver);
         order.setAddressReceiver(addressReceiver);
         order.setTotalAmount(Double.parseDouble(price));
         order.setNote(note);
-        order.setStatus(0);
+        order.setStatus(0); // Initial status: not confirmed
+
+        // Set the voucher if provided
+        if (voucherId != null) {
+            Voucher voucher = voucherService.getVoucherById(voucherId);  // Ensure voucherService is not null
+            if (voucher != null) {
+                order.setVoucher(voucher);
+            }
+        }
+
+        // Save the order
         orderRepository.save(order);
-//        customer.setStatus(true);
+
         return order;
     }
+
 
     @Override
     public void confirmPayment(Integer id) {

@@ -86,9 +86,13 @@
                                         </td>
                                         <td>
                                             <div class="product_count">
-                                                <input type="number" min="1" step="1" name="qty" id="sst" maxlength="12" th:value="${item.quantity}" title="Số lượng:"
-                                                       class="input-text qty" oninput="this.value = this.value > 0 ? this.value : 1;" onblur="this.form.submit()"/>
-
+                                                <input type="number" min="1" step="1" name="qty" id="sst" maxlength="12"
+                                                       th:value="${item.quantity}" th:max="${item.productDetail.quantity}"
+                                                       title="Số lượng:"
+                                                       class="input-text qty"
+                                                       onkeydown="return false;"
+                                                oninput="this.value = Math.min(this.value, ${item.productDetail.quantity});"
+                                                onblur="this.form.submit()" />
                                             </div>
                                         </td>
 

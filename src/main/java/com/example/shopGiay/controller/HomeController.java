@@ -415,7 +415,6 @@ public class HomeController {
     @PostMapping("/add-cart")
     public String addCart(Model model, @ModelAttribute AddCart cartItem) {
 
-
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String email = null;
         if (principal instanceof UserDetails) {
@@ -457,19 +456,27 @@ public class HomeController {
 
             // Lấy User từ email
             Customer user = userRepo.findByEmail(email);
-            if (user==null){
+            if (user == null) {
                 return "redirect:/login";
             }
+
             Cart cart = cartService.getOneByUserId(user.getId());
-            shoppingCartService.updateCartItem(cart.getId(),productId,colorId, sizeId, quantity);
-            redirectAttributes.addFlashAttribute("successMessage", "Cart item updated successfully");
+            ProductDetail productDetail = productDetailRepository.getOneProductDetail(productId, colorId, sizeId);
+
+            if (quantity > productDetail.getQuantity()) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Số lượng vượt quá tồn kho");
+                return "redirect:/cart";
+            }
+            shoppingCartService.updateCartItem(cart.getId(), productId, colorId, sizeId, quantity);
+            redirectAttributes.addFlashAttribute("successMessage", "Cập nhật giỏ hàng thành công");
         } catch (Exception e) {
             e.printStackTrace();
-            redirectAttributes.addFlashAttribute("errorMessage", "Error updating cart item");
+            redirectAttributes.addFlashAttribute("errorMessage", "Có lỗi xảy ra khi cập nhật giỏ hàng");
         }
 
-        return "redirect:/cart"; // Redirect to the cart page or any other page as needed
+        return "redirect:/cart";
     }
+
 
     @PostMapping("/buy-now")
     public String buyNow(@ModelAttribute OrderRequest orderRequest, Model model,
@@ -606,7 +613,7 @@ public class HomeController {
         }
 
         // Create the order with the final price
-        Order order = orderService.createOrder(nameReceiver, phoneReceiver, address.getNameAddress(), note, String.valueOf(totalPrice), id);
+        Order order = orderService.createOrder(nameReceiver, phoneReceiver, address.getNameAddress(), note, String.valueOf(totalPrice), id, voucherId);
 
         // Create order details
         orderDetailService.createOrderDetail(proId, order.getId(), quantity, sizeId, colorId);
@@ -642,7 +649,7 @@ public class HomeController {
         Address address = addressRepository.findById(addressReceiverRequest).orElse(null);
 
         // Create order
-        Order order = orderService.createOrder(nameReceiver, phoneReceiver, address.getNameAddress(), note, price, id);
+        Order order = orderService.createOrder(nameReceiver, phoneReceiver, address.getNameAddress(), note, price, id, voucherId);
 
         // Apply voucher if provided and valid
         if (voucherId != null) {

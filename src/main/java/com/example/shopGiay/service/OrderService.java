@@ -17,7 +17,7 @@ public interface OrderService {
     Page<Order> searchOrderByCustomerCode(String codeCustomer, String phone, Integer status, Pageable pageable, int cusId);
     Page<Order> searchOrder(String codeCustomer, String phone, Integer status, Pageable pageable);
 
-    Order createOrder(String nameReceiver, String phoneReceiver, String addressReceiver, String note, String price, Integer id);
+    Order createOrder(String nameReceiver, String phoneReceiver, String addressReceiver, String note, String price, Integer id, Integer voucherId);
 
     void confirmPayment(Integer id);
 
