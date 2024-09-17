@@ -4,21 +4,19 @@ import com.example.shopGiay.dto.AddCart;
 import com.example.shopGiay.dto.CartRequesst;
 import com.example.shopGiay.dto.OrderRequest;
 import com.example.shopGiay.dto.Result;
+import com.example.shopGiay.model.Cart;
 import com.example.shopGiay.model.CartItem;
+import com.example.shopGiay.model.Customer;
 import com.example.shopGiay.model.ProductDetail;
-import com.example.shopGiay.repository.CartItemRepository;
-import com.example.shopGiay.repository.ProductDetailRepository;
-import com.example.shopGiay.repository.ProductRepository;
-import com.example.shopGiay.repository.SizeRepository;
+import com.example.shopGiay.repository.*;
 import com.example.shopGiay.service.ShoppingCartService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.SessionScope;
-import org.webjars.NotFoundException;
 
 import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +36,13 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
     @Autowired
     CartItemRepository cartItemRepository;
+    private final UserRepository userRepo;
+    private final CartRepository cartRepository;
+
+    public ShoppingCartServiceImpl(UserRepository userRepo, CartRepository cartRepository) {
+        this.userRepo = userRepo;
+        this.cartRepository = cartRepository;
+    }
 
     //    @Autowired
 //    ProductSizeRepository productSizeRepository;
@@ -139,8 +144,18 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
     @Override
     public BigDecimal getAmount() {
-//        return maps.values().stream().mapToDouble(item -> item.getQuantity() * item.getPrice()).sum();
-        return cartItemRepository.total();
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email = null;
+        if (principal instanceof UserDetails) {
+            email = ((UserDetails) principal).getUsername();
+        } else if (principal instanceof String) {
+            email = (String) principal;
+        }
+
+        // Lấy User từ email
+        Customer user = userRepo.findByEmail(email);
+        Cart cart = cartRepository.getOneByCusId(user.getId());
+        return cartItemRepository.total(cart.getId());
     }
 
     @Override
