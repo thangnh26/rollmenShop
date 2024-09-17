@@ -486,10 +486,27 @@
                         <td class="px-4 py-3" th:text="${order.phoneReceiver}"></td>
                         <td class="px-4 py-3" th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}"></td>
                         <td class="px-4 py-3">
-                            <a style="background-color: #0e9f6e;text-align: center" class="flex items-center justify-between p-1 mb-2 text-sm font-semibold text-purple-100 bg-purple-600 rounded-lg shadow-md focus:outline-none focus:shadow-outline-purple" th:if="${order.status == 0}" th:href="@{/order/confirm-payment/{id}(id=${order.id})}">Xác nhận</a>
-                            <a style="background-color: #bd2130;text-align: center" class="flex items-center justify-between p-1 mb-2 text-sm font-semibold text-purple-100 bg-purple-600 rounded-lg shadow-md focus:outline-none focus:shadow-outline-purple"th:if="${order.status == 0}" th:href="@{/order/cancelled/{id}(id=${order.id})}">Hủy</a>
-                            <a style="background-color: #0e9f6e;text-align: center" class="flex items-center justify-between p-1 mb-2 text-sm font-semibold text-purple-100 bg-purple-600 rounded-lg shadow-md focus:outline-none focus:shadow-outline-purple" th:if="${order.status == 1}" th:href="@{/order/shipping/{id}(id=${order.id})}">Xác nhận giao hàng</a>
-                            <a style="background-color: #0e9f6e;text-align: center" class="flex items-center justify-between p-1 mb-2 text-sm font-semibold text-purple-100 bg-purple-600 rounded-lg shadow-md focus:outline-none focus:shadow-outline-purple" th:if="${order.status == 2}" th:href="@{/order/ok/{id}(id=${order.id})}">Giao hàng thành công</a>
+                            <a style="background-color: #0e9f6e;text-align: center"
+                               class="flex items-center justify-between p-1 mb-2 text-sm font-semibold text-purple-100 bg-purple-600 rounded-lg shadow-md focus:outline-none focus:shadow-outline-purple"
+                               th:if="${order.status == 0}" th:href="@{/order/confirm-payment/{id}(id=${order.id})}"
+                               onclick="return confirmChangeStatus(event, 'Bạn có chắc muốn xác nhận đơn hàng không?')">Xác nhận</a>
+
+                            <a style="background-color: #bd2130; text-align: center"
+                               class="flex items-center justify-between p-1 mb-2 text-sm font-semibold text-purple-100 bg-purple-600 rounded-lg shadow-md focus:outline-none focus:shadow-outline-purple"
+                               th:if="${order.status == 0 || order.status == 1}"
+                               th:href="@{/order/cancelled/{id}(id=${order.id})}"
+                               onclick="return confirmCancel(event)">Hủy</a>
+
+                            <a style="background-color: #0e9f6e;text-align: center"
+                               class="flex items-center justify-between p-1 mb-2 text-sm font-semibold text-purple-100 bg-purple-600 rounded-lg shadow-md focus:outline-none focus:shadow-outline-purple"
+                               th:if="${order.status == 1}" th:href="@{/order/shipping/{id}(id=${order.id})}"
+                               onclick="return confirmChangeStatus(event, 'Bạn có chắc muốn xác nhận giao hàng không?')">Xác nhận giao hàng</a>
+
+                            <a style="background-color: #0e9f6e;text-align: center"
+                               class="flex items-center justify-between p-1 mb-2 text-sm font-semibold text-purple-100 bg-purple-600 rounded-lg shadow-md focus:outline-none focus:shadow-outline-purple"
+                               th:if="${order.status == 2}" th:href="@{/order/ok/{id}(id=${order.id})}"
+                               onclick="return confirmChangeStatus(event, 'Đơn hàng đã được giao thành công ?')">Giao hàng thành công</a>
+
                             <a style="background-color: #0e9f6e;text-align: center" class="flex items-center justify-between p-1 mb-2 text-sm font-semibold text-purple-100 bg-purple-600 rounded-lg shadow-md focus:outline-none focus:shadow-outline-purple" th:if="${order.status == 3}">Đã thành công</a>
                             <a style="background-color: #bd2130;text-align: center" class="flex items-center justify-between p-1 mb-2 text-sm font-semibold text-purple-100 bg-purple-600 rounded-lg shadow-md focus:outline-none focus:shadow-outline-purple" th:if="${order.status == 4}">Đã hủy</a>
                             <a style="background-color: #3f83f8;text-align: center" class="flex items-center justify-between p-1 mb-2 text-sm font-semibold text-purple-100 bg-purple-600 rounded-lg shadow-md focus:outline-none focus:shadow-outline-purple" th:href="@{/order-detail-staff(id=${order.id})}">Xem chi tiết</a>
@@ -530,7 +547,26 @@
             window.location.href = url;
         }
     }
+
+    function confirmCancel(event) {
+        event.preventDefault(); // Ngăn chặn việc chuyển trang mặc định
+        const userConfirmation = confirm("Bạn có chắc muốn hủy đơn hàng không?");
+        if (userConfirmation) {
+            window.location.href = event.target.getAttribute('href');
+        }
+        return false;
+    }
+
+    function confirmChangeStatus(event, message) {
+        event.preventDefault();
+        if (confirm(message)) {
+            window.location.href = event.target.getAttribute('href');
+            alert("Trạng thái đơn hàng đã được thay đổi"); // Thông báo khi trạng thái thay đổi
+        }
+        return false;
+    }
 </script>
+
 
 </body>
 </html>

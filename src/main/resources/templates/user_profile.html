@@ -303,7 +303,9 @@
                 <td>
                     <a class="btn btn-success btn-custom btn-success-custom" th:if="${order.status == 0}">Chờ xác nhận</a>
                     <a class="btn btn-danger btn-custom btn-danger-custom" th:if="${order.status == 0 || order.status == 1}"
-                       th:href="@{/order/cancelled-customer/{id}(id=${order.id})}">Hủy</a>
+                       th:href="@{/order/cancelled-customer/{id}(id=${order.id})}"
+                       onclick="return confirmCancel(event)">Hủy</a>
+
                     <a class="btn btn-success btn-custom btn-success-custom" th:if="${order.status == 1}">Đã xác nhận</a>
                     <a class="btn btn-warning btn-custom btn-warning-custom" th:if="${order.status == 2}">Đang giao hàng</a>
                     <a class="btn btn-success btn-custom btn-success-custom" th:if="${order.status == 3}">Thành công</a>
@@ -340,6 +342,19 @@
 <footer>
     <p>&copy; 2024 Your Company</p>
 </footer>
+<script>
+    function confirmCancel(event) {
+        event.preventDefault(); // Ngăn chặn việc chuyển trang mặc định
+        const userConfirmation = confirm("Bạn có chắc muốn hủy đơn hàng không?");
+
+        // Nếu người dùng chọn "Có", tiếp tục thực hiện hành động hủy
+        if (userConfirmation) {
+            window.location.href = event.target.getAttribute('href');
+        }
+        // Nếu người dùng chọn "Không", không làm gì và quay lại
+        return false;
+    }
+</script>
 
 </body>
 </html>
