@@ -16,7 +16,7 @@ import java.util.Optional;
 
 @Repository
 public interface CartItemRepository extends JpaRepository<CartItem,Integer> {
-    @Query(value = "SELECT sum(ci.quantity * pd.price) FROM cart_item ci join product_detail pd on ci.product_detail_id = pd.id join cart c on c.cart_id = :cart", nativeQuery = true)
+    @Query(value = "SELECT sum(ci.quantity * pd.price) FROM cart_item ci join product_detail pd on ci.product_detail_id = pd.id join cart c on c.id = ci.cart_id where c.id = :cart", nativeQuery = true)
     BigDecimal total(int cart);
 
     @Query(value = "select sum(:quantity * pd.price) from product_detail pd where pd.id=:id",nativeQuery = true)
