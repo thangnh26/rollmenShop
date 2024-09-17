@@ -1,11 +1,13 @@
 package com.example.shopGiay.repository;
 
 import com.example.shopGiay.model.Address;
+import com.example.shopGiay.model.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface AddressRepository extends JpaRepository<Address, Integer> {
@@ -18,4 +20,6 @@ public interface AddressRepository extends JpaRepository<Address, Integer> {
 
     @Query(value = "select a.id from Address a where a.nameAddress=:address")
     Integer findByName(String address);
+    List<Address> findByCustomer(Customer customer);
+    Optional<Address> findByNameAddressAndCustomer(String nameAddress, Customer customer);
 }

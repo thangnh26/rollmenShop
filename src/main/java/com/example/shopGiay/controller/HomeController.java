@@ -20,6 +20,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.security.Principal;
@@ -119,6 +120,7 @@ public class HomeController {
         // Lấy User từ email
         Customer user = userRepo.findByEmail(email);
         address.setCustomer(user);
+        address.setStatus(1);
         addressRepository.save(address);
         return "redirect:/user/profile";
     }
@@ -819,6 +821,89 @@ public class HomeController {
         return "contact"; // Tên file HTML
     }
 
+    @GetMapping("/user/addresses")
+    public String listAddresses(Model model) {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email = null;
+
+        if (principal instanceof UserDetails) {
+            email = ((UserDetails) principal).getUsername();
+        } else if (principal instanceof String) {
+            email = (String) principal;
+        }
+
+        Customer user = userRepo.findByEmail(email);
+        List<Address> addresses = addressRepository.findByCustomer(user);
+
+        AddressListWrapper addressListWrapper = new AddressListWrapper();
+        addressListWrapper.setAddresses(addresses);
+
+        model.addAttribute("addressForm", addressListWrapper); // Truyền wrapper vào model
+        return "listAddresses";
+    }
+    @PostMapping("/user/update-addresses")
+    @Transactional // Ensure the method is transactional
+    public String updateAddresses(@ModelAttribute("addressForm") AddressListWrapper addressListWrapper,RedirectAttributes redirectAttributes) {
+        // Lấy thông tin user hiện tại từ SecurityContext
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email = null;
+
+        if (principal instanceof UserDetails) {
+            email = ((UserDetails) principal).getUsername();
+        } else if (principal instanceof String) {
+            email = (String) principal;
+        }
+
+        // Lấy user từ email
+        Customer user = userRepo.findByEmail(email);
+
+        // Duyệt qua danh sách địa chỉ và cập nhật các địa chỉ có ID
+        for (Address address : addressListWrapper.getAddresses()) {
+            if (address.getId() != null) {
+                // Cập nhật địa chỉ hiện có dựa trên ID
+                Address existingAddress = addressRepository.findById(address.getId())
+                        .orElseThrow(() -> new RuntimeException("Address not found with id: " + address.getId()));
+
+                // Cập nhật thông tin của địa chỉ hiện có
+                existingAddress.setNameAddress(address.getNameAddress());
+                existingAddress.setStatus(1);  // Set status bằng 1
+                existingAddress.setCustomer(user);  // Set lại customer
+
+                // Lưu địa chỉ đã cập nhật vào cơ sở dữ liệu
+                addressRepository.save(existingAddress);
+            }
+            // Nếu địa chỉ không có ID, bỏ qua không thêm địa chỉ mới
+        }
+        redirectAttributes.addFlashAttribute("successMessage", "Cập nhật thành công!");
+        return "redirect:/user/addresses"; // Chuyển hướng về trang danh sách địa chỉ
+    }
+
+    @PostMapping("/user/delete-address/{id}")
+    public String deleteAddress(@PathVariable Integer id) {
+        // Lấy thông tin user hiện tại từ SecurityContext
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email = null;
+
+        if (principal instanceof UserDetails) {
+            email = ((UserDetails) principal).getUsername();
+        } else if (principal instanceof String) {
+            email = (String) principal;
+        }
+
+        // Lấy user từ email
+        Customer user = userRepo.findByEmail(email);
+
+        // Tìm địa chỉ theo id và kiểm tra nếu nó thuộc về user hiện tại
+        Address address = addressRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Address not found with id: " + id));
+
+        // Kiểm tra xem địa chỉ có thuộc về user hiện tại không
+        if (address.getCustomer().getId().equals(user.getId())) {
+            addressRepository.delete(address); // Xóa địa chỉ
+        }
+
+        return "redirect:/user/addresses"; // Chuyển hướng lại trang danh sách địa chỉ
+    }
 
 
 }

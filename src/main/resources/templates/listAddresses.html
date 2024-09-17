@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Chỉnh sửa danh sách địa chỉ</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+        .alert-success {
+            color: #3c763d;
+            background-color: #dff0d8;
+            border-color: #d6e9c6;
+        }
+    </style>
+</head>
+<body>
+
+<form action="#" th:action="@{/user/update-addresses}" th:object="${addressForm}" method="post">
+    <div class="container mt-4">
+        <h2 class="text-center mb-4">Chỉnh sửa danh sách địa chỉ</h2>
+        <div id="successMessage" class="alert alert-success" th:if="${successMessage}" th:text="${successMessage}"></div>
+        <table class="table table-bordered table-hover">
+            <thead class="thead-dark">
+            <tr>
+                <th >Địa chỉ</th>
+                <th>Thao tác</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="address, iterStat : ${addressForm.addresses}">
+                <td>
+                    <input type="text" class="form-control" th:field="*{addresses[__${iterStat.index}__].nameAddress}" />
+                    <input type="hidden" th:field="*{addresses[__${iterStat.index}__].id}" />
+                </td>
+                <td style="width: 200px">
+                    <!-- Update Button -->
+                    <button type="submit" class="btn btn-primary">Cập nhật</button>
+
+                    <!-- Delete Form -->
+                    <form th:action="@{/user/delete-address/{id}(id=${address.id})}" method="post" style="display: inline;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa địa chỉ này?');">
+                        <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <a href="/user/profile" class="btn btn-secondary">Quay lại</a>
+    </div>
+</form>
+</body>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var successMessageElement = document.getElementById('successMessage');
+        if (successMessageElement) {
+            setTimeout(function() {
+                successMessageElement.style.display = 'none';
+            }, 2000);
+        }
+    });
+</script>
+<!-- Bootstrap JS, Popper.js, and jQuery -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</html>

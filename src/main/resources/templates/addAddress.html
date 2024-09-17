@@ -3,23 +3,47 @@
 <head>
     <title>Add Address</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding-top: 20px;
+        }
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .form-group label {
+            font-weight: bold;
+        }
+        .btn {
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
 <div class="container">
-    <h1>Add Address</h1>
-    <form th:action="@{/add-address}" th:object="${address}" method="post">
-        <div class="form-group">
-            <label for="nameAddress">Name Address</label>
-            <input type="text" class="form-control" id="nameAddress" th:field="*{nameAddress}">
-            <span th:if="${#fields.hasErrors('nameAddress')}" th:errors="*{nameAddress}">Name Address Error</span>
-        </div>
-        <div class="form-group">
-            <label for="status">Status</label>
-            <input type="number" class="form-control" id="status" th:field="*{status}">
-            <span th:if="${#fields.hasErrors('status')}" th:errors="*{status}">Status Error</span>
-        </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
+    <div class="form-container">
+        <h1 class="mb-4 text-center">Thêm địa chỉ</h1>
+        <form th:action="@{/add-address}" th:object="${address}" method="post">
+            <div class="form-group">
+                <label for="nameAddress">Tên địa chỉ</label>
+                <input type="text" class="form-control" id="nameAddress" th:field="*{nameAddress}" placeholder="Enter address name">
+                <span th:if="${#fields.hasErrors('nameAddress')}" th:errors="*{nameAddress}" class="text-danger">Name Address Error</span>
+            </div>
+            <div class="form-group d-flex justify-content-between">
+                <a href="/user/profile" class="btn btn-secondary" onclick="window.history.back();">Quay lại</a>
+                <button type="submit" class="btn btn-primary">Thêm</button>
+            </div>
+        </form>
+
+    </div>
 </div>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 </body>
 </html>
