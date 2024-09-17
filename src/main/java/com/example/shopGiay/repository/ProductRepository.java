@@ -5,6 +5,7 @@ package com.example.shopGiay.repository;
 import com.example.shopGiay.dto.ProductColorResponse;
 import com.example.shopGiay.dto.ProductDto;
 import com.example.shopGiay.dto.ProductSizeResponse;
+import com.example.shopGiay.dto.ProductThongKe;
 import com.example.shopGiay.model.OrderDetail;
 import com.example.shopGiay.model.Product;
 import com.example.shopGiay.model.ProductDetail;
@@ -71,4 +72,15 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             "ORDER BY SUM(od.quantity) DESC " +
             "LIMIT 4 ",nativeQuery = true)
     List<Product> getProductHot();
+
+    // lấy ra list 10 sản phẩm bán chạy nhất bên thôngs kê
+    @Query(value = "SELECT new com.example.shopGiay.dto.ProductThongKe(p.name, SUM(od.quantity)) " +
+            "FROM Product p " +
+            "JOIN ProductDetail pd ON p.id = pd.product.id " +
+            "JOIN OrderDetail od ON pd.id = od.productDetail.id " +
+            "JOIN Order o ON o.id = od.order.id " +
+            "WHERE o.status = 3 " +
+            "GROUP BY p.id, p.name " +
+            "ORDER BY SUM(od.quantity) DESC")
+    List<ProductThongKe> getProductHotthongke();
 }

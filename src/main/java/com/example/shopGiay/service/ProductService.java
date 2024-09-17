@@ -5,6 +5,7 @@ package com.example.shopGiay.service;
 import com.example.shopGiay.dto.ProductColorResponse;
 import com.example.shopGiay.dto.ProductDto;
 import com.example.shopGiay.dto.ProductSizeResponse;
+import com.example.shopGiay.dto.ProductThongKe;
 import com.example.shopGiay.model.OrderDetail;
 import com.example.shopGiay.model.Product;
 import com.example.shopGiay.model.ProductDetail;
@@ -47,6 +48,7 @@ public interface ProductService {
     List<ProductColorResponse> listColorByList(List<Integer> productDetailIds);
 
     List<Product> getProductHot();
+    List<ProductThongKe> getProductHotthongke();
 
     void updateProductDetails(Integer id, BigDecimal price, Integer quantity);
 

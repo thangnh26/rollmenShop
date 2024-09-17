@@ -3,7 +3,9 @@ package com.example.shopGiay.controller;
 import com.example.shopGiay.model.Customer;
 import com.example.shopGiay.model.Staff;
 import com.example.shopGiay.repository.OrderRepository;
+import com.example.shopGiay.repository.ProductRepository;
 import com.example.shopGiay.service.OrderService;
+import com.example.shopGiay.service.ProductService;
 import com.example.shopGiay.service.StaffService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -31,6 +33,9 @@ public class AdminController {
 
     @Autowired
     StaffService staffService;
+
+    @Autowired
+    ProductRepository productRepository;
 
 //    @PreAuthorize("hasRole('STAFF')")
 //    @GetMapping("/admin")
@@ -63,6 +68,7 @@ public class AdminController {
     @GetMapping("/admin/index")
     public String adminHome(Model model){
         BigDecimal total =orderService.total();
+        model.addAttribute("list10spbanchay",productRepository.getProductHotthongke());
         model.addAttribute("total",total);
         model.addAttribute("countUser",orderRepository.countUser());
         model.addAttribute("countOrder", orderRepository.countOrder());

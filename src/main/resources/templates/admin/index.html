@@ -205,7 +205,7 @@
             </a>
 
             <!--đơn hàng đã bán--->
-            <a th:href="@{/order}">
+            <a th:href="@{/order(status=3)}">
               <div
                       class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800"
               >
@@ -235,7 +235,7 @@
             </a>
 
             <!-- Card -->
-            <a th:href="@{/order}">
+            <a th:href="@{/order(status=0)}">
               <div
                       class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800"
               >
@@ -266,7 +266,7 @@
               </div>
             </a>
 
-            <!--Số sản phẩm đang bán-->
+            <!-- tổng tiền -->
             <a th:href="@{/admin/index}">
               <div
                       class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800"
@@ -297,6 +297,27 @@
               </div>
             </a>
           </div>
+          <div class="container px-6 mx-auto mt-8">
+            <div class="bg-white shadow-md rounded-lg p-4">
+              <h2 class="text-xl font-semibold text-gray-700 mb-4">Sản phẩm bán nhiều nhất</h2>
+              <table class="min-w-full bg-white border border-gray-200 rounded-lg overflow-hidden">
+                <thead class="bg-gray-100">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border">STT</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border">Tên sản phẩm</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border">Số lượng đã bán</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="product, stat : ${list10spbanchay}" class="odd:bg-white even:bg-gray-50">
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 border" th:text="${stat.index + 1}"></td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border" th:text="${product.name}"></td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 border" th:text="${product.quantitySold}"></td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
 
           <!--- End Card-->
         </div>
@@ -306,6 +327,7 @@
         <div id="container"
              style="width: 550px; height: 400px; margin: 0 auto"></div>
       </div>
+
     </main>
   </div>
 </div>

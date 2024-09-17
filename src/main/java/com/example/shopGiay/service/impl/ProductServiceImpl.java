@@ -4,6 +4,7 @@ package com.example.shopGiay.service.impl;
 import com.example.shopGiay.dto.ProductColorResponse;
 import com.example.shopGiay.dto.ProductDto;
 import com.example.shopGiay.dto.ProductSizeResponse;
+import com.example.shopGiay.dto.ProductThongKe;
 import com.example.shopGiay.model.Order;
 import com.example.shopGiay.model.OrderDetail;
 import com.example.shopGiay.model.Product;
@@ -124,6 +125,11 @@ public class ProductServiceImpl implements ProductService {
     public List<Product> getProductHot() {
 
         return productRepository.getProductHot();
+    }
+
+    @Override
+    public List<ProductThongKe> getProductHotthongke() {
+        return productRepository.getProductHotthongke();
     }
 
     @Override
