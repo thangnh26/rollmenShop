@@ -33,7 +33,7 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
     Page<Order> findByCustomer(String codeCustomer, String phone, Integer status, Pageable pageable,int cusId);
 
 
-    @Query(value = "select sum(od.quantity) from `dbshopgiay`.`order_detail` od join `dbshopgiay`.`order` o on o.id = od.order_id where month(o.create_date) = :date and o.status >=1",nativeQuery = true)
+    @Query(value = "select sum(od.quantity) from `dbshopgiay`.`order_detail` od join `dbshopgiay`.`order` o on o.id = od.order_id where month(o.create_date) = :date and o.status =3",nativeQuery = true)
     Integer soLuongTheoThang(int date);
 
     @Transactional
