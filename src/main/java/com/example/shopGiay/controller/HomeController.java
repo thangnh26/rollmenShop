@@ -713,7 +713,6 @@ public class HomeController {
                                  @RequestParam("password") String password,
                                  @RequestParam("firstName") String firstName,
                                  @RequestParam("lastName") String lastName,
-                                 @RequestParam("address") String address,
                                  @RequestParam("phoneNumber") String phoneNumber,
                                  Model model) {
         if (userRepo.findByEmail(email) != null) {
