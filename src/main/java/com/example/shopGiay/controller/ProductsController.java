@@ -186,7 +186,14 @@ public class ProductsController {
                     .orElseThrow(() -> new IllegalArgumentException("Invalid material ID")));
             product.setSole(soleRepository.findById(soleId)
                     .orElseThrow(() -> new IllegalArgumentException("Invalid sole ID")));
-
+            if (product.getName() == null || product.getName().trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Tên sản phẩm không được để trống.");
+                return "redirect:/admin/product/update/" + product.getId();
+            }
+            if (productService.isProductNameDuplicate(product.getName(), product.getId())) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Tên sản phẩm đã tồn tại.");
+                return "redirect:/admin/product/update/" + product.getId();
+            }
             // Handle thumbnail update
             if (thumbnailUrl != null && !thumbnailUrl.isEmpty()) {
                 // If a new image is uploaded, update the thumbnail
@@ -214,10 +221,16 @@ public class ProductsController {
             productService.saveOrUpdateProduct(product);
             redirectAttributes.addFlashAttribute("successMessage", "Sửa thành công!");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Failed to update product. Please try again.");
+            redirectAttributes.addFlashAttribute("errorMessage", "Lỗi khi cập nhật sản phẩm. Vui lòng thử lại.");
             return "redirect:/admin/product/update/" + product.getId();
         }
         return "redirect:/admin/products";
+    }
+    @GetMapping("/product/check-name")
+    @ResponseBody
+    public boolean checkDuplicateProductName(@RequestParam("name") String name,
+                                             @RequestParam(value = "id", required = false) Integer id) {
+        return productService.isProductNameDuplicate(name, id != null ? id : -1);
     }
 
     @GetMapping("/product/{id}")

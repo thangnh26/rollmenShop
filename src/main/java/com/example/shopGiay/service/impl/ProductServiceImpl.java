@@ -143,4 +143,9 @@ public class ProductServiceImpl implements ProductService {
     public void saveOrUpdateProduct(Product product) {
         productRepository.save(product);
     }
+
+    @Override
+    public boolean isProductNameDuplicate(String name, Integer id) {
+        return productRepository.existsByNameAndIdNot(name, id);
+    }
 }

@@ -85,5 +85,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     List<ProductThongKe> getProductHotthongke();
     List<Product> findByName(String name);
     Optional<Product> findByNameAndIdNot(String name, Integer id);
+    @Query("SELECT COUNT(p) > 0 FROM Product p WHERE p.name = :name AND p.id <> :id")
+    boolean existsByNameAndIdNot(String name, Integer id);
 
 }

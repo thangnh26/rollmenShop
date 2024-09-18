@@ -2,6 +2,7 @@
 <html :class="{ 'theme-dark': dark }" x-data="data()" lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:x-transition="">
 <head th:replace="fragment/fragmentAdmin::head_admin"/>
+
 <body>
 <div
         class="flex h-screen bg-gray-50 dark:bg-gray-900"
@@ -438,8 +439,9 @@
                                     placeholder="Nhập tên sản phẩm"
                                     name="name"
                                     th:value="*{name}"
-
                             />
+                            <small id="emptyNameError" class="text-red-600"></small>
+                            <small id="duplicateNameError" class="text-red-600"></small>
                         </label>
 
                         <!--Chon loại-->
@@ -593,6 +595,48 @@
         </main>
     </div>
 </div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("form").on("submit", function(event) {
+            var name = $("input[name='name']").val().trim();
+            var productId = $("input[name='id']").val();  // Product ID
+
+            // Clear any previous error messages
+            $("#duplicateNameError").text("");
+            $("#emptyNameError").text("");
+
+            // Check if the product name is empty
+            if (name === "") {
+                $("#emptyNameError").text("Tên sản phẩm không được để trống.");
+                event.preventDefault();
+                return;
+            }
+
+            $.ajax({
+                url: "/admin/product/check-name",
+                type: "GET",
+                data: {
+                    name: name,
+                    id: productId
+                },
+                success: function(isDuplicate) {
+                    if (isDuplicate) {
+                        $("#duplicateNameError").text("Tên sản phẩm đã tồn tại.");
+                        event.preventDefault();  // Prevent form submission
+                    } else {
+                        $("form").off("submit").submit();
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("AJAX Error: ", error);
+                }
+            });
+
+            event.preventDefault();
+        });
+    });
+</script>
 </body>
 </html>
-</script>
+

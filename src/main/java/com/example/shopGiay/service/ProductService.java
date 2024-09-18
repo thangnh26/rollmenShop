@@ -53,4 +53,5 @@ public interface ProductService {
     void updateProductDetails(Integer id, BigDecimal price, Integer quantity);
 
     void saveOrUpdateProduct(Product product);
+    boolean isProductNameDuplicate(String name, Integer id);
 }
