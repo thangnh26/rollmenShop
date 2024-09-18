@@ -456,6 +456,13 @@
                     </select>
                     <button class="btn btn-primary px-4 py-2 rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500" type="submit">Tìm kiếm</button>
                 </form>
+                <div th:if="${successMessage}" class="alert alert-success" role="alert" >
+                    <span  th:text="${successMessage}"></span>
+                </div>
+
+                <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+                    <span th:text="${errorMessage}"></span>
+                </div>
 
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                     <thead class="bg-gray-50 dark:bg-gray-800">

@@ -416,31 +416,84 @@
         </h2>
         <!--================Order Details Area =================-->
         <section>
-            <form style="max-width: 1200px; margin: auto; overflow: auto" class="form-container" th:action="@{/admin/product/add-product-detail}" method="post">
-                <div class="default-select" id="default-select-size">
-                    <select name="sizeId">
-                        <option value="" disabled>Select a Size</option>
-                        <option th:each="size : ${size}"
-                                th:value="${size.id}"
-                                th:text="${size.sizeNumber}">
-                        </option>
-                    </select>
+            <form style="max-width: 800px; margin: auto; padding: 20px; background-color: #f7f7f7; border-radius: 8px; box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);"
+                  class="form-container" th:action="@{/admin/product/add-product-detail}" method="post">
+
+                <!-- Display Error Message -->
+                <div th:if="${errorMessage}" class="alert alert-danger" role="alert" style="color: red; font-weight: bold;">
+                    <p th:text="${errorMessage}"></p>
                 </div>
-                <div class="default-select" id="default-select-color">
-                    <select name="colorId">
-                        <option value="" disabled>Select a Color</option>
-                        <option th:each="color : ${color}"
-                                th:value="${color.id}"
-                                th:text="${color.name}">
-                        </option>
-                    </select>
+
+                <!-- Select Size -->
+                <div class="form-group">
+                    <label for="default-select-size" style="font-weight: bold;">Chọn Size:</label>
+                    <div class="default-select" id="default-select-size">
+                        <select name="sizeId" style="width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ccc;">
+                            <option value="" disabled>Select a Size</option>
+                            <option th:each="size : ${size}"
+                                    th:value="${size.id}"
+                                    th:text="${size.sizeNumber}">
+                            </option>
+                        </select>
+                    </div>
                 </div>
-                <input name="price" type="text" placeholder="Giá tiền">
+
+                <!-- Select Color -->
+                <div class="form-group">
+                    <label for="default-select-color" style="font-weight: bold;">Chọn Màu:</label>
+                    <div class="default-select" id="default-select-color">
+                        <select name="colorId" style="width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ccc;">
+                            <option value="" disabled>Select a Color</option>
+                            <option th:each="color : ${color}"
+                                    th:value="${color.id}"
+                                    th:text="${color.name}">
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Price Input -->
+                <div class="form-group">
+                    <label for="price" style="font-weight: bold;">Giá tiền:</label>
+                    <input id="price" name="price" type="number" placeholder="Giá tiền" min="0.01" step="0.01"
+                           style="width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ccc;" required>
+                </div>
+
+                <!-- Quantity Input -->
+                <div class="form-group">
+                    <label for="quantity" style="font-weight: bold;">Số lượng:</label>
+                    <input id="quantity" name="quantity" type="number" placeholder="Số lượng"
+                           style="width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ccc;">
+                </div>
+
                 <input name="productId" type="hidden" th:value="${productId}">
-                <input name="quantity" type="number" placeholder="Số lượng">
-                <button type="submit">Thêm</button>
+
+                <!-- Submit Button -->
+                <button type="submit" style="width: 100%; padding: 10px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                    Thêm
+                </button>
             </form>
         </section>
+
+
     </div>
+</div>
+<script>
+    document.querySelector('form').addEventListener('submit', function (event) {
+        var price = document.getElementById('price').value;
+        var quantity = document.getElementById('quantity').value;
+
+        if (price <= 0 || quantity <= 0) {
+            event.preventDefault();  // Ngăn không cho form submit
+            alert('Giá tiền và số lượng phải lớn hơn 0!');
+        }
+        if (isNaN(priceValue) || priceValue <= 0) {
+            alert('Giá tiền phải lớn hơn 0.');
+            event.preventDefault();  // Prevent form submission
+        }
+    });
+
+</script>
+
 </body>
 </html>

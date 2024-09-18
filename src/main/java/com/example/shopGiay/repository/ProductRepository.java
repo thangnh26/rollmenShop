@@ -83,4 +83,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             "GROUP BY p.id, p.name " +
             "ORDER BY SUM(od.quantity) DESC")
     List<ProductThongKe> getProductHotthongke();
+    List<Product> findByName(String name);
+    Optional<Product> findByNameAndIdNot(String name, Integer id);
+
 }

@@ -26,7 +26,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -122,7 +124,14 @@ public class ProductsController {
                                       @RequestParam("colorIds") List<Integer> colorIds,
                                       RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            return "admin/product/createProduct";  // Return back to the form if there are errors
+            return "admin/product/createProduct";  // Return to form if validation fails
+        }
+
+        // Check if any products with the same name exist
+        List<Product> existingProducts = productRepository.findByName(productDTO.getName());
+        if (!existingProducts.isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Tên sản phẩm đã tồn tại.");
+            return "redirect:/admin/createProduct";
         }
 
         try {
@@ -133,8 +142,14 @@ public class ProductsController {
             redirectAttributes.addFlashAttribute("errorMessage", "Error creating product");
         }
 
-        redirectAttributes.addFlashAttribute("successMessage", "Thêm mới thành công!");
         return "redirect:/admin/products";
+    }
+
+    @GetMapping("/api/check-product-name")
+    @ResponseBody
+    public Map<String, Boolean> checkProductName(@RequestParam String name) {
+        boolean exists = productRepository.findByName(name).isEmpty();
+        return Collections.singletonMap("exists", exists);
     }
 
 
@@ -234,12 +249,19 @@ public class ProductsController {
                                    @RequestParam("colorId") Integer colorId,
                                    RedirectAttributes redirectAttributes) {
         try {
-            ProductDetail existingDetail = productDetailRepository.getOne(productId, colorId, sizeId);
-            if (existingDetail != null) {
-                redirectAttributes.addFlashAttribute("errorMessage", "Product detail already exists.");
-                return "redirect:/admin/product/" + productId;
+            if (price.compareTo(BigDecimal.ZERO) <= 0) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Giá tiền phải lớn hơn 0.");
+                return "redirect:/admin/product/add-product-detail?productId=" + productId;
+            }
+            // Check if the product detail already exists (by product, color, and size)
+            Optional<ProductDetail> existingDetail = productDetailRepository.findByProductIdAndColorIdAndSizeId(productId, colorId, sizeId);
+
+            if (existingDetail.isPresent()) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Chi tiết sản phẩm có kích thước và màu sắc đã chọn đã tồn tại.");
+                return "redirect:/admin/product/add-product-detail?productId=" + productId;
             }
 
+            // Fetch related entities
             Product product = productRepository.findById(productId)
                     .orElseThrow(() -> new IllegalArgumentException("Invalid product ID"));
             Size size = sizeRepository.findById(sizeId)
@@ -247,6 +269,7 @@ public class ProductsController {
             Color color = colorRepository.findById(colorId)
                     .orElseThrow(() -> new IllegalArgumentException("Invalid color ID"));
 
+            // Create a new product detail
             ProductDetail productDetail = new ProductDetail();
             productDetail.setProduct(product);
             productDetail.setSize(size);
@@ -255,13 +278,16 @@ public class ProductsController {
             productDetail.setQuantity(quantity);
             productDetail.setStatus(1);
 
+            // Save the new product detail
             productDetailRepository.save(productDetail);
-            redirectAttributes.addFlashAttribute("successMessage", "Product detail added successfully!");
+            redirectAttributes.addFlashAttribute("successMessage", "Đã thêm chi tiết sản phẩm thành công!");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Failed to add product detail. Please try again.");
+            redirectAttributes.addFlashAttribute("errorMessage", "Không thêm được chi tiết sản phẩm. Vui lòng thử lại.");
         }
+
         return "redirect:/admin/product/" + productId;
     }
+
 
     // Helper methods for product creation
     private void createProductAndDetails(ProductDetailForm productDTO, List<Integer> sizeIds, List<Integer> colorIds) throws IOException {

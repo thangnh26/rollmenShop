@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 @Repository
@@ -46,4 +47,6 @@ public interface ProductDetailRepository extends JpaRepository<ProductDetail, In
 
     @Query(value = "select p.quantity from ProductDetail p where p.product.id in :ids group by p.product.id, p.quantity")
     List<Integer> findListQuantityByProductId(Stream<Integer> ids);
+
+    Optional<ProductDetail> findByProductIdAndColorIdAndSizeId(Integer productId, Integer colorId, Integer sizeId);
 }

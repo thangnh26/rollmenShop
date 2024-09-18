@@ -413,6 +413,10 @@
                             <input class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
                                    name="name" placeholder="Nhập tên sản phẩm" required/>
                         </label>
+                        <!-- Display Error Message -->
+                        <div th:if="${errorMessage}" class="alert alert-danger" role="alert" style="color: red; font-weight: bold;">
+                            <p th:text="${errorMessage}"></p>
+                        </div>
 
                         <!-- Category -->
                         <label class="block mt-4 text-sm">
@@ -549,4 +553,16 @@
         };
         reader.readAsDataURL(file);
     }
+    document.querySelector('form').addEventListener('submit', function (event) {
+        let productName = document.querySelector('input[name="name"]').value;
+
+        fetch(`/admin/api/check-product-name?name=${encodeURIComponent(productName)}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.exists) {
+                    alert('Tên sản phẩm đã tồn tại!');
+                    event.preventDefault(); // Prevent form submission if name exists
+                }
+            });
+    });
 </script>

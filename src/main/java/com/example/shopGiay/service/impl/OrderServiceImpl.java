@@ -114,7 +114,7 @@ public class OrderServiceImpl implements OrderService {
         for (OrderDetail orderDetail : list) {
             ProductDetail productDetail = orderDetail.getProductDetail();
             if (orderDetail.getQuantity() > productDetail.getQuantity()) {
-                throw new NotFoundException("Không đủ số lượng cho sản phẩm: " + productDetail.getProduct().getName());
+                throw new NotEnoughStockException("Không đủ số lượng cho sản phẩm: " + productDetail.getProduct().getName());
             }
         }
 
@@ -128,7 +128,11 @@ public class OrderServiceImpl implements OrderService {
         // Confirm the order
         orderRepository.confirm(id, 1);
     }
-
+    public class NotEnoughStockException extends RuntimeException {
+        public NotEnoughStockException(String message) {
+            super(message);
+        }
+    }
 
     @Override
     public void cancelled(Integer id) {

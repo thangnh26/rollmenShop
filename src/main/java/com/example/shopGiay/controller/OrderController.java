@@ -4,6 +4,7 @@ import com.example.shopGiay.dto.SearchOrder;
 import com.example.shopGiay.model.*;
 import com.example.shopGiay.repository.UserRepository;
 import com.example.shopGiay.service.*;
+import com.example.shopGiay.service.impl.OrderServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -134,8 +136,14 @@ public class OrderController {
     }
 
     @GetMapping("/confirm-payment/{id}")
-    public String confirmPayment(@PathVariable Integer id){
-        orderService.confirmPayment(id);
+    public String confirmPayment(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
+        try {
+            orderService.confirmPayment(id);
+            redirectAttributes.addFlashAttribute("successMessage", "Đơn hàng đã được xác nhận thành công.");
+        } catch (OrderServiceImpl.NotEnoughStockException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/order";  // Stay on the order page
+        }
         return "redirect:/order";
     }
 
