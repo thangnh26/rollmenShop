@@ -1,6 +1,8 @@
 package com.example.shopGiay.controller;
 
-
+import com.example.shopGiay.dto.ProductDetailForm;
+import com.example.shopGiay.dto.ProductDetailFormWrapper;
+import com.example.shopGiay.dto.ProductDetailRequest;
 import com.example.shopGiay.model.*;
 import com.example.shopGiay.repository.*;
 import com.example.shopGiay.service.*;
@@ -11,277 +13,394 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.validation.Valid;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.sql.Timestamp;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Controller
+@RequestMapping("/admin")
 public class ProductsController {
 
     @Autowired
-    CategoryService categoryService;
+    private CategoryService categoryService;
 
     @Autowired
-    BrandService brandService;
+    private BrandService brandService;
 
     @Autowired
-    MaterialService materialService;
+    private MaterialService materialService;
 
     @Autowired
-    SoleService soleService;
+    private SoleService soleService;
 
     @Autowired
-    ProductService productService;
+    private ProductService productService;
 
     @Autowired
-    CategoryRepository categoryRepository;
+    private CategoryRepository categoryRepository;
 
     @Autowired
-    BrandRepository brandRepository;
+    private BrandRepository brandRepository;
 
     @Autowired
-    MaterialRepository materialRepository;
+    private MaterialRepository materialRepository;
 
     @Autowired
-    SoleRepository soleRepository;
+    private SoleRepository soleRepository;
 
     @Autowired
-    ProductRepository productRepository;
+    private ProductRepository productRepository;
 
     @Autowired
-    ProductDetailRepository productDetailRepository;
+    private ProductDetailRepository productDetailRepository;
 
     @Autowired
-    SizeRepository sizeRepository;
+    private SizeRepository sizeRepository;
 
     @Autowired
-    ColorRepository colorRepository;
+    private ColorRepository colorRepository;
 
-
-
-    @GetMapping("/admin/products")
-    public String adminProducts(Model model, @RequestParam("page")Optional<Integer> page, @RequestParam("size") Optional<Integer> size){
-
+    @GetMapping("/products")
+    public String adminProducts(Model model, @RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size) {
         int currentPage = page.orElse(1);
-        int sizePage = size.orElse(10);
-
+        int sizePage = size.orElse(5);
+        // Đảm bảo currentPage không nhỏ hơn 1
+        if (currentPage < 1) {
+            currentPage = 1;
+        }
         Pageable pageable = PageRequest.of(currentPage - 1, sizePage);
         Page<Product> listProduct = productService.findAllOrderById(pageable);
         model.addAttribute("listProduct", listProduct);
+
         int totalPage = listProduct.getTotalPages();
-        if (totalPage > 0 ){
-            int start = Math.max(1,currentPage-2);
+        if (totalPage > 0) {
+            int start = Math.max(1, currentPage - 2);
             int end = Math.min(currentPage + 2, totalPage);
-            if( totalPage > 5 ){
-                if( end == totalPage){
+            if (totalPage > 5) {
+                if (end == totalPage) {
                     start = end - 5;
-                }else if(start == 1){
+                } else if (start == 1) {
                     end = start + 5;
                 }
             }
-            List<Integer> pagenummber = IntStream.rangeClosed(start,end)
-                    .boxed()
-                    .collect(Collectors.toList());
-            model.addAttribute("pageNumber", pagenummber);
+            List<Integer> pageNumber = IntStream.rangeClosed(start, end).boxed().collect(Collectors.toList());
+            model.addAttribute("pageNumber", pageNumber);
         }
         return "admin/product/products";
     }
-    @GetMapping("/admin/createProduct")
-    public String adminCreateProduct(Model model){
 
-        model.addAttribute("newProduct",new Product());
-        model.addAttribute("listCategory",categoryRepository.findAll());
-        model.addAttribute("listBrand",brandRepository.findAll());
-        model.addAttribute("listMaterial",materialRepository.findAll());
-        model.addAttribute("listSole",soleRepository.findAll());
-        model.addAttribute("listSize",sizeRepository.findAll());
-        model.addAttribute("listColor",colorRepository.findAll());
+    @GetMapping("/createProduct")
+    public String adminCreateProduct(Model model) {
+        model.addAttribute("newProduct", new Product());
+        model.addAttribute("listCategory", categoryRepository.findByStatusActive());
+        model.addAttribute("listBrand", brandRepository.findByStatusActive());
+        model.addAttribute("listMaterial", materialRepository.findByStatusActive());
+        model.addAttribute("listSole", soleRepository.findByStatusActive());
+        model.addAttribute("listSize", sizeRepository.findByStatusActive());
+        model.addAttribute("listColor", colorRepository.findByStatusActive());
         return "admin/product/createProduct";
     }
 
-    @PostMapping("/admin/createProduct")
-    public String adminCreateProduct(@RequestParam("name") String name,
-                                     @RequestParam("categoryId") Integer categoryId,
-                                     @RequestParam("brandId") Integer brandId,
-                                     @RequestParam("materialId") Integer materialId,
-                                     @RequestParam("soleId") Integer soleId,
-                                     @RequestParam("sizeId") int idSize,
-                                     @RequestParam("colorId") int idColor,
-                                     @RequestParam("quantity") int quantity,
-                                     @RequestParam("price") double price,
-                                     @RequestParam("description") String description,
-                                     @RequestParam("thumbnailUrl") MultipartFile multipartFile) throws IOException {
-        Product product = new Product();
-        String filename = StringUtils.cleanPath(multipartFile.getOriginalFilename());
-        product.setName(name);
-        product.setDescription(description);
-        Category category = categoryRepository.getById(categoryId);
-        product.setCategory(category);
-        Brand brand = brandRepository.getById(brandId);
-        product.setBrand(brand);
-        Material material = materialRepository.getById(materialId);
-        product.setMaterial(material);
-        Sole sole = soleRepository.getById(soleId);
-        product.setSole(sole);
-        product.setThumbnail("~/img/product/"+filename);
-        ProductDetail productdetail = new ProductDetail();
-        product.setStatus(true);
-        productdetail.setProduct(product);
-        Size size = sizeRepository.getById(idSize);
-        productdetail.setSize(size);
-        Color color = colorRepository.getById(idColor);
-        productdetail.setColor(color);
-        productdetail.setQuantity(quantity);
-        productdetail.setPrice(price);
-        productRepository.save(product);
-        categoryRepository.save(category);
-        brandRepository.save(brand);
-        materialRepository.save(material);
-        soleRepository.save(sole);
-        productDetailRepository.save(productdetail);
+    @PostMapping("/createProduct")
+    public String adminCreateProducts(@Valid @ModelAttribute ProductDetailForm productDTO,
+                                      BindingResult bindingResult,
+                                      @RequestParam("sizeIds") List<Integer> sizeIds,
+                                      @RequestParam("colorIds") List<Integer> colorIds,
+                                      RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            return "admin/product/createProduct";  // Return to form if validation fails
+        }
 
-        String uploadDir = "./src/main/resources/static/img/product/";
-        Path uploadPath = Paths.get(uploadDir);
-        if(!Files.exists(uploadPath)){
-            Files.createDirectories(uploadPath);
+        // Check if any products with the same name exist
+        List<Product> existingProducts = productRepository.findByName(productDTO.getName());
+        if (!existingProducts.isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Tên sản phẩm đã tồn tại.");
+            return "redirect:/admin/createProduct";
         }
-        try{
-            InputStream inputStream = multipartFile.getInputStream();
-            Path filePath = uploadPath.resolve(filename);
-            Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
-        }catch (IOException e){
-            throw new IOException("Không thể tải file: "+filename);
+
+        try {
+            createProductAndDetails(productDTO, sizeIds, colorIds);
+            redirectAttributes.addFlashAttribute("successMessage", "Thêm mới thành công sản phẩm");
+        } catch (IOException e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("errorMessage", "Error creating product");
         }
+
         return "redirect:/admin/products";
     }
 
-    @GetMapping("/products")
-    public String showListProduct(Model model, @RequestParam( name = "name", required = false) String keyword,
-                                  @RequestParam("page") Optional<Integer> page,
-                                  @RequestParam("size") Optional<Integer> size,
-                                  @RequestParam("category") Optional<Integer> category,
-                                  @RequestParam("material") Optional<Integer> material,
-                                  @RequestParam("sole") Optional<Integer> sole
-                                  ){
-
-
-        List<Category> categoryReputation = categoryService.getAllCategory();
-        model.addAttribute("listCategoryReputation",categoryReputation);
-
-        List<Brand> brandsReputation = brandService.getAllBrands();
-        model.addAttribute("listBrandsReputation",brandsReputation);
-
-        List<Material> materialReputation = materialService.getAllMaterial();
-        model.addAttribute("listMaterialsReputation",materialReputation);
-
-        List<Sole> solesReputation = soleService.getAllSoles();
-        model.addAttribute("listSolesReputation",solesReputation);
-
-
-        List<Size> sizesReputation = sizeRepository.findAll();
-        model.addAttribute("listSizesReputation",sizesReputation);
-
-
-        //Tìm kiếm sản phẩm
-
-        int currentPage = page.orElse(1);//Trang hiển thị
-        int sizePage = size.orElse(8);//Kích thước sản phẩm trong 1 trang
-
-        Pageable pageable = PageRequest.of(currentPage - 1,sizePage);
-
-        Page<Product> listProduct = productService.searchProduct(keyword,pageable);//Lấy các
-        model.addAttribute("listProduct", listProduct);
-        model.addAttribute("keyword",keyword);
-
-        int totalPage = listProduct.getTotalPages();
-        if( totalPage > 0 ){
-            int start = Math.max(1,currentPage - 2);
-            int end = Math.min(currentPage + 2,totalPage);
-            if( totalPage > 5){
-                if( end == totalPage ){
-                    start = end - 5;
-                }else if (start == 1){
-                    end = start + 5;
-                }
-            }
-            List<Integer> pageNumber = IntStream.rangeClosed(start,end)
-                    .boxed()
-                    .collect(Collectors.toList());
-            model.addAttribute("pageNumber", pageNumber);
-        }
-
-        return "category";
-
+    @GetMapping("/api/check-product-name")
+    @ResponseBody
+    public Map<String, Boolean> checkProductName(@RequestParam String name) {
+        boolean exists = productRepository.findByName(name).isEmpty();
+        return Collections.singletonMap("exists", exists);
     }
 
-    @GetMapping("/admin/product/{id}")
-    public String productDetail(Model model,@PathVariable("id") Integer id){
+
+    @GetMapping("/product/update/{id}")
+    public String updateProductForm(Model model, @PathVariable("id") Integer id) {
         Product product = productService.getDetailProductById(id);
-        List<ProductDetail> listSize = productDetailRepository.findAllByProductId(id);
-        model.addAttribute("product",product);
-        model.addAttribute("listSize",listSize);
+        if (product == null) {
+            return "error/404";  // Redirect to a 404 page if the product is not found
+        }
+        product.getStatus();
+        model.addAttribute("product", product);
+        model.addAttribute("listCategory", categoryRepository.findByStatusActive());
+        model.addAttribute("listBrand", brandRepository.findByStatusActive());
+        model.addAttribute("listMaterial", materialRepository.findByStatusActive());
+        model.addAttribute("listSole", soleRepository.findByStatusActive());
+        return "admin/product/updateProduct";
+    }
+
+    @PostMapping("/product/update")
+    public String updateProduct(@ModelAttribute("product") Product product,
+                                @RequestParam("categoryId") Integer categoryId,
+                                @RequestParam("brandId") Integer brandId,
+                                @RequestParam("materialId") Integer materialId,
+                                @RequestParam("soleId") Integer soleId,
+                                @RequestParam("existingThumbnail") String existingThumbnail,
+                                @RequestParam("thumbnailUrl") MultipartFile thumbnailUrl,
+                                RedirectAttributes redirectAttributes) {
+        try {
+            product.setCategory(categoryRepository.findById(categoryId)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid category ID")));
+            product.setBrand(brandRepository.findById(brandId)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid brand ID")));
+            product.setMaterial(materialRepository.findById(materialId)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid material ID")));
+            product.setSole(soleRepository.findById(soleId)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid sole ID")));
+            if (product.getName() == null || product.getName().trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Tên sản phẩm không được để trống.");
+                return "redirect:/admin/product/update/" + product.getId();
+            }
+            if (productService.isProductNameDuplicate(product.getName(), product.getId())) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Tên sản phẩm đã tồn tại.");
+                return "redirect:/admin/product/update/" + product.getId();
+            }
+            // Handle thumbnail update
+            if (thumbnailUrl != null && !thumbnailUrl.isEmpty()) {
+                // If a new image is uploaded, update the thumbnail
+                String filename = StringUtils.cleanPath(thumbnailUrl.getOriginalFilename());
+                product.setThumbnail("~/img/product/" + filename);
+
+                String uploadDir = "./src/main/resources/static/img/product/";
+                Path uploadPath = Paths.get(uploadDir);
+                if (!Files.exists(uploadPath)) {
+                    Files.createDirectories(uploadPath);
+                }
+                try (InputStream inputStream = thumbnailUrl.getInputStream()) {
+                    Path filePath = uploadPath.resolve(filename);
+                    Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+                }
+            } else {
+                // If no new image is uploaded, retain the existing image
+                product.setThumbnail(existingThumbnail);
+            }
+
+            if (product.getStatus() == null) {
+                product.setStatus(1);  // Set a default status if not provided
+            }
+
+            productService.saveOrUpdateProduct(product);
+            redirectAttributes.addFlashAttribute("successMessage", "Sửa thành công!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Lỗi khi cập nhật sản phẩm. Vui lòng thử lại.");
+            return "redirect:/admin/product/update/" + product.getId();
+        }
+        return "redirect:/admin/products";
+    }
+    @GetMapping("/product/check-name")
+    @ResponseBody
+    public boolean checkDuplicateProductName(@RequestParam("name") String name,
+                                             @RequestParam(value = "id", required = false) Integer id) {
+        return productService.isProductNameDuplicate(name, id != null ? id : -1);
+    }
+
+    @GetMapping("/product/{id}")
+    public String productDetail(Model model, @PathVariable("id") Integer id) {
+        List<ProductDetail> productDetails = productService.getListDetailProductById(id);
+        if (productDetails == null || productDetails.isEmpty()) {
+            return "error/404";  // Redirect to a 404 page if the product details are not found
+        }
+        model.addAttribute("product", productDetails);
+        model.addAttribute("id", id);
         return "admin/product/productDetail";
     }
 
-//    @PostMapping("/admin/product/{id}/update")
-//    public String updateSize(@PathVariable("id") int id, @RequestParam("productId") int productId, @RequestParam("qty") int quantity, @RequestParam("price") double price){
-//        ProductDetail product_size = productDetailRepository.findByProductIdAndSizeId(productId,id);
-//        int a = product_size.getQuantity();
-//        double b = product_size.getPrice();
-//        product_size.setQuantity(quantity);
-//        product_size.setPrice(price);
-//        Product product = productRepository.getById(productId);
-//        productRepository.save(product);
-//        productDetailRepository.save(product_size);
-//        return "redirect:/admin/product/"+productId;
-//    }
-@GetMapping("/admin/product/update/{id}")
-public String updateProduct(Model model,@PathVariable("id") Integer id){
-    Product product = productService.getDetailProductById(id);
-    model.addAttribute("product",product);
-    model.addAttribute("listCategory",categoryRepository.findAll());
-    model.addAttribute("listBrand",brandRepository.findAll());
-    model.addAttribute("listMaterial",materialRepository.findAll());
-    model.addAttribute("listSole",soleRepository.findAll());
+    @GetMapping("/product/add-product-detail")
+    public String addProductDetailForm(Model model, @RequestParam("productId") Integer productId) {
+        List<Size> sizeList = sizeRepository.findAll();
+        List<Color> colorList = colorRepository.findAll();
+        model.addAttribute("size", sizeList);
+        model.addAttribute("color", colorList);
+        model.addAttribute("productId", productId);
+        return "admin/product/addProductDetail";
+    }
 
-    return "admin/product/updateProduct";
-}
-    @PostMapping("/admin/product/update")
-    public String adminCreateProduct(@RequestParam("id") Integer id,
-                                     @RequestParam("name") String name,
-                                     @RequestParam("categoryId") Integer categoryId,
-                                     @RequestParam("brandId") Integer brandId,
-                                     @RequestParam("materialId") Integer materialId,
-                                     @RequestParam("soleId") Integer soleId
-    ) throws IOException {
-        Product product = productService.getDetailProductById(id);
-        product.setName(name);
-        Category category = categoryRepository.getById(categoryId);
-        Brand brand = brandRepository.getById(brandId);
-        Material material = materialRepository.getById(materialId);
-        Sole sole = soleRepository.getById(soleId);
+    @PostMapping("/product/add-product-detail")
+    public String addProductDetail(@RequestParam("productId") Integer productId,
+                                   @RequestParam("price") BigDecimal price,
+                                   @RequestParam("quantity") Integer quantity,
+                                   @RequestParam("sizeId") Integer sizeId,
+                                   @RequestParam("colorId") Integer colorId,
+                                   RedirectAttributes redirectAttributes) {
+        try {
+            if (price.compareTo(BigDecimal.ZERO) <= 0) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Giá tiền phải lớn hơn 0.");
+                return "redirect:/admin/product/add-product-detail?productId=" + productId;
+            }
+            // Check if the product detail already exists (by product, color, and size)
+            Optional<ProductDetail> existingDetail = productDetailRepository.findByProductIdAndColorIdAndSizeId(productId, colorId, sizeId);
 
+            if (existingDetail.isPresent()) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Chi tiết sản phẩm có kích thước và màu sắc đã chọn đã tồn tại.");
+                return "redirect:/admin/product/add-product-detail?productId=" + productId;
+            }
+
+            // Fetch related entities
+            Product product = productRepository.findById(productId)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid product ID"));
+            Size size = sizeRepository.findById(sizeId)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid size ID"));
+            Color color = colorRepository.findById(colorId)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid color ID"));
+
+            // Create a new product detail
+            ProductDetail productDetail = new ProductDetail();
+            productDetail.setProduct(product);
+            productDetail.setSize(size);
+            productDetail.setColor(color);
+            productDetail.setPrice(price);
+            productDetail.setQuantity(quantity);
+            productDetail.setStatus(1);
+
+            // Save the new product detail
+            productDetailRepository.save(productDetail);
+            redirectAttributes.addFlashAttribute("successMessage", "Đã thêm chi tiết sản phẩm thành công!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Không thêm được chi tiết sản phẩm. Vui lòng thử lại.");
+        }
+
+        return "redirect:/admin/product/" + productId;
+    }
+
+
+    // Helper methods for product creation
+    private void createProductAndDetails(ProductDetailForm productDTO, List<Integer> sizeIds, List<Integer> colorIds) throws IOException {
+        Product product = createProduct(productDTO);
+        if (sizeIds == null || colorIds == null || sizeIds.isEmpty() || colorIds.isEmpty()) {
+            throw new IllegalArgumentException("Size IDs and Color IDs cannot be null or empty");
+        }
+
+        for (Integer sizeId : sizeIds) {
+            for (Integer colorId : colorIds) {
+                ProductDetailRequest detailRequest = new ProductDetailRequest();
+                detailRequest.setSizeId(sizeId);
+                detailRequest.setColorId(colorId);
+                detailRequest.setQuantity(productDTO.getQuantity());
+                detailRequest.setPrice(productDTO.getPrice());
+
+                createProductDetail(product, detailRequest);
+            }
+        }
+    }
+
+    private void createProductDetail(Product product, ProductDetailRequest detailRequest) {
+        if (detailRequest.getSizeId() == null || detailRequest.getColorId() == null || detailRequest.getQuantity() == null || detailRequest.getPrice() == null) {
+            throw new IllegalArgumentException("Product detail fields cannot be null");
+        }
+
+        ProductDetail productDetail = new ProductDetail();
+        productDetail.setProduct(product);
+
+        Size size = sizeRepository.findById(detailRequest.getSizeId())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid size ID"));
+        productDetail.setSize(size);
+
+        Color color = colorRepository.findById(detailRequest.getColorId())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid color ID"));
+        productDetail.setColor(color);
+
+        productDetail.setQuantity(detailRequest.getQuantity());
+        productDetail.setPrice(BigDecimal.valueOf(detailRequest.getPrice()));
+        productDetail.setStatus(1);
+
+        productDetailRepository.save(productDetail);
+    }
+
+    private Product createProduct(ProductDetailForm productDTO) throws IOException {
+        Product product = new Product();
+        String filename = StringUtils.cleanPath(productDTO.getThumbnailUrl().getOriginalFilename());
+
+        product.setName(productDTO.getName());
+        product.setDescription(productDTO.getDescription());
+
+        Category category = categoryRepository.findById(productDTO.getCategoryId())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid category ID"));
         product.setCategory(category);
+
+        Brand brand = brandRepository.findById(productDTO.getBrandId())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid brand ID"));
         product.setBrand(brand);
+
+        Material material = materialRepository.findById(productDTO.getMaterialId())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid material ID"));
         product.setMaterial(material);
+
+        Sole sole = soleRepository.findById(productDTO.getSoleId())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid sole ID"));
         product.setSole(sole);
+
+        product.setThumbnail("~/img/product/" + filename);
+        product.setStatus(1);
+
         productRepository.save(product);
+
         String uploadDir = "./src/main/resources/static/img/product/";
         Path uploadPath = Paths.get(uploadDir);
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+        try (InputStream inputStream = productDTO.getThumbnailUrl().getInputStream()) {
+            Path filePath = uploadPath.resolve(filename);
+            Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            throw new IOException("Cannot upload file: " + filename, e);
+        }
+
+        return product;
+    }
+    @PostMapping("/updateProduct")
+    public String updateProducts(@RequestParam("productIds") List<Integer> productIds,
+                                 @RequestParam("prices") List<BigDecimal> prices,
+                                 @RequestParam("quantities") List<Integer> quantities,
+                                 RedirectAttributes redirectAttributes) {
+        try {
+            for (int i = 0; i < productIds.size(); i++) {
+                productService.updateProductDetails(productIds.get(i), prices.get(i), quantities.get(i));
+            }
+            redirectAttributes.addFlashAttribute("successMessage", "Cập nhật thành công!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to update products. Please try again.");
+        }
         return "redirect:/admin/products";
     }
+
 }

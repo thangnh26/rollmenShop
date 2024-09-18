@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zxx" class="no-js" xmlns:th="http://www.thymeleaf.org"  >
+
+<head th:replace=" fragment/fragment :: html_head" />
+
+
+<body id="category">
+<!-- Start Header Area -->
+<header th:replace="fragment/header:: header" />
+<!-- Start Banner Area -->
+<section class="banner-area organic-breadcrumb">
+	<div class="container">
+		<div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
+			<div class="col-first">
+				<h1 style="font-weight: 600;color: #ff9933;">Danh mục sản phẩm</h1>
+				<nav class="d-flex align-items-center">
+					<a >Trang chủ<span class="lnr lnr-arrow-right"></span> Cửa hàng <span class="lnr lnr-arrow-right"></span> Danh mục sản phẩm</a>
+				</nav>
+			</div>
+		</div>
+	</div>
+</section>
+<!-- End Banner Area -->
+<div class="container">
+	<div class="row">
+		<div class="col-xl-3 col-lg-4 col-md-5">
+			<div class="sidebar-categories">
+				<div class="head" style="background-color: saddlebrown; border-radius: 4px;">Bộ lọc sản phẩm</div>
+
+				<div class="common-filter">
+					<div style="padding: 20px 0px 10px 20px; color: black; font-weight: bold;">Thương hiệu</div>
+					<div style="padding-left: 20px;">
+						<a style="color: black;" href="/product">Tất cả sản phẩm</a>
+						<form  th:each="brand : ${listBrandsReputation}">
+							<hr>
+							<a style="color: black;" th:href="@{/product(name=${brand.nameBrand})}" ><img style="zoom: 0.45;" th:src="@{${brand.thumbnail}}"> [[${brand.nameBrand}]]</a>
+						</form>
+						<hr>
+					</div>
+
+				</div>
+			</div>
+			<div class="sidebar-filter mt-50">
+
+			</div>
+		</div>
+		<div class="col-xl-9 col-lg-8 col-md-7">
+			<!-- Start Filter Bar -->
+			<div class="filter-bar d-flex  align-items-center" style="justify-content: space-between; background-color: saddlebrown; border-radius: 4px;">
+				<div class="sorting">
+				</div>
+				<div class="sorting">
+					<form th:action="@{/product}" class="d-inline-flex" >
+						<input class="form-control " type="text" id="name" name="name" th:value="${keyword}">
+						<button class="btn btn-outline" style="margin-left: 5px;">Tìm kiếm</button>
+					</form>
+				</div>
+
+
+			</div>
+			<!-- End Filter Bar -->
+			<!-- Start Best Seller -->
+			<section class="product-list">
+				<div class="row" th:if="${listProduct.hasContent()}">
+					<!-- single product -->
+					<div class="col-lg-3 col-md-6" th:each="product: ${listProduct.content}">
+						<div class="single-product" style="height: 90%;">
+							<a th:href="@{/{id}(id=${product.id})}">
+								<img class="img-fluid" th:src="@{${product.thumbnail}}" alt="Product Image">
+								<div class="product-details">
+									<h6 th:text="${product.name}"></h6>
+									<div class="price">
+										<h6 th:text="${#numbers.formatDecimal(product.price ?: 0, 0, 'COMMA', 0, 'POINT')} + ' vnđ'"></h6>
+									</div>
+									<div class="prd-bottom">
+										<a th:href="@{/{id}(id=${product.id})}" style="width: 100%;" class="social-info">
+											<span class="ti-info"></span>
+											<p class="hover-text">Chi tiết</p>
+										</a>
+									</div>
+								</div>
+							</a>
+						</div>
+					</div>
+				</div>
+
+				<!-- Pagination -->
+				<div class="row">
+					<div class="col-lg-12">
+						<nav aria-label="Page navigation">
+							<ul class="pagination justify-content-center">
+								<li class="page-item" th:classappend="${listProduct.hasPrevious()} ? '': 'disabled'">
+									<a class="page-link" th:href="@{/product(page=${listProduct.number - 1}, size=${listProduct.size}, name=${keyword}, category=${category}, material=${material}, sole=${sole})}" aria-label="Previous">
+										<span aria-hidden="true">&laquo;</span>
+									</a>
+								</li>
+								<li class="page-item" th:each="i : ${#numbers.sequence(1, listProduct.totalPages)}"
+									th:classappend="${listProduct.number + 1 == i} ? 'active' : ''">
+									<a class="page-link" th:href="@{/product(page=${i - 1}, size=${listProduct.size}, name=${keyword}, category=${category}, material=${material}, sole=${sole})}" th:text="${i}">1</a>
+								</li>
+								<li class="page-item" th:classappend="${listProduct.hasNext()} ? '': 'disabled'">
+									<a class="page-link" th:href="@{/product(page=${listProduct.number + 1}, size=${listProduct.size}, name=${keyword}, category=${category}, material=${material}, sole=${sole})}" aria-label="Next">
+										<span aria-hidden="true">&raquo;</span>
+									</a>
+								</li>
+							</ul>
+						</nav>
+					</div>
+				</div>
+			</section>
+
+		</div>
+	</div>
+</div>
+<footer th:replace="fragment/footer :: footer"/>
+
+
+
+
+<script src="js/vendor/jquery-2.2.4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
+		crossorigin="anonymous"></script>
+<script src="js/vendor/bootstrap.min.js"></script>
+<script src="js/jquery.ajaxchimp.min.js"></script>
+<script src="js/jquery.nice-select.min.js"></script>
+<script src="js/jquery.sticky.js"></script>
+<script src="js/nouislider.min.js"></script>
+<script src="js/jquery.magnific-popup.min.js"></script>
+<script src="js/owl.carousel.min.js"></script>
+<!--gmaps Js-->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCjCGmQ0Uq4exrzdcL6rvxywDDOvfAu6eE"></script>
+<script src="js/gmaps.min.js"></script>
+<script src="js/main.js"></script>
+</body>
+
+</html>

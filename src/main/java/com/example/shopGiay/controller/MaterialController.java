@@ -5,7 +5,6 @@ import com.example.shopGiay.model.Brand;
 import com.example.shopGiay.model.Category;
 import com.example.shopGiay.model.Material;
 import com.example.shopGiay.service.MaterialService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,7 +13,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 
 @Controller
@@ -56,14 +57,20 @@ public class MaterialController {
     }
 
     @PostMapping("/add")
-    public String addMaterial(@Valid @ModelAttribute("material") Material material, BindingResult result) {
+    public String addMaterial(@Valid @ModelAttribute("material") Material material, BindingResult result,  RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             return "admin/material/new"; // Trả về lại form nếu có lỗi validation
+        }
+        if (materialService.existsByName(material.getName())) {
+            // Nếu đã tồn tại, thêm thông báo lỗi và trả về lại form
+            result.rejectValue("name", "error.name", "Chất liệu đã tồn tại!");
+            return "admin/material/new";
         }
         material.setStatus(1);
         material.setCreateDate(LocalDate.now());
         // Lưu category vào cơ sở dữ liệu nếu hợp lệ
         materialService.saveMaterial(material);
+        redirectAttributes.addFlashAttribute("successMessage", "Thêm mới thành công!");
         return "redirect:/material";
     }
 
@@ -77,20 +84,23 @@ public class MaterialController {
     @PostMapping("/edit/{id}")
     public String updateMaterial(@PathVariable Integer id,
                                  @Valid @ModelAttribute("material") Material material,
-                                 BindingResult result) {
+                                 BindingResult result,  RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             return "admin/material/edit";
         }
-
+        if (materialService.existsByNameAndIdNot(material.getName(), material.getId())) {
+            result.rejectValue("name", "error.name", "Tên chất liệu đã tồn tại!");
+            return "admin/material/edit";
+        }
         // Lấy danh mục hiện tại từ cơ sở dữ liệu
         Material existingMaterial = materialService.getMaterialById(id);
         existingMaterial.setName(material.getName());
-        existingMaterial.setCode(material.getCode());
+//        existingMaterial.setCode(material.getCode());
         existingMaterial.setStatus(material.getStatus());
         existingMaterial.setUpdateDate(LocalDate.now());
         // Lưu lại danh mục đã chỉnh sửa vào cơ sở dữ liệu
         materialService.saveMaterial(existingMaterial);
-
+        redirectAttributes.addFlashAttribute("successMessage", "Sửa thành công!");
         return "redirect:/material";
     }
     @GetMapping("/{id}")

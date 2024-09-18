@@ -48,8 +48,20 @@ public class CategoryServiceImpl implements CategoryService {
     public Page<Category> searchCategoriesByName(String keyword, Pageable pageable) {
         return categoryRepository.findByNameCategoryContainingIgnoreCaseAndStatusNot(keyword,2, pageable);
     }
+    @Override
+    public boolean existsByNameCategory(String nameCategory) {
+        return categoryRepository.existsByNameCategory(nameCategory);
+    }
 
+    @Override
+    public boolean existsByNameCategoryAndIdNot(String nameCategory, Integer id) {
+        return categoryRepository.existsByNameCategoryAndIdNot(nameCategory, id);
+    }
 
+    @Override
+    public List<Category> findByStatusActive() {
+        return categoryRepository.findByStatusActive();
+    }
 
 
 }

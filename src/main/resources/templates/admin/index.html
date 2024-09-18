@@ -135,7 +135,7 @@
                 <li class="flex">
                   <a
                           class="inline-flex items-center justify-between w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
-                          th:href="@{/admin/orders}"
+                          th:href="@{/order}"
                   >
                     <span>Đơn hàng chờ xác nhận</span>
                     <span
@@ -149,6 +149,13 @@
 
               </ul>
             </template>
+          </li>
+          <li>
+            <a href="/staff/profile">
+              <svg class="h-6 w-6 text-red-500"  fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+              </svg>
+            </a>
           </li>
         </ul>
       </div>
@@ -169,7 +176,7 @@
           <div class="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-2">
 
             <!-- Card -->
-            <a th:href="@{/admin/users}">
+            <a th:href="@{/admin/index}">
               <div
                       class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800"
               >
@@ -198,7 +205,7 @@
             </a>
 
             <!--đơn hàng đã bán--->
-            <a th:href="@{/admin/orders}">
+            <a th:href="@{/order(status=3)}">
               <div
                       class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800"
               >
@@ -228,7 +235,7 @@
             </a>
 
             <!-- Card -->
-            <a th:href="@{/admin/orders}">
+            <a th:href="@{/order(status=0)}">
               <div
                       class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800"
               >
@@ -259,8 +266,8 @@
               </div>
             </a>
 
-            <!--Số sản phẩm đang bán-->
-            <a th:href="@{/admin/products}">
+            <!-- tổng tiền -->
+            <a th:href="@{/admin/index}">
               <div
                       class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800"
               >
@@ -279,62 +286,106 @@
                   <p
                           class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400"
                   >
-                    Số sản phẩm
+                    Tổng tiền đã thanh toán
                   </p>
                   <p
                           class="text-lg font-semibold text-gray-700 dark:text-gray-200"
-                          th:text="${totalProduct}">
-
+                          th:text="${#numbers.formatDecimal(total, 1, 'COMMA', 2, 'POINT')}">
                   </p>
+
                 </div>
               </div>
             </a>
           </div>
+          <div class="container px-6 mx-auto mt-8">
+            <div class="bg-white rounded-lg p-6 shadow-lg">
+              <h2 class="text-2xl font-semibold text-gray-800 mb-4">Sản phẩm bán nhiều nhất</h2>
+              <div class="overflow-x-auto">
+                <table class="min-w-full bg-white">
+                  <thead class="border-b bg-gray-100">
+                  <tr>
+                    <th class="text-left text-sm font-medium text-gray-500 uppercase tracking-wider px-4 py-3">STT</th>
+                    <th class="text-left text-sm font-medium text-gray-500 uppercase tracking-wider px-4 py-3">Tên sản phẩm</th>
+                    <th class="text-left text-sm font-medium text-gray-500 uppercase tracking-wider px-4 py-3">Số lượng đã bán</th>
+                  </tr>
+                  </thead>
+                  <tbody class="divide-y divide-gray-200">
+                  <tr th:each="product, stat : ${list10spbanchay}" class="hover:bg-gray-50 transition-all duration-200">
+                    <td class="px-4 py-3 text-sm font-semibold text-gray-800 text-center" th:text="${stat.index + 1}"></td>
+                    <td class="px-4 py-3 text-sm text-gray-700" th:text="${product.name}"></td>
+                    <td class="px-4 py-3 text-sm text-gray-700 text-center" th:text="${product.quantitySold}"></td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+
 
           <!--- End Card-->
         </div>
       </div>
+      <div class="container">
 
-      <!--Chua lấy được dữ liệu-->
-      <!--bieu do-->
-      <div class="grid gap-6 mb-8 px-6">
-        <div
-                class="min-w-0 p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800"
-        >
-          <h4 class="mb-4 font-semibold text-gray-800 dark:text-gray-300">
-            Thương hiệu ưa chuộng
-          </h4>
-          <canvas id="pie" value="30"></canvas>
-          <div
-                  class="flex justify-center mt-4 space-x-3 text-sm text-gray-600 dark:text-gray-400"
-          >
-            <!-- Chart legend -->
-            <div class="flex items-center">
-
-                      <span
-                              class="inline-block w-3 h-3 mr-1 bg-blue-500 rounded-full"
-                      ></span>
-              <span>Adidas</span>
-            </div>
-            <div class="flex items-center">
-                      <span
-                              class="inline-block w-3 h-3 mr-1 bg-teal-600 rounded-full"
-                      ></span>
-              <span>Nike</span>
-            </div>
-            <div class="flex items-center">
-                      <span
-                              class="inline-block w-3 h-3 mr-1 bg-purple-600 rounded-full"
-                      ></span>
-              <span>Khác</span>
-            </div>
-          </div>
-        </div>
+        <div id="container"
+             style="width: 550px; height: 400px; margin: 0 auto"></div>
       </div>
-      <!--- End Card-->
+
     </main>
   </div>
 </div>
+<script
+        src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<!-- Latest compiled and minified JavaScript -->
+<script
+        src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script th:inline="javascript">
+  $(function(){
+    Highcharts.chart('container', {
+      chart: {
+        type: 'column'
+      },
+      title: {
+        text: 'Biểu đồ thống kê'
+      },
+      subtitle: {
+        text: 'Số lượng sản phẩm bán ra theo từng tháng'
+      },
+      xAxis: {
+        categories: [[${keySet}]],
+        crosshair: true
+      },
+      yAxis: {
+        min: 0,
+        max:100,
+        title: {
+          text: 'Số lượng'
+        }
+      },
+      tooltip: {
+        headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+        pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                '<td style="padding:0"><b>{point.y:.1f}</b></td></tr>',
+        footerFormat: '</table>',
+        shared: true,
+        useHTML: true
+      },
+      plotOptions: {
+        column: {
+          pointPadding: 0.2,
+          borderWidth: 0
+        }
+      },
+      series: [{
+        name: 'Số lượng',
+        data: [[${values}]]
+      }]
+    });
+  });
+</script>
 </body>
 </html>
 

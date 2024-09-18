@@ -1,6 +1,7 @@
 package com.example.shopGiay.model;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
+import javax.validation.constraints.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
@@ -16,7 +17,7 @@ public class Product {
     @Column( name = "thumbnail")
     private String thumbnail;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", unique = true, nullable = false)
     private String name;
 
     @Column(name = "description")
@@ -44,8 +45,8 @@ public class Product {
     @Column(name = "update_date")
     private LocalDate updateDate;
 
-    @Column( name = "status",columnDefinition = "BOOLEAN")
-    private  boolean status;
+    @Column( name = "status", nullable = false)
+    private  Integer status;
 
 //    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
 //    private List<Image> images;
@@ -164,11 +165,11 @@ public class Product {
         this.comments = comments;
     }
 
-    public boolean isStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(boolean status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 

@@ -4,6 +4,8 @@ import com.example.shopGiay.model.Size;
 import com.example.shopGiay.repository.SizeRepository;
 import com.example.shopGiay.service.SizeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,5 +33,26 @@ public class SizeServiceImpl implements SizeService {
     @Override
     public void deleteSizeById(Integer id) {
         sizeRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Size> findByStatusActive() {
+        return sizeRepository.findByStatusActive();
+    }
+
+    @Override
+    public Page<Size> findAllOrderById(Pageable pageable) {
+        Page<Size> pageList = sizeRepository.findAllOrderById(pageable);
+        return pageList;
+    }
+
+    @Override
+    public boolean existsBySizeNumber(Integer sizeNumber) {
+        return sizeRepository.existsBySizeNumber(sizeNumber);
+    }
+
+    @Override
+    public boolean existsBySizeNumberAndIdNot(Integer sizeNumber, Integer id) {
+        return sizeRepository.existsBySizeNumberAndIdNot(sizeNumber, id);
     }
 }

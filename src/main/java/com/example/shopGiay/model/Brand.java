@@ -1,6 +1,7 @@
 package com.example.shopGiay.model;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
+import javax.validation.constraints.*;
 
 import java.time.LocalDate;
 
@@ -10,9 +11,19 @@ public class Brand {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
-    @Column(name = "name_brand", nullable = false)
+    @NotBlank(message = "Tên không được để trống")
     private String nameBrand;
+
+    public String getThumbnail() {
+        return thumbnail;
+    }
+
+    public void setThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
+    }
+
+    @Column( name = "thumbnail")
+    private String thumbnail;
 
     @Column(name = "description")
     private String description;

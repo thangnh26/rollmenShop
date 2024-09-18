@@ -1,23 +1,26 @@
 package com.example.shopGiay.model;
-
-import jakarta.persistence.*;
+import javax.persistence.*;
+import javax.validation.constraints.*;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Entity
-@Table(name = "`Order`")
+@Table(name = "`order`")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @Column(name = "code")
+    private String code;
 
     @ManyToOne
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
     @ManyToOne
-    @JoinColumn(name = "staff_id", nullable = false)
+    @JoinColumn(name = "staff_id")
     private Staff staff;
 
     @ManyToOne
@@ -36,7 +39,7 @@ public class Order {
     @Column(name = "status", nullable = false)
     private Integer status;
 
-    @Column(name = "address_receiver", nullable = false)
+    @Column(name = "address_receiver")
     private String addressReceiver;
 
     @Column(name = "name_receiver", nullable = false)
@@ -48,8 +51,9 @@ public class Order {
     @Column(name = "total_amount", nullable = false)
     private Double totalAmount;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    private List<OrderDetail> orderDetails;
+
+//    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+//    private List<OrderDetail> orderDetails;
 
     public Integer getId() {
         return id;
@@ -147,11 +151,19 @@ public class Order {
         this.totalAmount = totalAmount;
     }
 
-    public List<OrderDetail> getOrderDetails() {
-        return orderDetails;
+    public String getCode() {
+        return code;
     }
 
-    public void setOrderDetails(List<OrderDetail> orderDetails) {
-        this.orderDetails = orderDetails;
+    public void setCode(String code) {
+        this.code = code;
     }
+
+//    public List<OrderDetail> getOrderDetails() {
+//        return orderDetails;
+//    }
+//
+//    public void setOrderDetails(List<OrderDetail> orderDetails) {
+//        this.orderDetails = orderDetails;
+//    }
 }

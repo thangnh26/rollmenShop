@@ -1,10 +1,9 @@
 package com.example.shopGiay.model;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
+import javax.persistence.*;
+import javax.validation.constraints.*;
+
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
@@ -21,27 +20,29 @@ public class Voucher {
 
     private LocalDate updateDate;
 
-    @NotNull(message = "Value không được để trống")
-    @PositiveOrZero(message = "Value phải là số dương hoặc bằng không")
+    @NotNull(message = "Giá trị không được để trống")
+    @PositiveOrZero(message = "Giá trị phải là số dương hoặc bằng không")
     private Double value;
 
-    @NotNull(message = "Quantity không được để trống")
-    @PositiveOrZero(message = "Quantity phải là số dương hoặc bằng không")
+    @NotNull(message = "Số Lượng không được để trống")
+    @PositiveOrZero(message = "Số Lượng phải là số dương hoặc bằng không")
     private Integer quantity;
 
     @NotBlank(message = "Tên không được để trống")
     private String nameVoucher;
 
-    @NotNull(message = "Ngày bắt đầu không được để trống")
-    @Future(message = "Ngày bắt đầu phải là ngày trong tương lai")
+    @Future(message = "Ngày bắt đầu phải là ngày trong tương lai", groups = CreatedDate.class)
+    @NotNull(message = "Ngày bắt đầu không được để trống", groups = CreatedDate.class)
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate startDate;
 
-    @NotNull(message = "Ngày kết thúc không được để trống")
-    @Future(message = "Ngày kết thúc phải là ngày trong tương lai")
+
+    @Future(message = "Ngày kết thúc phải là ngày trong tương lai", groups = CreatedDate.class)
+    @NotNull(message = "Ngày kết thúc không được để trống", groups = CreatedDate.class)
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate endDate;
 
-    @NotNull(message = "Trạng thái không được để trống")
-    @PositiveOrZero(message = "Trạng thái phải là số dương hoặc bằng không")
+
     @Column(name = "status")
     private Integer status;
 //    @Column(name = "condition", nullable = false)

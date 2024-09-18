@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zxx" class="no-js" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragment/fragment :: html_head"/>
+<body>
+
+<header th:replace="fragment/header :: header"/>
+
+<!-- Start Banner Area -->
+<section class="banner-area organic-breadcrumb">
+    <div class="container">
+        <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
+            <div class="col-first">
+                <h1 style="font-weight: 600;color: #ff9933;">Thông tin giỏ hàng</h1>
+                <nav class="d-flex align-items-center">
+                    <a href="#">Trang chủ<span class="lnr lnr-arrow-right"></span>Thông tin đơn hàng</a>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- End Banner Area -->
+
+<!--================Checkout Area =================-->
+<section class="checkout_area section_gap">
+    <div class="container">
+
+        <div class="row" style="margin-left: 15px; margin-right: 15px;">
+            <form class="row contact_form" th:action="@{/checkout-by-cart}" method="post">
+                <input type="hidden" name="userId" th:value="${user.id}">
+                <input type="hidden" id="price" name="price" th:value="${total}"> <!-- Hidden price input -->
+
+                <div class="col-lg-7">
+                    <h3>Chi tiết thanh toán</h3>
+
+                    <div class="col-md-12 form-group p_star">
+                        <input type="text" class="form-control" id="name_receiver" name="name_receiver"
+                               placeholder="Họ và tên người nhận" th:value="${user.firstName + ' ' + user.lastName}" required>
+                    </div>
+
+                    <div class="col-md-12 form-group p_star">
+                        <input type="text" class="form-control" id="phone_number_receiver" name="phone_number_receiver"
+                               placeholder="Số điện thoại người nhận" th:value="${user.phoneNumber}" required minlength="10" maxlength="15">
+                    </div>
+
+                    <div class="col-md-12 form-group p_star">
+                        <select id="address_receiver" name="address_receiver" class="form-control" required>
+                            <option value="" disabled selected>Chọn địa chỉ</option>
+                            <option th:each="addr : ${addresses}"
+                                    th:value="${addr.id}"
+                                    th:text="${addr.nameAddress}"
+                                    th:selected="${addr.id == selectedAddressId}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-12 form-group">
+                        <textarea class="form-control" name="note" id="note" rows="1" placeholder="Ghi chú đơn hàng"></textarea>
+                    </div>
+
+                    <!-- Voucher Section -->
+                    <div class="col-md-12 form-group">
+                        <label for="voucher">Chọn Voucher</label>
+                        <select id="voucher" name="voucherId" class="form-control" onchange="applyVoucher()">
+                            <option value="" disabled selected>Chọn voucher</option>
+                            <option th:each="voucher : ${vouchers}"
+                                    th:value="${voucher.id}"
+                                    th:data-value="${voucher.value}"
+                                    th:text="${voucher.nameVoucher} + ' - ' + ${voucher.value} + 'đ'">
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-lg-5">
+                    <div class="order_box">
+                        <h2>Đơn hàng</h2>
+                        <table class="d-inline-flex" style="width: 100%;">
+                            <tbody style="width: 100%;">
+                            <tr style="width: 100%;">
+                                <th style="width: 50%;">Sản phẩm</th>
+                                <th style="width: 10%;">Size</th>
+                                <th style="width: 35%;">Số lượng</th>
+                                <th style="width: 5%;">Màu</th>
+                            </tr>
+                            <tr th:each="item: ${listItem}">
+                                <td th:text="${item.productDetail.product.name}"></td>
+                                <td th:text="${item.productDetail.size.sizeNumber}"></td>
+                                <td th:text="${item.quantity}"></td>
+                                <td th:text="${item.productDetail.color.name}"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                        <ul class="list list_2">
+                            <li><a>Tổng tiền ban đầu <span id="initialTotal" th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 0, 'POINT') + 'đ'}"></span></a></li>
+                            <li><a>Giảm giá Voucher <span id="voucherDiscount">0đ</span></a></li>
+                            <li><a>Tổng tiền thanh toán <span id="finalTotal" th:data-total="${total}" th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 0, 'POINT') + 'đ'}"></span></a></li>
+                        </ul>
+
+                        <button class="primary-btn" style="width: 100%;" type="submit">Xác nhận thanh toán</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+<!--================End Checkout Area =================-->
+
+<footer th:replace="fragment/footer :: footer"/>
+
+<script src="js/vendor/jquery-2.2.4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"
+        integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
+<script src="js/vendor/bootstrap.min.js"></script>
+<script src="js/jquery.ajaxchimp.min.js"></script>
+<script src="js/jquery.nice-select.min.js"></script>
+<script src="js/jquery.sticky.js"></script>
+<script src="js/nouislider.min.js"></script>
+<script src="js/jquery.magnific-popup.min.js"></script>
+<script src="js/owl.carousel.min.js"></script>
+
+<!-- JavaScript for voucher application -->
+<script>
+    // Store the initial total amount when the page loads
+    let initialTotal = parseFloat(document.getElementById('finalTotal').getAttribute('data-total'));
+
+    function applyVoucher() {
+        const voucherSelect = document.getElementById('voucher');
+        const selectedOption = voucherSelect.options[voucherSelect.selectedIndex];
+        const voucherValue = parseFloat(selectedOption.getAttribute('data-value')) || 0;
+
+        // Elements to display totals
+        const finalTotalElement = document.getElementById('finalTotal');
+        const voucherDiscountElement = document.getElementById('voucherDiscount');
+
+        // Check if the voucher value is greater than the initial total
+        if (voucherValue > initialTotal) {
+            // Alert the user that the voucher cannot be applied
+            alert("Giá trị voucher không được lớn hơn tổng tiền ban đầu.");
+
+            // Reset the voucher selection
+            voucherSelect.selectedIndex = 0;
+
+            // Reset the displayed discount and total
+            voucherDiscountElement.innerText = '0đ';
+            finalTotalElement.innerText = initialTotal.toLocaleString() + 'đ';
+            finalTotalElement.setAttribute('data-total', initialTotal);  // Reset data-total attribute
+
+            return;
+        }
+
+        // Calculate the discounted total based on the initial price
+        const discountedTotal = initialTotal - voucherValue;
+
+        // Update the displayed voucher discount
+        voucherDiscountElement.innerText = voucherValue.toLocaleString() + 'đ';
+
+        // Update the displayed final total (for user reference)
+        finalTotalElement.innerText = discountedTotal.toLocaleString() + 'đ';
+        finalTotalElement.setAttribute('data-total', discountedTotal);  // Update the data-total attribute
+    }
+</script>
+
+
+</body>
+</html>

@@ -2,7 +2,6 @@ package com.example.shopGiay.controller;
 
 import com.example.shopGiay.model.Customer;
 import com.example.shopGiay.service.CustomerService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 
 @Controller
@@ -89,7 +89,7 @@ public class CustomerController {
         existingCustomer.setStatus(customer.getStatus());
         existingCustomer.setUpdateDate(LocalDate.now()); // Cập nhật ngày update
         customerService.saveCustomer(existingCustomer); // Lưu lại khách hàng đã cập nhật
-        return "redirect:/customer";
+        return "redirect:/user/profile";
     }
 
     @GetMapping("/{id}")

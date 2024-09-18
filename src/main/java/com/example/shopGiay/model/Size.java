@@ -1,6 +1,7 @@
 package com.example.shopGiay.model;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
+import javax.validation.constraints.*;
 
 import java.time.LocalDate;
 @Entity
@@ -11,12 +12,14 @@ public class Size {
     private Integer id;
 
     @Column(name = "size_number", nullable = false)
+    @NotNull(message = "Kích thước không được để trống")
+    @Min(value = 1, message = "Kích thước phải là một số nguyên dương")
     private Integer sizeNumber;
 
-    @Column(name = "create_date", nullable = false)
+    @Column(name = "create_date")
     private LocalDate createDate;
 
-    @Column(name = "update_date", nullable = false)
+    @Column(name = "update_date")
     private LocalDate updateDate;
 
     @Column(name = "status", nullable = false)

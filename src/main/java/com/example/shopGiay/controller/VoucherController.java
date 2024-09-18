@@ -5,7 +5,6 @@ import com.example.shopGiay.model.Material;
 import com.example.shopGiay.model.Voucher;
 import com.example.shopGiay.service.MaterialService;
 import com.example.shopGiay.service.VoucherService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 
 @Controller
@@ -59,10 +59,19 @@ public class VoucherController {
         if (result.hasErrors()) {
             return "admin/voucher/new"; // Trả về lại form nếu có lỗi validation
         }
-        voucher.setStatus(1);
-        voucher.setCreateDate(LocalDate.now());
-        // Lưu category vào cơ sở dữ liệu nếu hợp lệ
-        voucherService.saveVoucher(voucher);
+
+        // Kiểm tra lỗi trùng lặp tên voucher
+        try {
+            voucher.setStatus(1);
+            voucher.setCreateDate(LocalDate.now());
+            voucherService.saveVoucher(voucher);
+        } catch (IllegalArgumentException e) {
+            // Thêm lỗi vào BindingResult để hiển thị trong form
+            result.rejectValue("nameVoucher", "error.voucher", e.getMessage());
+            return "admin/voucher/new"; // Trả về lại form nếu tên voucher đã tồn tại
+        }
+
+        // Nếu không có lỗi, chuyển hướng đến danh sách voucher
         return "redirect:/voucher";
     }
 
@@ -74,17 +83,24 @@ public class VoucherController {
     }
 
     @PostMapping("/edit/{id}")
-    public String updateCategory(@PathVariable Integer id,
-                                 @Valid @ModelAttribute("voucher") Voucher voucher,
-                                 BindingResult result) {
-        // Kiểm tra xem có lỗi validation không
+    public String updateVoucher(@PathVariable Integer id,
+                                @Valid @ModelAttribute("voucher") Voucher voucher,
+                                BindingResult result) {
+        // Kiểm tra lỗi xác thực
         if (result.hasErrors()) {
-            // Nếu có lỗi, trả về lại form chỉnh sửa với các thông tin lỗi
-            return "admin/voucher/edit";
+            return "admin/voucher/edit"; // Trả về lại form nếu có lỗi validation
+        }
+        Voucher existingVoucher = voucherService.getVoucherById(id);
+        if (existingVoucher == null) {
+            result.rejectValue("nameVoucher", "error.voucher", "Voucher không tồn tại");
+            return "admin/voucher/edit"; // Trả về lại form nếu không tìm thấy voucher
         }
 
-        Voucher existingVoucher = voucherService.getVoucherById(id);
-        existingVoucher.setId(id);
+        // Kiểm tra lỗi trùng lặp tên voucher
+        if (voucherService.existsByNameVoucherAndNotId(voucher.getNameVoucher(), id)) {
+            result.rejectValue("nameVoucher", "error.voucher", "Tên voucher đã tồn tại");
+            return "admin/voucher/edit"; // Trả về lại form nếu tên voucher đã tồn tại
+        }
         existingVoucher.setValue(voucher.getValue());
         existingVoucher.setQuantity(voucher.getQuantity());
         existingVoucher.setNameVoucher(voucher.getNameVoucher());
@@ -92,9 +108,7 @@ public class VoucherController {
         existingVoucher.setEndDate(voucher.getEndDate());
         existingVoucher.setStatus(voucher.getStatus());
         existingVoucher.setUpdateDate(LocalDate.now());
-        voucherService.saveVoucher(existingVoucher);
-        // Lưu lại danh mục đã chỉnh sửa vào cơ sở dữ liệu
-        voucherService.saveVoucher(existingVoucher);
+        voucherService.updateVoucher(existingVoucher);
         return "redirect:/voucher";
     }
 

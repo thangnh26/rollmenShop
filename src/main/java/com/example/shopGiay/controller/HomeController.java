@@ -1,0 +1,908 @@
+package com.example.shopGiay.controller;
+
+import com.example.shopGiay.dto.*;
+import com.example.shopGiay.model.*;
+import com.example.shopGiay.repository.*;
+import com.example.shopGiay.service.*;
+import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.transaction.Transactional;
+import javax.validation.Valid;
+import java.math.BigDecimal;
+import java.security.Principal;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+@Controller
+public class HomeController {
+
+
+    private final BrandService brandService;
+    private final ProductService productService;
+    private final CategoryService categoryService;
+    private final MaterialService materialService;
+    private final SoleService soleService;
+    private final CommentService commentService;
+    private final ShoppingCartService shoppingCartService;
+    private final ColorService colorService;
+    private final UserRepository userRepo;
+    private final RolesRepository rolesRepository;
+    private final OrderService orderService;
+    private final OrderDetailService orderDetailService;
+    private final CartService cartService;
+    private final ProductDetailRepository productDetailRepository;
+    private final AddressRepository addressRepository;
+    private final CustomerRepository customerRepository;
+    private final VoucherService voucherService;
+
+
+
+    public HomeController(BrandService brandService, ProductService productService, CategoryService categoryService, MaterialService materialService, SoleService soleService, CommentService commentService, ShoppingCartService shoppingCartService, ColorService colorService, UserRepository userRepo, RolesRepository rolesRepository, OrderService orderService, OrderDetailService orderDetailService, CartService cartService, ProductDetailRepository productDetailRepository, AddressRepository addressRepository, CustomerRepository customerRepository, VoucherService voucherService) {
+        this.brandService = brandService;
+        this.productService = productService;
+        this.categoryService = categoryService;
+        this.materialService = materialService;
+        this.soleService = soleService;
+        this.commentService = commentService;
+        this.shoppingCartService = shoppingCartService;
+        this.colorService = colorService;
+        this.userRepo = userRepo;
+        this.rolesRepository = rolesRepository;
+        this.orderService = orderService;
+        this.orderDetailService = orderDetailService;
+        this.cartService = cartService;
+        this.productDetailRepository = productDetailRepository;
+        this.addressRepository = addressRepository;
+        this.customerRepository = customerRepository;
+        this.voucherService = voucherService;
+    }
+
+
+    @GetMapping("/")
+    public String homePage(Model model, HttpServletRequest request) {
+        String currentUrl = request.getRequestURI();
+        model.addAttribute("currentUrl", currentUrl);
+        //Lấy các thương hiệu
+        List<Brand> brandsReputation = brandService.getAllBrands();
+        model.addAttribute("listBrandsReputation", brandsReputation);
+
+        //lay  ra sp o banner
+        List<ProductDto> newProductsBanner = productService.getNewProducts8(8);
+        model.addAttribute("newProducts", newProductsBanner);
+
+        //Lấy 8 sản phẩm mới nhất (dung)
+        List<ProductDto> newProducts = productService.getNewProducts8(8);
+        model.addAttribute("listNewProduct", newProducts);
+
+        //sp bán chạy
+        List<Product> productHot = productService.getProductHot();
+        model.addAttribute("hot", productHot);
+
+        // san pham noi bat co thuong hieu la adias
+        List<ProductDto> randomProducts = productService.getListNewProducts(8);
+        model.addAttribute("listRandomProduct", randomProducts);
+        return "index";
+    }
+    @GetMapping("/add-address")
+    public String showAddForm(Address address) {
+        return "addAddress";
+    }
+    @PostMapping("/add-address")
+    public String addAddress(@Valid Address address, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            return "addAddress";
+        }
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email = null;
+        if (principal instanceof UserDetails) {
+            email = ((UserDetails) principal).getUsername();
+        } else if (principal instanceof String) {
+            email = (String) principal;
+        }
+
+        // Lấy User từ email
+        Customer user = userRepo.findByEmail(email);
+        address.setCustomer(user);
+        address.setStatus(1);
+        addressRepository.save(address);
+        return "redirect:/user/profile";
+    }
+    @GetMapping("/order-detail-customer")
+    public String getOrderDetail(@RequestParam("id") Integer id, Model model) {
+        // Fetch the order
+        Order order = orderService.getOrderById(id);
+
+        // Check if the order exists
+        if (order == null) {
+            return "error/404";  // Redirect to an error page if the order does not exist
+        }
+
+        // Fetch the order details
+        List<OrderDetail> orderDetails = orderDetailService.getOrderDetailsByOrderId(id);
+
+        // Calculate the initial total (Tổng tiền ban đầu)
+        BigDecimal initialTotal = orderDetails.stream()
+                .map(detail -> detail.getProductDetail().getPrice().multiply(new BigDecimal(detail.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        // Calculate the discount (Giảm giá đã áp dụng)
+        BigDecimal discount = BigDecimal.ZERO;  // Default discount to 0
+        if (order.getVoucher() != null) {
+            discount = new BigDecimal(order.getVoucher().getValue());
+        }
+
+        // Calculate the final total (Tổng tiền thanh toán)
+        BigDecimal finalTotal = initialTotal.subtract(discount);
+        if (finalTotal.compareTo(BigDecimal.ZERO) < 0) {
+            finalTotal = BigDecimal.ZERO;  // Ensure final total doesn't go below zero
+        }
+
+        // Add attributes to the model to be used in the Thymeleaf template
+        model.addAttribute("order", order);  // The order itself
+        model.addAttribute("orderDetail", orderDetails);  // The list of order details
+        model.addAttribute("initialTotal", initialTotal);  // Tổng tiền ban đầu
+        model.addAttribute("discount", discount);  // Giảm giá đã áp dụng
+        model.addAttribute("finalTotal", finalTotal);  // Tổng tiền thanh toán
+
+        return "orderDetail";  // Return the view name
+    }
+
+    @GetMapping("/order-detail-staff")
+    public String getOrderDetailStaff(@RequestParam("id") Integer id, Model model) {
+        // Fetch the order by its ID
+        Order order = orderService.getOrderById(id);
+
+        // If no order is found, handle the error
+        if (order == null) {
+            return "error/404";  // Redirect to error page if order does not exist
+        }
+
+        // Fetch order details related to the order
+        List<OrderDetail> orderDetails = orderDetailService.getOrderDetailsByOrderId(id);
+
+        // Calculate the initial total (Tổng tiền ban đầu)
+        BigDecimal initialTotal = orderDetails.stream()
+                .map(detail -> detail.getProductDetail().getPrice().multiply(new BigDecimal(detail.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        // Calculate the discount (Giảm giá đã áp dụng)
+        BigDecimal discount = BigDecimal.ZERO;  // Default discount to 0
+        if (order.getVoucher() != null) {
+            discount = new BigDecimal(order.getVoucher().getValue());
+        }
+
+        // Calculate the final total (Tổng tiền thanh toán)
+        BigDecimal finalTotal = initialTotal.subtract(discount);
+        if (finalTotal.compareTo(BigDecimal.ZERO) < 0) {
+            finalTotal = BigDecimal.ZERO;  // Ensure final total doesn't go below zero
+        }
+
+        // Add calculated totals to the model
+        model.addAttribute("initialTotal", initialTotal);  // Tổng tiền ban đầu
+        model.addAttribute("discount", discount);  // Giảm giá đã áp dụng
+        model.addAttribute("finalTotal", finalTotal);  // Tổng tiền thanh toán
+
+        // Add other necessary attributes
+        model.addAttribute("order", order);  // The order itself
+        model.addAttribute("orderDetail", orderDetails);  // The list of order details
+
+        return "staff/orderDetail";  // Return the view name
+    }
+
+
+    @GetMapping("/{id}")
+    public String getDetailProduct(Model model, @PathVariable int id, @RequestParam("page") Optional<Integer> page, @RequestParam("size") Optional<Integer> size) {
+
+        //Lấy các thương hiệu
+        List<Brand> brandsReputation = brandService.getAllBrands();
+        model.addAttribute("listBrandsReputation", brandsReputation);
+
+        //Lấy thông tin sản phẩm
+        Product product;
+//        try {
+            product = productService.getDetailProductById(id);
+//        } catch (Exception ex) {
+//            return "error/404";
+//        }
+
+        //Phân trang comment
+        int currentPage = page.orElse(1);
+        int sizePage = size.orElse(4);
+        Pageable pageable = PageRequest.of(currentPage - 1, sizePage);
+        Page<Comment> listComment = commentService.findAllByProductId(id, pageable);
+        ProductDetail productDetail = productDetailRepository.findPricreByProductId(product.getId());
+
+        // Định dạng số với 2 chữ số sau dấu phẩy và dấu phẩy ngăn cách mỗi 3 chữ số
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.US);
+        symbols.setGroupingSeparator(',');
+        DecimalFormat df = new DecimalFormat("#,##0.00", symbols);
+        String formatPrice = df.format(productDetail.getPrice());
+
+        // Loại bỏ dấu phẩy trước khi chuyển đổi lại thành BigDecimal
+        String plainStringPrice = formatPrice.replace(",", "");
+        BigDecimal formatBig = new BigDecimal(plainStringPrice);
+        productDetail.setPrice(formatBig);
+
+        model.addAttribute("product", product);
+        model.addAttribute("productDetail", productDetail);
+        model.addAttribute("listCommnet", listComment);
+
+        int totalPage = listComment.getTotalPages();
+
+        if (totalPage > 0) {
+            int start = Math.max(1, currentPage - 2);
+            int end = Math.min(currentPage + 2, totalPage);
+            if (totalPage > 5) {
+                if (end == totalPage) {
+                    start = end - 5;
+                } else if (start == 1) {
+                    end = start + 5;
+                }
+            }
+            List<Integer> pagenummber = IntStream.rangeClosed(start, end)
+                    .boxed()
+                    .collect(Collectors.toList());
+            model.addAttribute("pageNumber", pagenummber);
+        }
+//        //Lấy size có sẵn
+        List<ProductSizeResponse> listSizeByProduct = productService.listSize(id);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth.getPrincipal() != "anonymousUser") {
+            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            String email = null;
+            if (principal instanceof UserDetails) {
+                email = ((UserDetails) principal).getUsername();
+            } else if (principal instanceof String) {
+                email = (String) principal;
+            }
+
+            // Lấy User từ email
+            Customer user = userRepo.findByEmail(email);
+            model.addAttribute("user", user);
+        }
+        model.addAttribute("listSize", listSizeByProduct);
+        List<ProductColorResponse> listColor = productService.listColor(id);
+        model.addAttribute("listColor", listColor);
+
+        return "single-product";
+    }
+    @GetMapping("/product-detail/quantity")
+    @ResponseBody
+    public Map<String, Integer> getProductDetailQuantity(@RequestParam("sizeId") Integer sizeId,
+                                                         @RequestParam("colorId") Integer colorId,
+                                                         @RequestParam("productId") Integer productId) {
+        ProductDetail productDetail = productDetailRepository.findBySizeIdAndColorIdAndProductId(sizeId, colorId, productId);
+
+        Map<String, Integer> response = new HashMap<>();
+        Map<String, BigDecimal> response1 = new HashMap<>();
+        response.put("quantity", productDetail != null ? productDetail.getQuantity() : 0);
+        response1.put("price", productDetail != null ? productDetail.getPrice() : BigDecimal.ZERO);
+
+        return response;
+    }
+    @GetMapping("/product-detail/price")
+    @ResponseBody
+    public Map<String, BigDecimal> getProductDetailPrice(@RequestParam("sizeId") Integer sizeId,
+                                                         @RequestParam("colorId") Integer colorId,
+                                                         @RequestParam("productId") Integer productId) {
+        ProductDetail productDetail = productDetailRepository.findBySizeIdAndColorIdAndProductId(sizeId, colorId, productId);
+
+        Map<String, BigDecimal> response1 = new HashMap<>();
+        response1.put("price", productDetail != null ? productDetail.getPrice() : BigDecimal.ZERO);
+
+        return response1;
+    }
+
+
+
+    @GetMapping("/product")
+    public String showListProduct(Model model, @RequestParam(name = "name", required = false) String keyword,
+                                  @RequestParam("page") Optional<Integer> page,
+                                  @RequestParam("size") Optional<Integer> size,
+                                  @RequestParam("category") Optional<Integer> category,
+                                  @RequestParam("material") Optional<Integer> material,
+                                  @RequestParam("sole") Optional<Integer> sole, HttpServletRequest request,
+                                  @PageableDefault(size = 8) Pageable pageable) {
+        String currentUrl = request.getRequestURI();
+        model.addAttribute("currentUrl", currentUrl);
+        List<Category> categoryReputation = categoryService.getAllCategory();
+        model.addAttribute("listCategoryReputation", categoryReputation);
+
+        List<Brand> brandsReputation = brandService.getAllBrands();
+        model.addAttribute("listBrandsReputation", brandsReputation);
+
+        List<Material> materialReputation = materialService.getAllMaterial();
+        model.addAttribute("listMaterialsReputation", materialReputation);
+
+        List<Sole> solesReputation = soleService.getAllSoles();
+        model.addAttribute("listSolesReputation", solesReputation);
+
+
+        //Tìm kiếm sản phẩm
+
+        int currentPage = page.orElse(1);//Trang hiển thị
+        int sizePage = size.orElse(8);//Kích thước sản phẩm trong 1 trang
+
+//        Pageable pageable = PageRequest.of(currentPage - 1, sizePage);
+
+        Page<ProductDto> pageProduct = productService.searchProduct(keyword, pageable);//Lấy các
+        model.addAttribute("listProduct", pageProduct);
+        model.addAttribute("keyword", keyword);
+
+        int totalPage = pageProduct.getTotalPages();
+        if (totalPage > 0) {
+            int start = Math.max(1, currentPage - 2);
+            int end = Math.min(currentPage + 2, totalPage);
+            if (totalPage > 5) {
+                if (end == totalPage) {
+                    start = end - 5;
+                } else if (start == 1) {
+                    end = start + 5;
+                }
+            }
+            List<Integer> pageNumber = IntStream.rangeClosed(start, end)
+                    .boxed()
+                    .collect(Collectors.toList());
+            model.addAttribute("pageNumber", pageNumber);
+        }
+
+        return "category";
+    }
+
+    @PostMapping("/comment")
+    public String sendComment(@RequestParam("message") String comment, @RequestParam("productId") int productId) {
+        User user = ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+        commentService.createComment(productId, user.getId(), comment);
+        return "redirect:/" + productId;
+    }
+
+    @GetMapping("cart")
+    public String list(Model model, HttpServletRequest request) {
+        String currentUrl = request.getRequestURI();
+        model.addAttribute("currentUrl", currentUrl);
+        //Lấy các thương hiệu
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email = null;
+        if (principal instanceof UserDetails) {
+            email = ((UserDetails) principal).getUsername();
+        } else if (principal instanceof String) {
+            email = (String) principal;
+        }
+
+        // Lấy User từ email
+        Customer user = userRepo.findByEmail(email);
+        if (user==null){
+            return "redirect:/login";
+        }
+        List<Brand> brandsReputation = brandService.getAllBrands();
+        Result result = null;
+       List<CartItem> list= shoppingCartService.getAllItems(user.getId());
+        List<ProductDetail> productDetails = productDetailRepository.findAllByProduct(list.stream()
+                .map(item -> item.getProductDetail().getProduct().getId())
+                .collect(Collectors.toList())
+        );
+        Set<Size> distinctSizes = new HashSet<>();
+        Set<Color> distinctColors = new HashSet<>();
+        for (ProductDetail detail : productDetails) {
+            distinctColors.add(detail.getColor());
+            distinctSizes.add(detail.getSize());
+        }
+
+        model.addAttribute("listBrandsReputation", brandsReputation);
+        model.addAttribute("result", result);
+        model.addAttribute("listItem", list);
+        model.addAttribute("total", shoppingCartService.getAmount());
+        model.addAttribute("sizes", distinctSizes);
+        model.addAttribute("colors", distinctColors);
+        return "cart";
+    }
+
+    @PostMapping("/add-cart")
+    public String addCart(Model model, @ModelAttribute AddCart cartItem) {
+
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email = null;
+        if (principal instanceof UserDetails) {
+            email = ((UserDetails) principal).getUsername();
+        } else if (principal instanceof String) {
+            email = (String) principal;
+        }
+
+        // Lấy User từ email
+        Customer user = userRepo.findByEmail(email);
+        if (user==null){
+            return "redirect:/login";
+        }
+        Result result = shoppingCartService.add(cartItem, user.getId());
+        List<Brand> brandsReputation = brandService.getAllBrands();
+        model.addAttribute("listBrandsReputation", brandsReputation);
+        model.addAttribute("result", result);
+        model.addAttribute("listItem", shoppingCartService.getAllItems(user.getId()));
+        model.addAttribute("total", shoppingCartService.getAmount());
+        return "redirect:/cart";
+    }
+
+    @PostMapping("/update")
+    public String updateCartItem(
+            @RequestParam("id") int productId,
+            @RequestParam("color") int colorId,
+            @RequestParam("size") int sizeId,
+            @RequestParam("qty") int quantity,
+            RedirectAttributes redirectAttributes) {
+
+        try {
+            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            String email = null;
+            if (principal instanceof UserDetails) {
+                email = ((UserDetails) principal).getUsername();
+            } else if (principal instanceof String) {
+                email = (String) principal;
+            }
+
+            // Lấy User từ email
+            Customer user = userRepo.findByEmail(email);
+            if (user == null) {
+                return "redirect:/login";
+            }
+
+            Cart cart = cartService.getOneByUserId(user.getId());
+            ProductDetail productDetail = productDetailRepository.getOneProductDetail(productId, colorId, sizeId);
+
+            if (quantity > productDetail.getQuantity()) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Số lượng vượt quá tồn kho");
+                return "redirect:/cart";
+            }
+            shoppingCartService.updateCartItem(cart.getId(), productId, colorId, sizeId, quantity);
+            redirectAttributes.addFlashAttribute("successMessage", "Cập nhật giỏ hàng thành công");
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("errorMessage", "Có lỗi xảy ra khi cập nhật giỏ hàng");
+        }
+
+        return "redirect:/cart";
+    }
+
+
+    @PostMapping("/buy-now")
+    public String buyNow(@ModelAttribute OrderRequest orderRequest, Model model,
+                         @RequestParam(value = "voucherId", required = false) Integer voucherId) {
+        List<Brand> brandsReputation = brandService.getAllBrands();
+        model.addAttribute("listBrandsReputation", brandsReputation);
+
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email = principal instanceof UserDetails ? ((UserDetails) principal).getUsername() : (String) principal;
+
+        Customer user = userRepo.findByEmail(email);
+        if (user == null) {
+            return "redirect:/login";
+        }
+
+        Address address = addressRepository.findByCustomerId(user.getId());
+        List<Address> allAddressByCusId = addressRepository.findByCusId(user.getId());
+
+        if (allAddressByCusId.isEmpty()) {
+            return "redirect:/add-address";
+        }
+
+        ProductDetail productDetail = productDetailRepository.getOneProductDetail(orderRequest.getProId(), orderRequest.getColorId(), orderRequest.getSizeId());
+        List<Voucher> vouchers = voucherService.getAllVoucher();
+        model.addAttribute("vouchers", vouchers);
+
+        // Add attributes to model for the view
+        model.addAttribute("user", user);
+        model.addAttribute("listItem", productDetail);
+        model.addAttribute("quantity", orderRequest.getQuantity());
+        model.addAttribute("proId", orderRequest.getProId());
+        model.addAttribute("sizeId", orderRequest.getSizeId());
+        model.addAttribute("colorId", orderRequest.getColorId());
+        model.addAttribute("selectedAddressId", address.getId());
+        model.addAttribute("addresses", allAddressByCusId);
+
+        // Calculate the total price in the backend
+        BigDecimal totalPrice = productDetail.getPrice().multiply(new BigDecimal(orderRequest.getQuantity()));
+
+        // Apply the voucher if one is selected
+        if (voucherId != null) {
+            Voucher voucher = voucherService.getVoucherById(voucherId);
+            if (voucher != null && voucher.getQuantity() > 0) {
+                totalPrice = totalPrice.subtract(new BigDecimal(voucher.getValue()));
+                if (totalPrice.compareTo(BigDecimal.ZERO) < 0) {
+                    totalPrice = BigDecimal.ZERO;
+                }
+            }
+        }
+
+        model.addAttribute("total", totalPrice);
+        return "checkoutBuyNow";
+    }
+
+
+    @GetMapping("/checkout")
+    public String checkoutCart(Model model) {
+        // Fetch brands and other details as before
+        List<Brand> brandsReputation = brandService.getAllBrands();
+        model.addAttribute("listBrandsReputation", brandsReputation);
+
+        // Fetch user information
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email = (principal instanceof UserDetails) ? ((UserDetails) principal).getUsername() : (String) principal;
+        Customer user = userRepo.findByEmail(email);
+
+        if (user == null) {
+            return "redirect:/login";
+        }
+
+        // Fetch user addresses and items
+        Address address = addressRepository.findByCustomerId(user.getId());
+        List<Address> allAddressByCusId = addressRepository.findByCusId(user.getId());
+
+        if (allAddressByCusId.size() == 0) {
+            return "redirect:/add-address";
+        }
+
+        model.addAttribute("user", user);
+        model.addAttribute("listItem", shoppingCartService.getAllItems(user.getId()));
+        model.addAttribute("total", shoppingCartService.getAmount());
+        model.addAttribute("selectedAddressId", address.getId());
+        model.addAttribute("addresses", allAddressByCusId);
+
+        // Fetch available vouchers
+        List<Voucher> vouchers = voucherService.getAllVoucher(); // Assuming you have this method in VoucherService
+        model.addAttribute("vouchers", vouchers);
+
+        return "checkout";
+    }
+
+    @PostMapping("/checkout")
+    public String createOrder(@RequestParam("name_receiver") String nameReceiver,
+                              @RequestParam("phone_number_receiver") String phoneReceiver,
+                              @RequestParam(value = "address_receiver") Integer addressReceiverRequest,
+                              @RequestParam("note") String note,
+                              @RequestParam("price") String price, // This is the price without voucher applied
+                              @RequestParam("userId") Integer id,
+                              @RequestParam(value = "voucherId", required = false) Integer voucherId, // Voucher ID passed from frontend
+                              @RequestParam(value = "proId", required = false) int proId,
+                              @RequestParam(value = "sizeId", required = false) int sizeId,
+                              @RequestParam(value = "colorId", required = false) int colorId,
+                              @RequestParam(value = "quantity", required = false) int quantity) {
+
+        // Fetch the user
+        if (id == null) {
+            return "redirect:/login";
+        }
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email = principal instanceof UserDetails ? ((UserDetails) principal).getUsername() : (String) principal;
+        Customer user = userRepo.findByEmail(email);
+        if (user == null) {
+            return "redirect:/login";
+        }
+
+        // Fetch the address
+        Address address = addressRepository.findById(addressReceiverRequest).orElse(null);
+        if (address == null) {
+            return "redirect:/checkout";
+        }
+
+        // Convert the price sent from frontend to double
+        double totalPrice = Double.parseDouble(price);
+
+        // Validate and apply voucher discount on the backend
+        if (voucherId != null) {
+            Voucher voucher = voucherService.getVoucherById(voucherId);
+            if (voucher != null) {
+                totalPrice -= voucher.getValue();  // Apply the voucher discount
+                if (totalPrice < 0) {
+                    totalPrice = 0;  // Ensure the total price is not negative
+                }
+            }
+        }
+
+        // Create the order with the final price
+        Order order = orderService.createOrder(nameReceiver, phoneReceiver, address.getNameAddress(), note, String.valueOf(totalPrice), id, voucherId);
+
+        // Create order details
+        orderDetailService.createOrderDetail(proId, order.getId(), quantity, sizeId, colorId);
+
+        return "success";
+    }
+
+
+    @PostMapping("/checkout-by-cart")
+    public String createOrderByCart(
+            @RequestParam("name_receiver") String nameReceiver,
+            @RequestParam("phone_number_receiver") String phoneReceiver,
+            @RequestParam(value = "address_receiver") Integer addressReceiverRequest,
+            @RequestParam("note") String note,
+            @RequestParam("price") String price,  // Final total price after voucher application
+            @RequestParam(value = "voucherId", required = false) Integer voucherId,  // Voucher ID from the form (optional)
+            @RequestParam("userId") Integer id) {
+
+        if (id == null) {
+            return "redirect:/login";
+        }
+
+        // Fetch user information
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email = (principal instanceof UserDetails) ? ((UserDetails) principal).getUsername() : (String) principal;
+        Customer user = userRepo.findByEmail(email);
+
+        if (user == null) {
+            return "redirect:/login";
+        }
+
+        // Fetch address
+        Address address = addressRepository.findById(addressReceiverRequest).orElse(null);
+
+        // Create order
+        Order order = orderService.createOrder(nameReceiver, phoneReceiver, address.getNameAddress(), note, price, id, voucherId);
+
+        // Apply voucher if provided and valid
+        if (voucherId != null) {
+            Voucher voucher = voucherService.getVoucherById(voucherId);  // Fetch voucher by ID
+            if (voucher != null && voucher.getQuantity() > 0) {
+                // Apply the voucher discount
+                double discountedTotal = order.getTotalAmount() - voucher.getValue();
+                order.setTotalAmount(discountedTotal);
+
+                // Decrease the voucher's quantity
+                voucher.setQuantity(voucher.getQuantity() - 1);
+                voucherService.updateVoucher(voucher);  // Only update the voucher
+            }
+        }
+
+        // Process cart items
+        Cart cart = cartService.getOneByUserId(user.getId());
+        Collection<CartItem> cartItems = shoppingCartService.getAllItemsByCartId(cart.getId());
+
+        for (CartItem item : cartItems) {
+            Product product = productService.getDetailProductById(item.getProductDetail().getProduct().getId());
+            orderDetailService.createOrderDetail(product.getId(), order.getId(), item.getQuantity(), item.getProductDetail().getSize().getId(), item.getProductDetail().getColor().getId());
+        }
+
+        // Clear the cart after order creation
+        shoppingCartService.clear(cart.getId());
+
+        return "success";
+    }
+
+    @GetMapping("/delete")
+    public String deleteProInCart(@RequestParam("proId") int proId) {
+        shoppingCartService.deletePro(proId);
+        return "redirect:/cart";
+    }
+
+    @GetMapping("/clear")
+    public String clearCart() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email = null;
+        if (principal instanceof UserDetails) {
+            email = ((UserDetails) principal).getUsername();
+        } else if (principal instanceof String) {
+            email = (String) principal;
+        }
+
+        // Lấy User từ email
+        Customer user = userRepo.findByEmail(email);
+        if (user==null){
+            return "redirect:/login";
+        }
+        Cart cart = cartService.getOneByUserId(user.getId());
+        shoppingCartService.clear(cart.getId());
+        return "redirect:/cart";
+    }
+
+    @PostMapping("/process_register")
+    public String handleRegister(@RequestParam("email") String email,
+                                 @RequestParam("password") String password,
+                                 @RequestParam("firstName") String firstName,
+                                 @RequestParam("lastName") String lastName,
+                                 @RequestParam("phoneNumber") String phoneNumber,
+                                 Model model) {
+        if (userRepo.findByEmail(email) != null) {
+            // Email đã tồn tại, thông báo lỗi
+            model.addAttribute("error", "Email đã được sử dụng");
+            return "login";
+        }
+
+        // Tạo người dùng mới
+        Customer newUser = new Customer();
+        Random random = new Random();
+        int randomDigits = 100 + random.nextInt(900);
+        newUser.setCode("KH"+randomDigits);
+        newUser.setEmail(email);
+        newUser.setPassword(password); // Không mã hóa mật khẩu
+        newUser.setFirstName(firstName);
+        newUser.setLastName(lastName);
+        newUser.setPhoneNumber(phoneNumber);
+//        newUser.setStatus(true); // Hoặc set tùy thuộc vào logic của bạn
+
+        customerRepository.save(newUser);
+
+        // Đăng ký thành công, chuyển hướng về trang đăng nhập
+        return "redirect:/login";
+    }
+
+    @GetMapping("/login")
+    public String showLoginPage(Model model, @RequestParam("error") Optional<String> error,
+                                Principal principal) {
+        model.addAttribute("user", new User());
+        if (error.isPresent()) {
+            model.addAttribute("error", error);
+        }
+        if (principal != null) {
+            model.addAttribute("username", principal.getName());
+        }
+
+        return "login";
+    }
+
+    @GetMapping("/user/profile")
+    public String showUserProfile(Model model,
+                                  @RequestParam(defaultValue = "0") int page,
+                                  @RequestParam(required = false) String codeCustomer,
+                                  @RequestParam(required = false) String phone,
+                                  @RequestParam(required = false) Integer status,
+                                  HttpSession session, HttpServletRequest request) {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email;
+        if (principal instanceof UserDetails) {
+            email = ((UserDetails) principal).getUsername();
+        } else {
+            email = principal.toString();
+        }
+
+        Customer user = userRepo.findByEmail(email);
+        if (user==null){
+            return "redirect:/login";
+        }
+        Address address = addressRepository.findByCustomerId(user.getId());
+        List<Address> allAddressByCusId = addressRepository.findByCusId(user.getId());
+        if (allAddressByCusId.size()==0){
+            return "redirect:/add-address";
+        }
+
+        if (user != null) {
+            int pageSize = 5; // Số mục trên mỗi trang
+            Pageable pageable = PageRequest.of(page, pageSize);
+            String currentUrl = request.getRequestURI();
+            model.addAttribute("currentUrl", currentUrl);
+
+            Page<Order> orders = orderService.searchOrderByCustomerCode(codeCustomer, phone, status, pageable, user.getId());
+
+            model.addAttribute("orders", orders.getContent());
+            model.addAttribute("currentPage", page);
+            model.addAttribute("totalPages", orders.getTotalPages());
+            model.addAttribute("codeCustomer", codeCustomer); // Pass keyword back to the view
+            model.addAttribute("phone", phone); // Pass keyword back to the view
+            model.addAttribute("status", status);
+            session.setAttribute("loggedInUser", user);
+            model.addAttribute("user", user);
+            model.addAttribute("addresses",allAddressByCusId);
+            return "user_profile";
+        } else {
+            model.addAttribute("error", "User not found");
+            return "redirect:/login";
+        }
+    }
+
+
+
+    @GetMapping("/logout")
+    public String logout() {
+        // Xử lý logout
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null) {
+            auth.setAuthenticated(false);
+        }
+        return "redirect:/login";
+    }
+
+    @GetMapping("/contact")
+    public String contact(Model model) {
+        model.addAttribute("currentUrl", "/contact");
+        return "contact"; // Tên file HTML
+    }
+
+    @GetMapping("/user/addresses")
+    public String listAddresses(Model model) {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email = null;
+
+        if (principal instanceof UserDetails) {
+            email = ((UserDetails) principal).getUsername();
+        } else if (principal instanceof String) {
+            email = (String) principal;
+        }
+
+        Customer user = userRepo.findByEmail(email);
+        List<Address> addresses = addressRepository.findByCustomer(user);
+
+        AddressListWrapper addressListWrapper = new AddressListWrapper();
+        addressListWrapper.setAddresses(addresses);
+
+        model.addAttribute("addressForm", addressListWrapper); // Truyền wrapper vào model
+        return "listAddresses";
+    }
+    @PostMapping("/user/update-addresses")
+    @Transactional // Ensure the method is transactional
+    public String updateAddresses(@ModelAttribute("addressForm") AddressListWrapper addressListWrapper,RedirectAttributes redirectAttributes) {
+        // Lấy thông tin user hiện tại từ SecurityContext
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email = null;
+
+        if (principal instanceof UserDetails) {
+            email = ((UserDetails) principal).getUsername();
+        } else if (principal instanceof String) {
+            email = (String) principal;
+        }
+
+        // Lấy user từ email
+        Customer user = userRepo.findByEmail(email);
+
+        // Duyệt qua danh sách địa chỉ và cập nhật các địa chỉ có ID
+        for (Address address : addressListWrapper.getAddresses()) {
+            if (address.getId() != null) {
+                // Cập nhật địa chỉ hiện có dựa trên ID
+                Address existingAddress = addressRepository.findById(address.getId())
+                        .orElseThrow(() -> new RuntimeException("Address not found with id: " + address.getId()));
+
+                // Cập nhật thông tin của địa chỉ hiện có
+                existingAddress.setNameAddress(address.getNameAddress());
+                existingAddress.setStatus(1);  // Set status bằng 1
+                existingAddress.setCustomer(user);  // Set lại customer
+
+                // Lưu địa chỉ đã cập nhật vào cơ sở dữ liệu
+                addressRepository.save(existingAddress);
+            }
+            // Nếu địa chỉ không có ID, bỏ qua không thêm địa chỉ mới
+        }
+        redirectAttributes.addFlashAttribute("successMessage", "Cập nhật thành công!");
+        return "redirect:/user/addresses"; // Chuyển hướng về trang danh sách địa chỉ
+    }
+
+    @PostMapping("/user/delete-address/{id}")
+    public String deleteAddress(@PathVariable Integer id) {
+        // Lấy thông tin user hiện tại từ SecurityContext
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email = null;
+
+        if (principal instanceof UserDetails) {
+            email = ((UserDetails) principal).getUsername();
+        } else if (principal instanceof String) {
+            email = (String) principal;
+        }
+
+        // Lấy user từ email
+        Customer user = userRepo.findByEmail(email);
+
+        // Tìm địa chỉ theo id và kiểm tra nếu nó thuộc về user hiện tại
+        Address address = addressRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Address not found with id: " + id));
+
+        // Kiểm tra xem địa chỉ có thuộc về user hiện tại không
+        if (address.getCustomer().getId().equals(user.getId())) {
+            addressRepository.delete(address); // Xóa địa chỉ
+        }
+
+        return "redirect:/user/addresses"; // Chuyển hướng lại trang danh sách địa chỉ
+    }
+
+
+}

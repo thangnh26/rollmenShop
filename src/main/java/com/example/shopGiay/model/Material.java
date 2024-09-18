@@ -1,9 +1,10 @@
 package com.example.shopGiay.model;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
+import javax.persistence.*;
+import javax.validation.constraints.*;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Entity
 @Table(name = "Material")
@@ -15,7 +16,6 @@ public class Material {
     @NotBlank(message = "Tên không được để trống")
     private String name;
 
-    @NotBlank(message = "Code không được để trống")
     private String code;
 
     private LocalDate createDate;
@@ -23,6 +23,13 @@ public class Material {
     private LocalDate updateDate;
 
     private Integer status;
+    @PrePersist
+    public void prePersist() {
+        if (this.code == null || this.code.isEmpty()) {
+            this.code = UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        }
+        this.createDate = LocalDate.now();
+    }
 
     public Integer getId() {
         return id;

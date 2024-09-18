@@ -1,6 +1,6 @@
 package com.example.shopGiay.model;
-
-import jakarta.persistence.*;
+import javax.persistence.*;
+import javax.validation.constraints.*;
 
 import java.time.LocalDate;
 
@@ -11,16 +11,13 @@ public class Sole {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "name", nullable = false)
+    @NotBlank(message = "Tên không được để trống")
     private String name;
 
-    @Column(name = "create_date")
     private LocalDate createDate;
 
-    @Column(name = "update_date")
     private LocalDate updateDate;
 
-    @Column(name = "status", nullable = false)
     private Integer status;
 
     public Integer getId() {

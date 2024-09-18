@@ -1,9 +1,8 @@
 package com.example.shopGiay.model;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
+import javax.persistence.*;
+import javax.validation.constraints.*;
+
 
 import java.time.LocalDate;
 import java.util.List;

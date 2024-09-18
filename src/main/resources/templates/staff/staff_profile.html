@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html :class="{ 'theme-dark': dark }" x-data="data()" lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:x-transition="">
+<head th:replace="fragment/fragmentAdmin::head_admin"/>
+
+<body>
+<!--<div th:replace="fragment/sidebarAdmin::sidebar" />-->
+<header class="z-10 py-4 bg-white shadow-md dark:bg-gray-800">
+    <div
+            class="container flex items-center justify-between h-full px-6 mx-auto text-purple-600 dark:text-purple-300"
+    ><!-- Search input -->
+        <div class="flex flex-1 lg:mr-32">
+            <div
+                    class="relative w-full max-w-xl mr-6 focus-within:text-purple-500"
+            >
+                <a href="/admin/index">
+                    <svg class="w-8 h-8" aria-hidden="true" fill="none" stroke-linecap="round" stroke-linejoin="round"
+                         stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
+                        <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                    </svg>
+                </a>
+            </div>
+        </div>
+        <ul class="flex items-center flex-shrink-0 space-x-6">
+            <!-- Theme toggler -->
+            <!-- Notifications menu -->
+            <li class="relative">
+                <button
+                        class="relative align-middle rounded-md focus:outline-none focus:shadow-outline-purple"
+                        @click="toggleNotificationsMenu"
+                        @keydown.escape="closeNotificationsMenu"
+                        aria-label="Notifications"
+                        aria-haspopup="true"
+                >
+                    <svg
+                            class="w-5 h-5"
+                            aria-hidden="true"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                    >
+                        <path
+                                d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"
+                        ></path>
+                    </svg>
+                    <!-- Notification badge -->
+                    <span
+                            aria-hidden="true"
+                            class="absolute top-0 right-0 inline-block w-3 h-3 transform translate-x-1 -translate-y-1 bg-red-600 border-2 border-white rounded-full dark:border-gray-800"
+                    ></span>
+                </button>
+                <template x-if="isNotificationsMenuOpen">
+                    <ul
+                            x-transition:leave="transition ease-in duration-150"
+                            x-transition:leave-start="opacity-100"
+                            x-transition:leave-end="opacity-0"
+                            @click.away="closeNotificationsMenu"
+                            @keydown.escape="closeNotificationsMenu"
+                            class="absolute right-0 w-56 p-2 mt-2 space-y-2 text-gray-600 bg-white border border-gray-100 rounded-md shadow-md dark:text-gray-300 dark:border-gray-700 dark:bg-gray-700"
+                    >
+
+                        <li class="flex">
+                            <a class="inline-flex items-center justify-between w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                               th:href="@{/admin/orders}">
+                                <span>Đơn hàng chờ xác nhận</span>
+                                <span class="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-600 bg-red-100 rounded-full dark:text-red-100 dark:bg-red-600"
+                                      th:text="${countOrderWait}">
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
+                </template>
+            </li>
+
+
+        </ul>
+
+    </div>
+</header>
+<main class="h-full overflow-y-auto">
+    <div class="container mx-auto p-6">
+        <section class="bg-white shadow-lg rounded-lg p-6">
+            <!-- Tiêu đề phần Thông tin người dùng -->
+            <div class="mb-6 text-center">
+                <h1 class="text-3xl font-bold text-brown-600 uppercase tracking-wide">
+                    Thông tin người dùng
+                </h1>
+                <div class="mt-2 h-1 w-16 bg-brown-600 mx-auto rounded-full"></div>
+            </div>
+
+            <!-- Thông tin chi tiết người dùng -->
+            <div th:if="${user}">
+                <p><strong>Tên:</strong> <span th:text="${user.firstName}"></span></p>
+                <p><strong>Họ:</strong> <span th:text="${user.lastName}"></span></p>
+                <p><strong>Email:</strong> <span th:text="${user.email}"></span></p>
+                <p><strong>Số Điện Thoại:</strong> <span th:text="${user.phoneNumber}"></span></p>
+            </div>
+
+            <!-- Nút Đăng xuất -->
+            <div class="mt-6 text-right">
+                <button style="background-color: saddlebrown"
+                        onclick="window.location.href='/logout'"
+                        class="bg-blue-600 text-white hover:bg-blue-800 font-semibold py-2 px-4 rounded">
+                    Đăng xuất
+                </button>
+            </div>
+        </section>
+    </div>
+</main>
+
+<!--================End Checkout Area =================-->
+<!--<footer th:replace="fragment/footer :: footer"></footer>-->
+
+<script src="js/vendor/jquery-2.2.4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"
+        integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
+        crossorigin="anonymous"></script>
+<script src="js/vendor/bootstrap.min.js"></script>
+<script src="js/jquery.ajaxchimp.min.js"></script>
+<script src="js/jquery.nice-select.min.js"></script>
+<script src="js/jquery.sticky.js"></script>
+<script src="js/nouislider.min.js"></script>
+<script src="js/jquery.magnific-popup.min.js"></script>
+<script src="js/owl.carousel.min.js"></script>
+<!--gmaps Js-->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCjCGmQ0Uq4exrzdcL6rvxywDDOvfAu6eE"></script>
+<script src="js/gmaps.min.js"></script>
+<script src="js/main.js"></script>
+<script type="text/javascript"
+        src="https://www.paypal.com/sdk/js?client-id=Aa59KmHTIuSPTEkR8i2bAZLBnoWECkS2TomhETkd9uu2emswucAFoPFIIW75LrOwmp2sebotG_-5Wavp"></script>
+</body>
+
+</html>

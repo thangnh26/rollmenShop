@@ -1,6 +1,7 @@
 package com.example.shopGiay.service;
 
 import com.example.shopGiay.model.Category;
+import com.example.shopGiay.model.Material;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -19,5 +20,7 @@ public interface CategoryService {
     Page<Category> getAllCategoryPaginated(Pageable pageable);
     public Page<Category> getCategoriesByStatusNot2(Pageable pageable);
     public Page<Category> searchCategoriesByName(String keyword, Pageable pageable);
-
+    boolean existsByNameCategory(String nameCategory);
+    boolean existsByNameCategoryAndIdNot(String nameCategory, Integer id);
+    List<Category> findByStatusActive();
 }

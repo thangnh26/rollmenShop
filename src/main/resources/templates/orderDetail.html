@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .order-detail-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .order-detail-table th, .order-detail-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .order-detail-table th {
+            background-color: #f8f8f8;
+            color: #555;
+        }
+
+        .order-detail-table tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .order-detail-table td {
+            color: #333;
+        }
+
+        .order-summary {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f8f8f8;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            text-align: right;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .btn-back {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .btn-back:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Hóa Đơn Chi Tiết</h1>
+
+    <!-- Order Detail Table -->
+    <table class="order-detail-table">
+        <thead>
+        <tr>
+            <th>Tên Sản Phẩm</th>
+            <th>Kích Thước</th>
+            <th>Màu Sắc</th>
+            <th>Số Lượng</th>
+            <th>Giá</th>
+            <th>Tổng Tiền</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="detail : ${orderDetail}">
+            <td th:text="${detail.productDetail.product.name}">Product Name</td>
+            <td th:text="${detail.productDetail.size.sizeNumber}"></td>
+            <td th:text="${detail.productDetail.color.name}"></td>
+            <td th:text="${detail.quantity}">Quantity</td>
+            <td th:text="${#numbers.formatDecimal(detail.productDetail.price, 0, 'COMMA', 0, 'POINT') + ' vnđ'}">Price</td>
+            <td th:text="${#numbers.formatDecimal(detail.quantity * detail.productDetail.price, 0, 'COMMA', 0, 'POINT') + ' vnđ'}">
+                Total
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Display Calculated Totals (Tổng tiền ban đầu, Giảm giá, Tổng tiền thanh toán) -->
+    <div class="order-summary">
+        <p><strong>Tổng tiền ban đầu:</strong>
+            <span th:text="${#numbers.formatDecimal(initialTotal, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}"></span>
+        </p>
+        <p><strong>Giảm giá đã áp dụng:</strong>
+            <span th:if="${order.voucher != null}"
+                  th:text="${#numbers.formatDecimal(order.voucher.value, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}"></span>
+            <span th:if="${order.voucher == null}">Không áp dụng</span>
+        </p>
+        <p><strong>Tổng tiền thanh toán:</strong>
+            <span th:text="${#numbers.formatDecimal(finalTotal, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}"></span>
+        </p>
+    </div>
+
+    <br>
+    <!-- Order Information -->
+    <p><strong>Tên đặt hàng:</strong> <span th:text="${order.nameReceiver}"></span></p>
+    <p><strong>Địa chỉ:</strong> <span th:text="${order.addressReceiver}"></span></p>
+    <p><strong>Số điện thoại:</strong> <span th:text="${order.phoneReceiver}"></span></p>
+    <p><strong>Mã đơn hàng:</strong> <span th:text="${order.code}"></span></p>
+    <p><strong>Trạng thái:</strong>
+        <span th:if="${order.status == 0}">Chưa xác nhận</span>
+        <span th:if="${order.status == 1}">Đã xác nhận</span>
+        <span th:if="${order.status == 2}">Đang giao hàng</span>
+        <span th:if="${order.status == 3}">Đã giao hàng</span>
+        <span th:if="${order.status == 4}">Đã hủy</span>
+    </p>
+
+    <br>
+    <a href="/user/profile" class="btn-back">Quay Lại</a>
+</div>
+
+</body>
+</html>

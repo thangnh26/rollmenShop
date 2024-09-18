@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Edit Order</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <h1>Edit Order</h1>
+    <form th:action="@{'/order/' + ${order.id}}" th:object="${order}" method="post">
+        <input type="hidden" th:field="*{id}">
+
+        <div class="form-group">
+            <label for="staff">Staff:</label>
+            <select class="form-control" id="staff" th:field="*{staff.id}">
+                <option value="">-- Select Staff --</option>
+                <option th:each="staff : ${staffList}" th:value="${staff.id}" th:text="${staff.firstName + ' ' + staff.lastName}"></option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="customer">Customer:</label>
+            <select class="form-control" id="customer" th:field="*{customer.id}">
+                <option value="">-- Select Customer --</option>
+                <option th:each="customer : ${customerList}" th:value="${customer.id}" th:text="${customer.firstName + ' ' + customer.lastName}"></option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="voucher">Voucher:</label>
+            <select class="form-control" id="voucher" th:field="*{voucher.id}">
+                <option value="">-- Select Voucher --</option>
+                <option th:each="voucher : ${voucherList}" th:value="${voucher.id}" th:text="${voucher.nameVoucher}"></option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="note">Note:</label>
+            <textarea class="form-control" id="note" th:field="*{note}"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="addressReceiver">Address Receiver:</label>
+            <input type="text" class="form-control" id="addressReceiver" th:field="*{addressReceiver}">
+            <span class="text-danger" th:if="${#fields.hasErrors('addressReceiver')}" th:errors="*{addressReceiver}"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="nameReceiver">Name Receiver:</label>
+            <input type="text" class="form-control" id="nameReceiver" th:field="*{nameReceiver}">
+            <span class="text-danger" th:if="${#fields.hasErrors('nameReceiver')}" th:errors="*{nameReceiver}"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="phoneReceiver">Phone Receiver:</label>
+            <input type="text" class="form-control" id="phoneReceiver" th:field="*{phoneReceiver}">
+            <span class="text-danger" th:if="${#fields.hasErrors('phoneReceiver')}" th:errors="*{phoneReceiver}"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="totalAmount">Total Amount:</label>
+            <input type="text" class="form-control" id="totalAmount" th:field="*{totalAmount}">
+            <span class="text-danger" th:if="${#fields.hasErrors('totalAmount')}" th:errors="*{totalAmount}"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="status">Status:</label>
+            <select class="form-control" id="status" th:field="*{status}">
+                <option value="0" th:selected="${order.status == 0}">InActive</option>
+                <option value="1" th:selected="${order.status == 1}">Active</option>
+            </select>
+            <span class="text-danger" th:if="${#fields.hasErrors('status')}" th:errors="*{status}"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Update</button>
+        <a class="btn btn-secondary" th:href="@{/order}">Cancel</a>
+    </form>
+</div>
+</body>
+</html>

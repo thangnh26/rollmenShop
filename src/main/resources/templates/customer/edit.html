@@ -3,23 +3,55 @@
 <head>
     <title>Edit Customer</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            margin-top: 50px;
+            max-width: 600px;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 24px;
+            color: #343a40;
+        }
+        .form-group label {
+            font-weight: bold;
+        }
+        .btn-primary {
+            width: 100%;
+            padding: 10px;
+        }
+        .btn-back {
+            margin-bottom: 15px;
+        }
+    </style>
 </head>
 <body>
 <div class="container">
-    <h1>Edit Customer</h1>
+    <!-- Nút quay lại -->
+    <a th:href="@{/user/profile}" class="btn btn-secondary btn-back">Quay lại trang hồ sơ</a>
+
+    <h1>Sửa thông tin khách hàng</h1>
     <form th:action="@{/customer/{id}(id=${customer.id})}" th:object="${customer}" method="post">
         <div class="form-group">
-            <label for="code">Code</label>
+            <label for="code">Mã Khách Hàng</label>
             <input type="text" class="form-control" id="code" th:field="*{code}" placeholder="Enter code">
             <div th:if="${#fields.hasErrors('code')}" th:errors="*{code}" class="text-danger"></div>
         </div>
         <div class="form-group">
-            <label for="firstName">First Name</label>
+            <label for="firstName">Tên </label>
             <input type="text" class="form-control" id="firstName" th:field="*{firstName}" placeholder="Enter first name">
             <div th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}" class="text-danger"></div>
         </div>
         <div class="form-group">
-            <label for="lastName">Last Name</label>
+            <label for="lastName">Họ và Tên Đệm</label>
             <input type="text" class="form-control" id="lastName" th:field="*{lastName}" placeholder="Enter last name">
             <div th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}" class="text-danger"></div>
         </div>
@@ -29,32 +61,24 @@
             <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-danger"></div>
         </div>
         <div class="form-group">
-            <label for="phoneNumber">Phone Number</label>
+            <label for="phoneNumber">Số Điện Thoại</label>
             <input type="text" class="form-control" id="phoneNumber" th:field="*{phoneNumber}" placeholder="Enter phone number">
             <div th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}" class="text-danger"></div>
         </div>
         <div class="form-group">
-            <label for="gender">Gender</label>
+            <label for="gender">Giới Tính</label>
             <select class="form-control" id="gender" th:field="*{gender}">
-                <option value="1" th:selected="${customer.gender == 1}">Male</option>
-                <option value="2" th:selected="${customer.gender == 2}">Female</option>
+                <option value="1" th:selected="${customer.gender == 1}">Nam </option>
+                <option value="2" th:selected="${customer.gender == 2}">Nữ</option>
             </select>
             <div th:if="${#fields.hasErrors('gender')}" th:errors="*{gender}" class="text-danger"></div>
         </div>
         <div class="form-group">
-            <label for="password">Password</label>
+            <label for="password">Mật Khẩu</label>
             <input type="password" class="form-control" id="password" th:field="*{password}" placeholder="Enter new password">
             <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="text-danger"></div>
         </div>
-        <div class="form-group">
-            <label for="status">Status</label>
-            <select class="form-control" id="status" th:field="*{status}">
-                <option value="1" th:selected="${customer.status == 1}">Active</option>
-                <option value="0" th:selected="${customer.status == 0}">Inactive</option>
-            </select>
-            <div th:if="${#fields.hasErrors('status')}" th:errors="*{status}" class="text-danger"></div>
-        </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary">Cập nhật</button>
     </form>
 </div>
 </body>

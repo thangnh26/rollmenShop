@@ -1,11 +1,8 @@
 package com.example.shopGiay.model;
-
-import jakarta.persistence.*;
-
-
-
+import javax.persistence.*;
+import javax.validation.constraints.*;
 @Entity
-@Table(name = "OrderDetail")
+@Table(name = "order_detail")
 public class OrderDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
