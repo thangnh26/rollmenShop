@@ -41,16 +41,20 @@
                         <th scope="col" style="width: 15%;">Chức năng</th>
                     </tr>
                     </thead>
-                    <tbody >
+                    <tbody>
 
                     <div th:each="item : ${listItem}">
                         <form th:action="@{/update}" th:method="post">
-                            <input type="hidden" name="id" th:value="${item.productDetail.product.id}"/>
+                            <!-- Hidden inputs to ensure color and size are sent -->
+                            <input type="hidden" name="color" th:value="${item.productDetail.color.id}" />
+                            <input type="hidden" name="size" th:value="${item.productDetail.size.id}" />
+                            <input type="hidden" name="id" th:value="${item.productDetail.product.id}" />
+
                             <tr>
                                 <td>
                                     <div class="media">
                                         <div class="d-flex">
-                                            <img th:src="@{${item.productDetail.product.thumbnail}}" style="width: 132px; height: 102px;" alt="thumbanil">
+                                            <img th:src="@{${item.productDetail.product.thumbnail}}" style="width: 132px; height: 102px;" alt="thumbnail">
                                         </div>
                                         <div class="media-body">
                                             <a style="color: grey;" th:href="@{/{id}(id = ${item.productDetail.product.id})}" th:text="${item.productDetail.product.name}"></a>
@@ -58,31 +62,15 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <h5 th:text="${#numbers.formatDecimal(item.productDetail.price, 0, 'COMMA', 0, 'POINT') +' đ'}"></h5>
+                                    <h5 th:text="${#numbers.formatDecimal(item.productDetail.price, 0, 'COMMA', 0, 'POINT') + ' đ'}"></h5>
                                 </td>
                                 <td>
-                                    <div class="default-select" id="default-select-color">
-                                        <select name="color" id="colorSelect" onchange="this.form.submit()">
-                                            <option value="" disabled>Select a Color</option>
-                                            <option th:each="color : ${colors}"
-                                                    th:value="${color.id}"
-                                                    th:text="${color.name}"
-                                                    th:selected="${color.id == item.productDetail.color.id}">
-                                            </option>
-                                        </select>
-                                    </div>
+                                    <!-- Display only the selected color, without allowing changes -->
+                                    <input type="text" th:value="${item.productDetail.color.name}" readonly/>
                                 </td>
                                 <td>
-                                    <div class="default-select" id="default-select-size">
-                                        <select name="size" id="sizeSelect" onchange="this.form.submit()">
-                                            <option value="" disabled>Select a Size</option>
-                                            <option th:each="size : ${sizes}"
-                                                    th:value="${size.id}"
-                                                    th:text="${size.sizeNumber}"
-                                                    th:selected="${size.id == item.productDetail.size.id}">
-                                            </option>
-                                        </select>
-                                    </div>
+                                    <!-- Display only the selected size, without allowing changes -->
+                                    <input type="text" th:value="${item.productDetail.size.sizeNumber}" readonly/>
                                 </td>
                                 <td>
                                     <div class="product_count">
@@ -104,44 +92,24 @@
                         </form>
                     </div>
                     <tr class="bottom_button" th:if="${listItem.size() != 0}">
-                        <td >
+                        <td>
                             <a class="gray_btn" th:href="@{/clear}">Xóa giỏ hàng</a>
                         </td>
-                        <td>
-
-                        </td>
-                        <td>
-
-                        </td>
-                        <td>
-
-                        </td>
-                        <td>
-
-                        </td>
-                        <td>
-
-                        </td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                     </tr>
 
                     <tr th:if="${listItem.size() != 0}">
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>Tổng tiền:</td>
                         <td>
-
-                        </td>
-                        <td>
-
-                        </td>
-                        <td>
-
-                        </td>
-                        <td>
-
-                        </td>
-                        <td>
-                            Tổng tiền:
-                        </td>
-                        <td>
-                            <h5 th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 0, 'POINT')+ 'đ'}"></h5>
+                            <h5 th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 0, 'POINT') + 'đ'}"></h5>
                         </td>
                     </tr>
                     </tbody>
@@ -150,8 +118,8 @@
                 <div style="display: flex;flex-direction: row; justify-content: center; width: 100%;" th:if="${listItem.size() == 0}">
                     <img src="img/shopping-cart-icon.png" style="width: 100%;width: 300px; height: 163px;" alt="thumbnail" >
                 </div>
-                <div style="display: flex;flex-direction: row; justify-content: right; width: 100%;" >
-                    <div class="checkout_btn_inner d-flex align-items-center" style="">
+                <div style="display: flex;flex-direction: row; justify-content: right; width: 100%;">
+                    <div class="checkout_btn_inner d-flex align-items-center">
                         <a class="gray_btn" th:href="@{/product}">Tiếp tục mua sắm</a>
                         &ensp;
                         <div th:if="${#request.userPrincipal == null}">
@@ -160,13 +128,13 @@
                         <div th:if="${#request.userPrincipal != null}">
                             <a th:if="${listItem.size() != 0}" class="primary-btn" style="border-radius: 4px; line-height: 40px;" th:href="@{/checkout}">Thanh toán</a>
                         </div>
-
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
+
 <!--================End Cart Area =================-->
 <footer th:replace="fragment/footer :: footer"/>
 
