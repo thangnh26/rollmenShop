@@ -136,7 +136,7 @@ public class ProductsController {
 
         try {
             createProductAndDetails(productDTO, sizeIds, colorIds);
-            redirectAttributes.addFlashAttribute("successMessage", "Product created successfully with multiple details");
+            redirectAttributes.addFlashAttribute("successMessage", "Thêm mới thành công sản phẩm");
         } catch (IOException e) {
             e.printStackTrace();
             redirectAttributes.addFlashAttribute("errorMessage", "Error creating product");
@@ -383,7 +383,7 @@ public class ProductsController {
             for (int i = 0; i < productIds.size(); i++) {
                 productService.updateProductDetails(productIds.get(i), prices.get(i), quantities.get(i));
             }
-            redirectAttributes.addFlashAttribute("successMessage", "Products updated successfully!");
+            redirectAttributes.addFlashAttribute("successMessage", "Cập nhật thành công!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Failed to update products. Please try again.");
         }
